@@ -1,0 +1,512 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 71;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A00100000000000000000001 /* SurviveInLAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000001 /* SurviveInLAApp.swift */; };
+		A00100000000000000000002 /* GameModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000002 /* GameModels.swift */; };
+		A00100000000000000000003 /* GameContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000003 /* GameContent.swift */; };
+		A00100000000000000000004 /* SeededRandomNumberGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000004 /* SeededRandomNumberGenerator.swift */; };
+		A00100000000000000000005 /* GameEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000005 /* GameEngine.swift */; };
+		A00100000000000000000006 /* GameStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000006 /* GameStore.swift */; };
+		A00100000000000000000007 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000007 /* AppTheme.swift */; };
+		A00100000000000000000008 /* GameHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000008 /* GameHomeView.swift */; };
+		A00100000000000000000009 /* StatusStripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000009 /* StatusStripView.swift */; };
+		A0010000000000000000000A /* CityMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0020000000000000000000A /* CityMapView.swift */; };
+		A0010000000000000000000B /* MarketPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0020000000000000000000B /* MarketPanelView.swift */; };
+		A0010000000000000000000C /* TradeSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0020000000000000000000C /* TradeSheetView.swift */; };
+		A0010000000000000000000D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0020000000000000000000D /* Assets.xcassets */; };
+		A0010000000000000000000E /* GameEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0020000000000000000000E /* GameEngineTests.swift */; };
+		A0010000000000000000000F /* SupportViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000011 /* SupportViews.swift */; };
+		A00100000000000000000010 /* ProfilePersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000012 /* ProfilePersistence.swift */; };
+		A00100000000000000000011 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000013 /* ProfileManager.swift */; };
+		A00100000000000000000012 /* ProfileSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000014 /* ProfileSelectionView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A00300000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A01000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A00900000000000000000001;
+			remoteInfo = SurviveInLA;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		A00200000000000000000001 /* SurviveInLAApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurviveInLAApp.swift; sourceTree = "<group>"; };
+		A00200000000000000000002 /* GameModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModels.swift; sourceTree = "<group>"; };
+		A00200000000000000000003 /* GameContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameContent.swift; sourceTree = "<group>"; };
+		A00200000000000000000004 /* SeededRandomNumberGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeededRandomNumberGenerator.swift; sourceTree = "<group>"; };
+		A00200000000000000000005 /* GameEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEngine.swift; sourceTree = "<group>"; };
+		A00200000000000000000006 /* GameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStore.swift; sourceTree = "<group>"; };
+		A00200000000000000000007 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		A00200000000000000000008 /* GameHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameHomeView.swift; sourceTree = "<group>"; };
+		A00200000000000000000009 /* StatusStripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusStripView.swift; sourceTree = "<group>"; };
+		A0020000000000000000000A /* CityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityMapView.swift; sourceTree = "<group>"; };
+		A0020000000000000000000B /* MarketPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketPanelView.swift; sourceTree = "<group>"; };
+		A0020000000000000000000C /* TradeSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeSheetView.swift; sourceTree = "<group>"; };
+		A0020000000000000000000D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A0020000000000000000000E /* GameEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEngineTests.swift; sourceTree = "<group>"; };
+		A0020000000000000000000F /* SurviveInLA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SurviveInLA.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A00200000000000000000010 /* SurviveInLATests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SurviveInLATests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A00200000000000000000011 /* SupportViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportViews.swift; sourceTree = "<group>"; };
+		A00200000000000000000012 /* ProfilePersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePersistence.swift; sourceTree = "<group>"; };
+		A00200000000000000000013 /* ProfileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
+		A00200000000000000000014 /* ProfileSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSelectionView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A00400000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00400000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A00500000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A00500000000000000000002 /* SurviveInLA */,
+				A0050000000000000000000A /* SurviveInLATests */,
+				A0050000000000000000000B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A00500000000000000000002 /* SurviveInLA */ = {
+			isa = PBXGroup;
+			children = (
+				A00500000000000000000003 /* App */,
+				A00500000000000000000004 /* Domain */,
+				A00500000000000000000005 /* Engine */,
+				A00500000000000000000006 /* Store */,
+				A0050000000000000000000D /* UI */,
+				A00500000000000000000009 /* Resources */,
+			);
+			path = SurviveInLA;
+			sourceTree = "<group>";
+		};
+		A00500000000000000000003 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A00200000000000000000001 /* SurviveInLAApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A00500000000000000000004 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				A00200000000000000000002 /* GameModels.swift */,
+				A00200000000000000000003 /* GameContent.swift */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		A00500000000000000000005 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				A00200000000000000000004 /* SeededRandomNumberGenerator.swift */,
+				A00200000000000000000005 /* GameEngine.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		A00500000000000000000006 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				A00200000000000000000006 /* GameStore.swift */,
+				A00200000000000000000012 /* ProfilePersistence.swift */,
+				A00200000000000000000013 /* ProfileManager.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
+		A00500000000000000000007 /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				A00200000000000000000007 /* AppTheme.swift */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		A00500000000000000000008 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				A00200000000000000000008 /* GameHomeView.swift */,
+				A00200000000000000000009 /* StatusStripView.swift */,
+				A0020000000000000000000A /* CityMapView.swift */,
+				A00200000000000000000011 /* SupportViews.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		A00500000000000000000009 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A0020000000000000000000D /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A0050000000000000000000A /* SurviveInLATests */ = {
+			isa = PBXGroup;
+			children = (
+				A0020000000000000000000E /* GameEngineTests.swift */,
+			);
+			path = SurviveInLATests;
+			sourceTree = "<group>";
+		};
+		A0050000000000000000000B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A0020000000000000000000F /* SurviveInLA.app */,
+				A00200000000000000000010 /* SurviveInLATests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A0050000000000000000000C /* Market */ = {
+			isa = PBXGroup;
+			children = (
+				A0020000000000000000000B /* MarketPanelView.swift */,
+				A0020000000000000000000C /* TradeSheetView.swift */,
+			);
+			path = Market;
+			sourceTree = "<group>";
+		};
+		A0050000000000000000000D /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				A00500000000000000000007 /* DesignSystem */,
+				A00500000000000000000008 /* Home */,
+				A0050000000000000000000C /* Market */,
+				A0050000000000000000000E /* Profile */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		A0050000000000000000000E /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				A00200000000000000000014 /* ProfileSelectionView.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A00900000000000000000001 /* SurviveInLA */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00B00000000000000000002 /* Build configuration list for PBXNativeTarget "SurviveInLA" */;
+			buildPhases = (
+				A00600000000000000000001 /* Sources */,
+				A00400000000000000000001 /* Frameworks */,
+				A00700000000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SurviveInLA;
+			productName = SurviveInLA;
+			productReference = A0020000000000000000000F /* SurviveInLA.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A00900000000000000000002 /* SurviveInLATests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A00B00000000000000000003 /* Build configuration list for PBXNativeTarget "SurviveInLATests" */;
+			buildPhases = (
+				A00600000000000000000002 /* Sources */,
+				A00400000000000000000002 /* Frameworks */,
+				A00700000000000000000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A00A00000000000000000001 /* PBXTargetDependency */,
+			);
+			name = SurviveInLATests;
+			productName = SurviveInLATests;
+			productReference = A00200000000000000000010 /* SurviveInLATests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A01000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2620;
+				LastUpgradeCheck = 2620;
+				TargetAttributes = {
+					A00900000000000000000001 = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					A00900000000000000000002 = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = A00900000000000000000001;
+					};
+				};
+			};
+			buildConfigurationList = A00B00000000000000000001 /* Build configuration list for PBXProject "SurviveInLA" */;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				"zh-Hans",
+			);
+			mainGroup = A00500000000000000000001;
+			productRefGroup = A0050000000000000000000B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A00900000000000000000001 /* SurviveInLA */,
+				A00900000000000000000002 /* SurviveInLATests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A00700000000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0010000000000000000000D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00700000000000000000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A00600000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A00100000000000000000001 /* SurviveInLAApp.swift in Sources */,
+				A00100000000000000000002 /* GameModels.swift in Sources */,
+				A00100000000000000000003 /* GameContent.swift in Sources */,
+				A00100000000000000000004 /* SeededRandomNumberGenerator.swift in Sources */,
+				A00100000000000000000005 /* GameEngine.swift in Sources */,
+				A00100000000000000000006 /* GameStore.swift in Sources */,
+				A00100000000000000000007 /* AppTheme.swift in Sources */,
+				A00100000000000000000008 /* GameHomeView.swift in Sources */,
+				A00100000000000000000009 /* StatusStripView.swift in Sources */,
+				A0010000000000000000000A /* CityMapView.swift in Sources */,
+				A0010000000000000000000B /* MarketPanelView.swift in Sources */,
+				A0010000000000000000000C /* TradeSheetView.swift in Sources */,
+				A0010000000000000000000F /* SupportViews.swift in Sources */,
+				A00100000000000000000010 /* ProfilePersistence.swift in Sources */,
+				A00100000000000000000011 /* ProfileManager.swift in Sources */,
+				A00100000000000000000012 /* ProfileSelectionView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A00600000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0010000000000000000000E /* GameEngineTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A00A00000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A00900000000000000000001 /* SurviveInLA */;
+			targetProxy = A00300000000000000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		A00C00000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		A00C00000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A00C00000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5HL85C4694;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "洛杉矶浮生记";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.graymongooseus.SurviveInLA;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A00C00000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5HL85C4694;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "洛杉矶浮生记";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.graymongooseus.SurviveInLA;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		A00C00000000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.graymongooseus.SurviveInLATests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SurviveInLA.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SurviveInLA";
+			};
+			name = Debug;
+		};
+		A00C00000000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.graymongooseus.SurviveInLATests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SurviveInLA.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SurviveInLA";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A00B00000000000000000001 /* Build configuration list for PBXProject "SurviveInLA" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00C00000000000000000001 /* Debug */,
+				A00C00000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A00B00000000000000000002 /* Build configuration list for PBXNativeTarget "SurviveInLA" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00C00000000000000000003 /* Debug */,
+				A00C00000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A00B00000000000000000003 /* Build configuration list for PBXNativeTarget "SurviveInLATests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A00C00000000000000000005 /* Debug */,
+				A00C00000000000000000006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A01000000000000000000001 /* Project object */;
+}
