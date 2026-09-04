@@ -11,6 +11,7 @@ struct DiaryView: View {
                     LabeledContent("当前位置", value: GameContent.district(session.currentDistrictID).fullName)
                     LabeledContent("净资产", value: session.netWorth.usdText)
                     LabeledContent("库存", value: "\(session.usedCapacity) / \(session.capacity)")
+                    LabeledContent("随身证件", value: "外国护照")
                 }
 
                 if !session.inventory.isEmpty {
@@ -33,7 +34,7 @@ struct DiaryView: View {
                                 Text(entry.title)
                                     .font(.headline)
                                 Spacer()
-                                Text("第 \(entry.day) 天")
+                                Text("第 \(entry.day) 周")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
@@ -263,7 +264,7 @@ struct GameResultOverlay: View {
                     .foregroundStyle(survived ? AppTheme.warning : AppTheme.negative)
 
                 VStack(spacing: 6) {
-                    Text(survived ? "四十天结束" : "健康归零")
+                    Text(survived ? "五十二周结束" : "健康归零")
                         .font(.largeTitle.weight(.black))
                     Text(survived ? "你在洛杉矶留下了这份成绩单。" : "这一轮没能撑到最后。")
                         .foregroundStyle(.secondary)

@@ -9,9 +9,10 @@ final class GameEngineTests: XCTestCase {
         XCTAssertEqual(session.day, 1)
         XCTAssertEqual(session.cash, 2_000)
         XCTAssertEqual(session.debt, 5_000)
+        XCTAssertEqual(session.totalDays, 52)
         XCTAssertEqual(session.market.count, 5)
-        XCTAssertEqual(session.currentDistrictID, .koreatown)
-        XCTAssertEqual(GameContent.districts.count, 10)
+        XCTAssertEqual(session.currentDistrictID, .dingPangZiPlaza)
+        XCTAssertEqual(GameContent.districts.count, 15)
         XCTAssertEqual(GameContent.commodities.count, 10)
     }
 
@@ -61,30 +62,71 @@ final class GameEngineTests: XCTestCase {
         XCTAssertEqual(session.log.first?.title, "声望受损")
     }
 
-    func testTravelAdvancesDayAndAccruesDebtInterest() throws {
+    func testTravelAdvancesWeekAndAccruesDebtInterest() throws {
         var engine = GameEngine(seed: 99)
         var session = engine.makeNewSession()
 
-        try engine.travel(to: .fashionDistrict, session: &session)
+        try engine.travel(to: .pasadenaRoseBowl, session: &session)
 
         XCTAssertEqual(session.day, 2)
-        XCTAssertEqual(session.currentDistrictID, .fashionDistrict)
-        XCTAssertEqual(session.debt, 5_500)
+        XCTAssertEqual(session.currentDistrictID, .pasadenaRoseBowl)
+        XCTAssertEqual(session.debt, 5_100)
         XCTAssertEqual(session.market.count, 5)
         XCTAssertNotNil(session.latestEvent)
-        XCTAssertTrue(session.latestEvent?.canOccur(in: .fashionDistrict) == true)
+        XCTAssertTrue(session.latestEvent?.canOccur(in: .pasadenaRoseBowl) == true)
         if session.latestEvent?.group == .market,
            let commodityID = session.latestEvent?.affectedCommodityID {
             XCTAssertTrue(session.market.contains(where: { $0.commodityID == commodityID }))
         }
     }
 
-    func testLosAngelesEventCatalogMatchesClassicCategoryCounts() {
-        XCTAssertEqual(GameContent.marketEvents.count, 18)
-        XCTAssertEqual(GameContent.healthEvents.count, 12)
-        XCTAssertEqual(GameContent.moneyEvents.count, 7)
-        XCTAssertEqual(GameContent.events.count, 37)
-        XCTAssertEqual(Set(GameContent.events.map(\.id)).count, 37)
+    func testTradingLocksOutOtherIncomeForTheWeek() throws {
+        var engine = GameEngine(seed: 13)
+        var session = engine.makeNewSession()
+        session.cash = 100_000
+        let quote = try XCTUnwrap(session.market.first)
+
+        try engine.buy(quote.commodityID, quantity: 1, in: &session)
+
+        XCTAssertEqual(session.actionThisWeek, .trading)
+        XCTAssertThrowsError(try engine.work(in: &session)) { error in
+            XCTAssertEqual(error as? GameRuleError, .weeklyActionAlreadyChosen)
+        }
+    }
+
+    func testWorkingPaysCashCostsHealthAndAdvancesWeek() throws {
+        var engine = GameEngine(seed: 14)
+        var session = engine.makeNewSession()
+
+        try engine.work(in: &session)
+
+        XCTAssertEqual(session.day, 2)
+        XCTAssertGreaterThan(session.cash, 2_000)
+        XCTAssertLessThan(session.health, 100)
+        XCTAssertEqual(session.debt, 5_100)
+        XCTAssertNil(session.actionThisWeek)
+        XCTAssertEqual(session.latestEvent?.group, .money)
+    }
+
+    func testInvestmentSettlesImmediatelyAndAdvancesWeek() throws {
+        var engine = GameEngine(seed: 15)
+        var session = engine.makeNewSession()
+
+        try engine.invest(100, in: &session)
+
+        XCTAssertEqual(session.day, 2)
+        XCTAssertTrue((1_992 ... 2_008).contains(session.cash))
+        XCTAssertEqual(session.debt, 5_100)
+        XCTAssertNil(session.actionThisWeek)
+        XCTAssertEqual(session.latestEvent?.group, .money)
+    }
+
+    func testLosAngelesEventCatalogIncludesRegionalExpansion() {
+        XCTAssertEqual(GameContent.marketEvents.count, 23)
+        XCTAssertEqual(GameContent.healthEvents.count, 17)
+        XCTAssertEqual(GameContent.moneyEvents.count, 12)
+        XCTAssertEqual(GameContent.events.count, 52)
+        XCTAssertEqual(Set(GameContent.events.map(\.id)).count, 52)
         XCTAssertTrue(GameContent.marketEvents.allSatisfy {
             $0.group == .market && $0.affectedCommodityID != nil
         })
@@ -96,6 +138,29 @@ final class GameEngineTests: XCTestCase {
                     .compactMap(\.group)
             )
             XCTAssertEqual(groups, Set(GameEventGroup.allCases), "\(districtID) 缺少事件分类")
+        }
+    }
+
+    func testNewestDistrictsHaveDedicatedEventsInEveryCategory() {
+        let newestDistricts: [District.ID] = [
+            .dingPangZiPlaza,
+            .sanGabriel,
+            .rowlandHeights,
+            .irvine,
+            .littleSaigon
+        ]
+
+        for districtID in newestDistricts {
+            let dedicatedEvents = GameContent.events.filter {
+                $0.districtIDs == [districtID]
+            }
+
+            XCTAssertEqual(dedicatedEvents.count, 3, "\(districtID) 专属事件数量不正确")
+            XCTAssertEqual(
+                Set(dedicatedEvents.compactMap(\.group)),
+                Set(GameEventGroup.allCases),
+                "\(districtID) 缺少专属事件分类"
+            )
         }
     }
 
@@ -133,7 +198,7 @@ final class GameEngineTests: XCTestCase {
     }
 
     func testDistrictsHaveDistinctCommodityProfiles() {
-        XCTAssertEqual(Set(GameContent.districts.map(\.id)).count, 10)
+        XCTAssertEqual(Set(GameContent.districts.map(\.id)).count, 15)
         XCTAssertTrue(GameContent.districts.allSatisfy { !$0.marketRole.isEmpty })
         XCTAssertLessThan(
             GameContent.district(.koreatown).priceBias(for: .importedSnacks),
@@ -141,20 +206,35 @@ final class GameEngineTests: XCTestCase {
         )
         XCTAssertGreaterThan(
             GameContent.district(.hollywood).priceBias(for: .concertTickets),
-            GameContent.district(.fashionDistrict).priceBias(for: .concertTickets)
+            GameContent.district(.pasadenaRoseBowl).priceBias(for: .concertTickets)
         )
+    }
+
+    func testEveryDistrictHasOneJobAndInvestment() {
+        XCTAssertEqual(GameContent.jobs.count, GameContent.districts.count)
+        XCTAssertEqual(GameContent.investments.count, GameContent.districts.count)
+        XCTAssertEqual(Set(GameContent.jobs.map(\.districtID)), Set(District.ID.allCases))
+        XCTAssertEqual(Set(GameContent.investments.map(\.districtID)), Set(District.ID.allCases))
     }
 
     func testLegacyDistrictIDsMigrateWhenDecoded() throws {
         let decoder = JSONDecoder()
 
         XCTAssertEqual(
+            try decoder.decode(District.ID.self, from: Data("\"fashionDistrict\"".utf8)),
+            .pasadenaRoseBowl
+        )
+        XCTAssertEqual(
             try decoder.decode(District.ID.self, from: Data("\"downtown\"".utf8)),
-            .fashionDistrict
+            .figueroaCorridor
         )
         XCTAssertEqual(
             try decoder.decode(District.ID.self, from: Data("\"unionStation\"".utf8)),
-            .boyleHeights
+            .figueroaCorridor
+        )
+        XCTAssertEqual(
+            try decoder.decode(District.ID.self, from: Data("\"boyleHeights\"".utf8)),
+            .figueroaCorridor
         )
         XCTAssertEqual(
             try decoder.decode(District.ID.self, from: Data("\"centuryCity\"".utf8)),
@@ -175,7 +255,7 @@ final class GameEngineTests: XCTestCase {
         }
     }
 
-    func testBankingAndDebtPaymentsMoveMoneyWithoutAdvancingDay() throws {
+    func testBankingAndDebtPaymentsMoveMoneyWithoutAdvancingWeek() throws {
         var engine = GameEngine(seed: 18)
         var session = engine.makeNewSession()
 
@@ -231,7 +311,7 @@ final class GameEngineTests: XCTestCase {
         let repository = ProfileRepository(directoryURL: directory)
         var engine = GameEngine(seed: 77)
         var session = engine.makeNewSession()
-        try engine.travel(to: .fashionDistrict, session: &session)
+        try engine.travel(to: .pasadenaRoseBowl, session: &session)
         let snapshot = GameSnapshot(
             profileID: .two,
             session: session,
@@ -243,7 +323,7 @@ final class GameEngineTests: XCTestCase {
 
         XCTAssertEqual(restored.profileID, .two)
         XCTAssertEqual(restored.session.day, 2)
-        XCTAssertEqual(restored.session.currentDistrictID, .fashionDistrict)
+        XCTAssertEqual(restored.session.currentDistrictID, .pasadenaRoseBowl)
         XCTAssertEqual(restored.randomCheckpoint, engine.randomCheckpoint)
         XCTAssertNil(try repository.load(.one))
     }

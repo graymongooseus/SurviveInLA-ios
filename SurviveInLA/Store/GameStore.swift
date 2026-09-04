@@ -18,7 +18,9 @@ final class GameStore {
 
     var session: GameSession
     var selectedDestinationID: District.ID
+    var selectedAction: WeeklyAction = .trading
     var isMarketExpanded = false
+    var isIntroductionPresented = false
     var tradeContext: TradeContext?
     var notice: UserNotice?
 
@@ -36,7 +38,12 @@ final class GameStore {
         let initialSession: GameSession
         if let snapshot {
             initialEngine = GameEngine(randomCheckpoint: snapshot.randomCheckpoint)
-            initialSession = snapshot.session
+            var restoredSession = snapshot.session
+            if restoredSession.totalDays == 40 {
+                restoredSession.totalDays = 52
+                restoredSession.actionThisWeek = nil
+            }
+            initialSession = restoredSession
         } else {
             var newEngine = GameEngine(seed: seed)
             initialSession = newEngine.makeNewSession()
@@ -45,6 +52,7 @@ final class GameStore {
         engine = initialEngine
         session = initialSession
         selectedDestinationID = initialSession.currentDistrictID
+        isIntroductionPresented = snapshot == nil
     }
 
     var currentDistrict: District {
@@ -53,6 +61,14 @@ final class GameStore {
 
     var selectedDestination: District {
         GameContent.district(selectedDestinationID)
+    }
+
+    var currentJob: JobOpportunity {
+        GameContent.job(in: session.currentDistrictID)
+    }
+
+    var currentInvestment: InvestmentOpportunity {
+        GameContent.investment(in: session.currentDistrictID)
     }
 
     func select(_ districtID: District.ID) {
@@ -105,6 +121,32 @@ final class GameStore {
         }
     }
 
+    func work() {
+        do {
+            try engine.work(in: &session)
+            selectedDestinationID = session.currentDistrictID
+            showLatestEvent()
+            saveProgress()
+        } catch {
+            notice = UserNotice(title: "这周不能打工", message: error.localizedDescription)
+        }
+    }
+
+    func invest(_ amount: Int) {
+        do {
+            try engine.invest(amount, in: &session)
+            selectedDestinationID = session.currentDistrictID
+            showLatestEvent()
+            saveProgress()
+        } catch {
+            notice = UserNotice(title: "投资没有完成", message: error.localizedDescription)
+        }
+    }
+
+    func dismissIntroduction() {
+        isIntroductionPresented = false
+    }
+
     func finishGame() {
         engine.endJourney(session: &session)
         saveProgress()
@@ -146,7 +188,9 @@ final class GameStore {
         session = newEngine.makeNewSession()
         engine = newEngine
         selectedDestinationID = session.currentDistrictID
+        selectedAction = .trading
         isMarketExpanded = false
+        isIntroductionPresented = true
         tradeContext = nil
         notice = nil
         saveProgress()
@@ -172,5 +216,10 @@ final class GameStore {
             notice = UserNotice(title: title, message: error.localizedDescription)
             return false
         }
+    }
+
+    private func showLatestEvent() {
+        guard let event = session.latestEvent else { return }
+        notice = UserNotice(title: event.title, message: event.message)
     }
 }

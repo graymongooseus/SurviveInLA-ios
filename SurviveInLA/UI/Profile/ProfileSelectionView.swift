@@ -189,7 +189,7 @@ private struct ProfileSlotCard: View {
                         Text("第 ")
                         Text("\(min(session.day, session.totalDays))")
                             .foregroundStyle(AppTheme.coralSoft)
-                        Text(" / \(session.totalDays) 天")
+                        Text(" / \(session.totalDays) 周")
                     }
                     .font(.headline.monospacedDigit())
                     .foregroundStyle(.white.opacity(0.7))
@@ -236,7 +236,7 @@ private struct ProfileSlotCard: View {
                     .profileLabel(active: false)
                 Text("开始新人生")
                     .font(.system(size: 24, weight: .bold, design: .rounded))
-                Text("从第 1 天开始")
+                Text("从丁胖子广场的第 1 周开始")
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.48))
             }

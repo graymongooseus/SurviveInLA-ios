@@ -2,18 +2,66 @@ import Foundation
 import CoreLocation
 
 struct GameBalance: Sendable {
-    var totalDays = 40
+    var totalDays = 52
     var startingCash = 2_000
     var startingDebt = 5_000
     var startingHealth = 100
     var startingReputation = 100
     var startingCapacity = 100
-    var debtInterestRate = 0.10
-    var bankInterestRate = 0.01
+    var debtInterestRate = 0.02
+    var bankInterestRate = 0.002
     var treatmentCostPerPoint = 25
     var capacityUpgradeAmount = 10
     var maximumCapacity = 140
     var baseCapacityUpgradeCost = 2_500
+}
+
+enum WeeklyAction: String, CaseIterable, Identifiable, Codable, Sendable {
+    case trading = "倒卖"
+    case work = "打工"
+    case investment = "投资"
+
+    var id: Self { self }
+
+    var symbol: String {
+        switch self {
+        case .trading: "arrow.left.arrow.right"
+        case .work: "hammer.fill"
+        case .investment: "chart.line.uptrend.xyaxis"
+        }
+    }
+}
+
+struct JobOpportunity: Identifiable, Hashable, Sendable {
+    var id: District.ID { districtID }
+    let districtID: District.ID
+    let title: String
+    let detail: String
+    let wage: Int
+    let healthCost: Int
+}
+
+enum InvestmentRisk: String, Hashable, Sendable {
+    case low = "低风险"
+    case medium = "中风险"
+    case high = "高风险"
+
+    var returnRange: String {
+        switch self {
+        case .low: "−8% ～ +8%"
+        case .medium: "−20% ～ +25%"
+        case .high: "−45% ～ +60%"
+        }
+    }
+}
+
+struct InvestmentOpportunity: Identifiable, Hashable, Sendable {
+    var id: District.ID { districtID }
+    let districtID: District.ID
+    let title: String
+    let detail: String
+    let risk: InvestmentRisk
+    let minimumInvestment: Int
 }
 
 struct Commodity: Identifiable, Hashable, Sendable {
@@ -41,8 +89,8 @@ struct Commodity: Identifiable, Hashable, Sendable {
 struct District: Identifiable, Hashable, Sendable {
     enum ID: String, CaseIterable, Codable, Sendable {
         case koreatown
-        case fashionDistrict
-        case boyleHeights
+        case pasadenaRoseBowl
+        case figueroaCorridor
         case hollywood
         case silverLake
         case inglewood
@@ -50,16 +98,21 @@ struct District: Identifiable, Hashable, Sendable {
         case westwood
         case venice
         case santaMonica
+        case dingPangZiPlaza
+        case sanGabriel
+        case rowlandHeights
+        case irvine
+        case littleSaigon
 
         init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()
             let rawValue = try container.decode(String.self)
 
             switch rawValue {
-            case "downtown", "artsDistrict":
-                self = .fashionDistrict
-            case "unionStation":
-                self = .boyleHeights
+            case "fashionDistrict":
+                self = .pasadenaRoseBowl
+            case "downtown", "artsDistrict", "boyleHeights", "unionStation":
+                self = .figueroaCorridor
             case "centuryCity":
                 self = .westwood
             default:
@@ -199,7 +252,7 @@ struct GameLogEntry: Identifiable, Hashable, Codable, Sendable {
 
 struct GameSession: Codable, Sendable {
     var day: Int
-    let totalDays: Int
+    var totalDays: Int
     var cash: Int
     var debt: Int
     var bank: Int
@@ -211,6 +264,7 @@ struct GameSession: Codable, Sendable {
     var inventory: [Commodity.ID: InventoryPosition]
     var latestEvent: GameEvent?
     var log: [GameLogEntry]
+    var actionThisWeek: WeeklyAction?
 
     var usedCapacity: Int {
         inventory.values.reduce(0) { $0 + $1.quantity }
@@ -253,12 +307,14 @@ enum GameRuleError: LocalizedError, Equatable {
     case healthAlreadyFull
     case capacityAtMaximum
     case alreadyThere
+    case weeklyActionAlreadyChosen
+    case investmentTooSmall
     case gameFinished
 
     var errorDescription: String? {
         switch self {
         case .invalidQuantity: "数量必须大于零。"
-        case .quoteUnavailable: "这个商品今天没有报价。"
+        case .quoteUnavailable: "这个商品本周没有报价。"
         case .insufficientCash: "现金不足。"
         case .insufficientInventory: "库存不足。"
         case .insufficientCapacity: "背包容量不足。"
@@ -266,6 +322,8 @@ enum GameRuleError: LocalizedError, Equatable {
         case .healthAlreadyFull: "当前健康已经满了。"
         case .capacityAtMaximum: "当前仓储容量已经达到上限。"
         case .alreadyThere: "你已经在这里了。"
+        case .weeklyActionAlreadyChosen: "本周已经选择了另一种赚钱方式。"
+        case .investmentTooSmall: "投资金额没有达到最低门槛。"
         case .gameFinished: "本轮游戏已经结束。"
         }
     }

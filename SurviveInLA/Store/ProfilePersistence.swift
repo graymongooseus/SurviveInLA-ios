@@ -70,7 +70,18 @@ struct ProfileRepository: Sendable {
         guard snapshot.version == GameSnapshot.currentVersion else {
             throw ProfilePersistenceError.unsupportedVersion(snapshot.version)
         }
-        return snapshot
+        guard snapshot.session.totalDays == 40 else { return snapshot }
+
+        var migratedSession = snapshot.session
+        migratedSession.totalDays = 52
+        migratedSession.actionThisWeek = nil
+        return GameSnapshot(
+            version: snapshot.version,
+            profileID: snapshot.profileID,
+            session: migratedSession,
+            randomCheckpoint: snapshot.randomCheckpoint,
+            updatedAt: snapshot.updatedAt
+        )
     }
 
     func save(_ snapshot: GameSnapshot) throws {

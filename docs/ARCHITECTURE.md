@@ -39,10 +39,10 @@ GameSession + GameContent + GameBalance
 ## 存档数据流
 
 1. App 启动后读取三个 Profile 槽的最新 JSON 快照。
-2. View 向 `GameStore` 发送买入、卖出或移动意图。
+2. View 向 `GameStore` 发送倒卖、打工、投资或城市服务意图。
 3. Store 调用 Engine；Engine 原子化修改 `GameSession`。
 4. Store 在每次成功操作后原子覆盖当前槽的唯一快照，同时记录随机数状态。
-5. 每次跨天记录结构化日志，以支持日记、重放和调试。
+5. 每次跨周记录结构化日志，以支持日记、重放和调试。
 
 每个 Profile 只保留最新快照，不提供历史版本、手动读档或回滚入口。App 进入后台时会再保存一次，防止系统终止进程前遗漏界面状态。
 

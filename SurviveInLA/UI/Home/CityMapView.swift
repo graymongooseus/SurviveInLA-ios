@@ -6,8 +6,8 @@ struct CityMapView: View {
     @State private var visibleRegion: MKCoordinateRegion?
     @State private var cameraPosition: MapCameraPosition = .region(
         MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 34.045, longitude: -118.345),
-            span: MKCoordinateSpan(latitudeDelta: 0.22, longitudeDelta: 0.32)
+            center: CLLocationCoordinate2D(latitude: 33.93, longitude: -118.16),
+            span: MKCoordinateSpan(latitudeDelta: 0.62, longitudeDelta: 0.88)
         )
     )
 
@@ -16,6 +16,7 @@ struct CityMapView: View {
             ForEach(GameContent.districts) { district in
                 Annotation(district.name, coordinate: district.coordinate, anchor: .bottom) {
                     Button {
+                        guard store.selectedAction == .trading else { return }
                         withAnimation(.snappy) {
                             store.select(district.id)
                         }
@@ -23,7 +24,7 @@ struct CityMapView: View {
                         DistrictMarker(
                             district: district,
                             isCurrent: district.id == store.session.currentDistrictID,
-                            isSelected: district.id == store.selectedDestinationID
+                            isSelected: store.selectedAction == .trading && district.id == store.selectedDestinationID
                         )
                     }
                     .buttonStyle(.plain)
@@ -57,7 +58,7 @@ struct CityMapView: View {
     private func centerMap(on districtID: District.ID) {
         let destination = GameContent.district(districtID)
         let span = visibleRegion?.span
-            ?? MKCoordinateSpan(latitudeDelta: 0.22, longitudeDelta: 0.32)
+            ?? MKCoordinateSpan(latitudeDelta: 0.62, longitudeDelta: 0.88)
 
         withAnimation(.easeInOut(duration: 0.65)) {
             cameraPosition = .region(
@@ -73,7 +74,7 @@ private struct DistrictMarker: View {
     let isSelected: Bool
 
     private var keepsLabelVisible: Bool {
-        isCurrent || isSelected || district.id == .fashionDistrict || district.id == .hollywood
+        isCurrent || isSelected || district.id == .hollywood || district.id == .irvine
     }
 
     var body: some View {
