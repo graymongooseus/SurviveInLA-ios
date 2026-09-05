@@ -257,6 +257,40 @@ private struct ProfileSettingsView: View {
                 } footer: {
                     Text("删除后会从本机和 iCloud 同时移除，下一次选择该槽位时将从第 1 周重新开始。")
                 }
+
+                Section {
+                    LabeledContent {
+                        Text(appVersionDescription)
+                            .foregroundStyle(.secondary)
+                    } label: {
+                        Label("版本", systemImage: "info.circle")
+                    }
+
+                    Link(destination: developerContactURL) {
+                        HStack {
+                            Label("联系开发者", systemImage: "envelope")
+                            Spacer()
+                            Text("GitHub Issues")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            Image(systemName: "arrow.up.right")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .foregroundStyle(.primary)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("© 2026 graymongooseus")
+                            .font(.subheadline)
+                        Text("本项目基于 GPL-2.0 授权源码开发。")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 4)
+                } header: {
+                    Text("关于")
+                }
             }
             .navigationTitle("设置")
             .navigationBarTitleDisplayMode(.inline)
@@ -284,6 +318,16 @@ private struct ProfileSettingsView: View {
             get: { manager.isICloudSyncEnabled },
             set: { manager.setICloudSyncEnabled($0) }
         )
+    }
+
+    private var appVersionDescription: String {
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"
+        return "\(version) (\(build))"
+    }
+
+    private var developerContactURL: URL {
+        URL(string: "https://github.com/graymongooseus/SurviveInLA-ios/issues")!
     }
 
     private var syncStatus: (symbol: String, text: String, tint: Color, allowsRetry: Bool) {
