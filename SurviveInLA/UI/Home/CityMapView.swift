@@ -11,9 +11,21 @@ struct CityMapView: View {
         )
     )
 
+    private var markerPresentations: [DistrictMarkerPresentation] {
+        GameContent.districts.map { district in
+            DistrictMarkerPresentation(
+                district: district,
+                isCurrent: district.id == store.session.currentDistrictID,
+                isSelected: store.selectedAction == .trading
+                    && district.id == store.selectedDestinationID
+            )
+        }
+    }
+
     var body: some View {
         Map(position: $cameraPosition, interactionModes: [.pan, .zoom]) {
-            ForEach(GameContent.districts) { district in
+            ForEach(markerPresentations) { presentation in
+                let district = presentation.district
                 Annotation(district.name, coordinate: district.coordinate, anchor: .bottom) {
                     Button {
                         guard store.selectedAction == .trading else { return }
@@ -23,8 +35,8 @@ struct CityMapView: View {
                     } label: {
                         DistrictMarker(
                             district: district,
-                            isCurrent: district.id == store.session.currentDistrictID,
-                            isSelected: store.selectedAction == .trading && district.id == store.selectedDestinationID
+                            isCurrent: presentation.isCurrent,
+                            isSelected: presentation.isSelected
                         )
                     }
                     .buttonStyle(.plain)
@@ -68,13 +80,26 @@ struct CityMapView: View {
     }
 }
 
+private struct DistrictMarkerPresentation: Identifiable {
+    let district: District
+    let isCurrent: Bool
+    let isSelected: Bool
+
+    var id: String {
+        if isCurrent {
+            return "\(district.id.rawValue)-current"
+        }
+        return "\(district.id.rawValue)-selected-\(isSelected)"
+    }
+}
+
 private struct DistrictMarker: View {
     let district: District
     let isCurrent: Bool
     let isSelected: Bool
 
     private var keepsLabelVisible: Bool {
-        isCurrent || isSelected || district.id == .hollywood || district.id == .irvine
+        isCurrent || isSelected
     }
 
     var body: some View {
@@ -99,7 +124,7 @@ private struct DistrictMarker: View {
             } else {
                 Image(systemName: "circle.fill")
                     .font(.caption)
-                    .foregroundStyle(isSelected ? AppTheme.coralSoft : Color.white.opacity(0.84))
+                    .foregroundStyle(isSelected ? Color.white : Color.white.opacity(0.55))
                     .shadow(color: .black.opacity(0.4), radius: 4, y: 2)
             }
         }

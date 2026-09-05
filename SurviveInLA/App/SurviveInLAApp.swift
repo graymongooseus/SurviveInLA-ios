@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 
 @main
@@ -21,9 +22,26 @@ struct SurviveInLAApp: App {
             }
                 .preferredColorScheme(.dark)
                 .onChange(of: scenePhase) { _, phase in
-                    if phase != .active {
+                    switch phase {
+                    case .active:
+                        DebugLog.appBecameActive()
+                        profileManager.syncWithICloud()
+                    case .background:
                         profileManager.saveActiveProfile()
+                        DebugLog.appEnteredBackground()
+                    case .inactive:
+                        profileManager.saveActiveProfile()
+                        DebugLog.record("app.inactive")
+                    @unknown default:
+                        DebugLog.record("app.unknown_scene_phase")
                     }
+                }
+                .onReceive(
+                    NotificationCenter.default.publisher(
+                        for: NSUbiquitousKeyValueStore.didChangeExternallyNotification
+                    )
+                ) { _ in
+                    profileManager.syncWithICloud()
                 }
         }
     }

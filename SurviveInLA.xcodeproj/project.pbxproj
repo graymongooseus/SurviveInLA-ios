@@ -25,6 +25,14 @@
 		A00100000000000000000010 /* ProfilePersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000012 /* ProfilePersistence.swift */; };
 		A00100000000000000000011 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000013 /* ProfileManager.swift */; };
 		A00100000000000000000012 /* ProfileSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000014 /* ProfileSelectionView.swift */; };
+		A00100000000000000000013 /* GameEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000016 /* GameEvents.swift */; };
+		A00100000000000000000014 /* DistrictCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000017 /* DistrictCatalog.swift */; };
+		A00100000000000000000015 /* InAppPurchaseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000018 /* InAppPurchaseModels.swift */; };
+		A00100000000000000000016 /* AdventureShopStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000019 /* AdventureShopStore.swift */; };
+		A00100000000000000000017 /* AdventureShopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0020000000000000000001A /* AdventureShopView.swift */; };
+		A0010000000000000000001C /* JourneyResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0020000000000000000001C /* JourneyResult.swift */; };
+		A0010000000000000000001D /* GameResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0020000000000000000001D /* GameResultView.swift */; };
+		A0010000000000000000001E /* WorldEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0020000000000000000001E /* WorldEvents.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +66,16 @@
 		A00200000000000000000012 /* ProfilePersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePersistence.swift; sourceTree = "<group>"; };
 		A00200000000000000000013 /* ProfileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		A00200000000000000000014 /* ProfileSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSelectionView.swift; sourceTree = "<group>"; };
+		A00200000000000000000015 /* SurviveInLA.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SurviveInLA.entitlements; sourceTree = "<group>"; };
+		A00200000000000000000016 /* GameEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEvents.swift; sourceTree = "<group>"; };
+		A00200000000000000000017 /* DistrictCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistrictCatalog.swift; sourceTree = "<group>"; };
+		A00200000000000000000018 /* InAppPurchaseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppPurchaseModels.swift; sourceTree = "<group>"; };
+		A00200000000000000000019 /* AdventureShopStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdventureShopStore.swift; sourceTree = "<group>"; };
+		A0020000000000000000001A /* AdventureShopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdventureShopView.swift; sourceTree = "<group>"; };
+		A0020000000000000000001B /* Products.storekit */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Products.storekit; sourceTree = "<group>"; };
+		A0020000000000000000001C /* JourneyResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyResult.swift; sourceTree = "<group>"; };
+		A0020000000000000000001D /* GameResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameResultView.swift; sourceTree = "<group>"; };
+		A0020000000000000000001E /* WorldEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldEvents.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +99,7 @@
 		A00500000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+				A0020000000000000000001B /* Products.storekit */,
 				A00500000000000000000002 /* SurviveInLA */,
 				A0050000000000000000000A /* SurviveInLATests */,
 				A0050000000000000000000B /* Products */,
@@ -90,6 +109,7 @@
 		A00500000000000000000002 /* SurviveInLA */ = {
 			isa = PBXGroup;
 			children = (
+				A00200000000000000000015 /* SurviveInLA.entitlements */,
 				A00500000000000000000003 /* App */,
 				A00500000000000000000004 /* Domain */,
 				A00500000000000000000005 /* Engine */,
@@ -111,8 +131,13 @@
 		A00500000000000000000004 /* Domain */ = {
 			isa = PBXGroup;
 			children = (
+				A0020000000000000000001E /* WorldEvents.swift */,
+				A0020000000000000000001C /* JourneyResult.swift */,
 				A00200000000000000000002 /* GameModels.swift */,
 				A00200000000000000000003 /* GameContent.swift */,
+				A00200000000000000000017 /* DistrictCatalog.swift */,
+				A00200000000000000000016 /* GameEvents.swift */,
+				A00200000000000000000018 /* InAppPurchaseModels.swift */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
@@ -132,6 +157,7 @@
 				A00200000000000000000006 /* GameStore.swift */,
 				A00200000000000000000012 /* ProfilePersistence.swift */,
 				A00200000000000000000013 /* ProfileManager.swift */,
+				A00200000000000000000019 /* AdventureShopStore.swift */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -147,6 +173,7 @@
 		A00500000000000000000008 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				A0020000000000000000001D /* GameResultView.swift */,
 				A00200000000000000000008 /* GameHomeView.swift */,
 				A00200000000000000000009 /* StatusStripView.swift */,
 				A0020000000000000000000A /* CityMapView.swift */,
@@ -196,6 +223,7 @@
 				A00500000000000000000008 /* Home */,
 				A0050000000000000000000C /* Market */,
 				A0050000000000000000000E /* Profile */,
+				A0050000000000000000000F /* Shop */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -206,6 +234,14 @@
 				A00200000000000000000014 /* ProfileSelectionView.swift */,
 			);
 			path = Profile;
+			sourceTree = "<group>";
+		};
+		A0050000000000000000000F /* Shop */ = {
+			isa = PBXGroup;
+			children = (
+				A0020000000000000000001A /* AdventureShopView.swift */,
+			);
+			path = Shop;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -267,7 +303,7 @@
 			};
 			buildConfigurationList = A00B00000000000000000001 /* Build configuration list for PBXProject "SurviveInLA" */;
 			compatibilityVersion = "Xcode 16.0";
-			developmentRegion = en;
+			developmentRegion = "zh-Hans";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -308,6 +344,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0010000000000000000001E /* WorldEvents.swift in Sources */,
+				A0010000000000000000001D /* GameResultView.swift in Sources */,
+				A0010000000000000000001C /* JourneyResult.swift in Sources */,
 				A00100000000000000000001 /* SurviveInLAApp.swift in Sources */,
 				A00100000000000000000002 /* GameModels.swift in Sources */,
 				A00100000000000000000003 /* GameContent.swift in Sources */,
@@ -324,6 +363,11 @@
 				A00100000000000000000010 /* ProfilePersistence.swift in Sources */,
 				A00100000000000000000011 /* ProfileManager.swift in Sources */,
 				A00100000000000000000012 /* ProfileSelectionView.swift in Sources */,
+				A00100000000000000000013 /* GameEvents.swift in Sources */,
+				A00100000000000000000014 /* DistrictCatalog.swift in Sources */,
+				A00100000000000000000015 /* InAppPurchaseModels.swift in Sources */,
+				A00100000000000000000016 /* AdventureShopStore.swift in Sources */,
+				A00100000000000000000017 /* AdventureShopView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -352,7 +396,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -365,7 +409,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -379,8 +423,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SurviveInLA/SurviveInLA.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 5HL85C4694;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "洛杉矶浮生记";
@@ -389,6 +434,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -410,8 +456,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SurviveInLA/SurviveInLA.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 5HL85C4694;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "洛杉矶浮生记";
@@ -420,6 +467,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -442,7 +490,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -463,7 +511,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

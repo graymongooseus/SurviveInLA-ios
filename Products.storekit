@@ -1,0 +1,87 @@
+{
+  "identifier" : "6C5E7318-5370-4A89-9FE9-7BCA6FB8D19A",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : false,
+      "internalID" : "A1C3EB9B-497C-4D01-B171-1D7A7F2E8D01",
+      "localizations" : [
+        {
+          "description" : "触发越南女朋友借走三千美元后失联的洛城奇遇。",
+          "displayName" : "越南女朋友",
+          "locale" : "zh_CN"
+        }
+      ],
+      "productID" : "com.graymongooseus.SurviveInLA.adventure.vietnam",
+      "referenceName" : "Adventure - Vietnam Girlfriend",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "79D5838E-253D-4E46-BF3D-62C514427202",
+      "localizations" : [
+        {
+          "description" : "触发在 CVS 买六合彩中奖六千美元的洛城奇遇。",
+          "displayName" : "CVS 六合彩",
+          "locale" : "zh_CN"
+        }
+      ],
+      "productID" : "com.graymongooseus.SurviveInLA.adventure.lottery",
+      "referenceName" : "Adventure - Lottery Win",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "5.99",
+      "familyShareable" : false,
+      "internalID" : "C7A41F36-5C19-4526-BA5E-41F9631A3303",
+      "localizations" : [
+        {
+          "description" : "触发高人指点买末日期权赚一万八千美元的洛城奇遇。",
+          "displayName" : "末日期权",
+          "locale" : "zh_CN"
+        }
+      ],
+      "productID" : "com.graymongooseus.SurviveInLA.adventure.options",
+      "referenceName" : "Adventure - Options Windfall",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : false,
+      "internalID" : "E96633DE-9050-47CD-9D3D-0CA55443D404",
+      "localizations" : [
+        {
+          "description" : "触发车库拍卖淘到古董表并赚三万六千美元的洛城奇遇。",
+          "displayName" : "车库拍卖古董表",
+          "locale" : "zh_CN"
+        }
+      ],
+      "productID" : "com.graymongooseus.SurviveInLA.adventure.watch",
+      "referenceName" : "Adventure - Garage Sale Watch",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "0",
+    "_developerTeamID" : "5HL85C4694",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 0,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ],
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

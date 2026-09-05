@@ -4,6 +4,7 @@ import SwiftUI
 struct ProfileSelectionView: View {
     @Bindable var manager: ProfileManager
     @State private var isRulesPresented = false
+    @State private var isSettingsPresented = false
     @State private var cameraPosition: MapCameraPosition = .region(
         MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 34.035, longitude: -118.29),
@@ -46,11 +47,40 @@ struct ProfileSelectionView: View {
                 .frame(maxWidth: .infinity)
             }
             .safeAreaPadding(.vertical, 8)
+
+            VStack {
+                HStack {
+                    Spacer()
+                    Button {
+                        isSettingsPresented = true
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(.white.opacity(0.82))
+                            .frame(width: 44, height: 44)
+                            .background(.ultraThinMaterial, in: Circle())
+                            .overlay {
+                                Circle().stroke(Color.white.opacity(0.14), lineWidth: 1)
+                            }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("设置")
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .safeAreaPadding(.top, 8)
         }
         .preferredColorScheme(.dark)
         .sheet(isPresented: $isRulesPresented) {
             IronmanRulesView()
                 .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(28)
+        }
+        .sheet(isPresented: $isSettingsPresented) {
+            ProfileSettingsView(manager: manager)
+                .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(28)
         }
@@ -151,6 +181,132 @@ struct ProfileSelectionView: View {
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 10)
+    }
+}
+
+private struct ProfileSettingsView: View {
+    @Bindable var manager: ProfileManager
+    @Environment(\.dismiss) private var dismiss
+    @State private var pendingDeletion: ProfileID?
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    Toggle(isOn: iCloudBinding) {
+                        Label("iCloud 同步存档", systemImage: "icloud.fill")
+                    }
+                    .tint(AppTheme.coral)
+
+                    if manager.isICloudSyncEnabled {
+                        HStack(spacing: 10) {
+                            Image(systemName: syncStatus.symbol)
+                                .foregroundStyle(syncStatus.tint)
+                                .frame(width: 22)
+                            Text(syncStatus.text)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            if syncStatus.allowsRetry {
+                                Button("重试") {
+                                    manager.syncWithICloud()
+                                }
+                                .font(.subheadline.weight(.semibold))
+                            }
+                        }
+                    }
+                } header: {
+                    Text("云端存档")
+                } footer: {
+                    Text("开启后，三个 Profile 会在同一 Apple ID 的设备间同步。仍然只保留每个槽位的最新进度。")
+                }
+
+                Section {
+                    ForEach(manager.slots) { slot in
+                        HStack(spacing: 12) {
+                            Image(systemName: slot.isEmpty ? "tray" : "person.crop.square.filled.and.at.rectangle")
+                                .foregroundStyle(slot.isEmpty ? Color.secondary : AppTheme.coralSoft)
+                                .frame(width: 28)
+
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(slot.id.displayName)
+                                    .font(.subheadline.weight(.bold))
+                                Text(slotDescription(slot))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Spacer()
+
+                            if !slot.isEmpty {
+                                Button(role: .destructive) {
+                                    pendingDeletion = slot.id
+                                } label: {
+                                    Label("删除", systemImage: "trash")
+                                        .labelStyle(.iconOnly)
+                                        .frame(width: 36, height: 36)
+                                }
+                                .buttonStyle(.borderless)
+                                .accessibilityLabel("删除 \(slot.id.displayName) 存档")
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                } header: {
+                    Text("存档管理")
+                } footer: {
+                    Text("删除后会从本机和 iCloud 同时移除，下一次选择该槽位时将从第 1 周重新开始。")
+                }
+            }
+            .navigationTitle("设置")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("完成") { dismiss() }
+                }
+            }
+        }
+        .preferredColorScheme(.dark)
+        .alert(item: $pendingDeletion) { profileID in
+            Alert(
+                title: Text("删除 \(profileID.displayName)？"),
+                message: Text("这段人生的进度将从本机和 iCloud 永久删除，无法恢复。"),
+                primaryButton: .destructive(Text("删除")) {
+                    manager.delete(profileID)
+                },
+                secondaryButton: .cancel(Text("取消"))
+            )
+        }
+    }
+
+    private var iCloudBinding: Binding<Bool> {
+        Binding(
+            get: { manager.isICloudSyncEnabled },
+            set: { manager.setICloudSyncEnabled($0) }
+        )
+    }
+
+    private var syncStatus: (symbol: String, text: String, tint: Color, allowsRetry: Bool) {
+        switch manager.iCloudSyncState {
+        case .disabled:
+            ("icloud.slash", "同步已关闭", .secondary, false)
+        case .ready:
+            ("arrow.triangle.2.circlepath", "等待同步", AppTheme.coralSoft, true)
+        case .syncing:
+            ("arrow.triangle.2.circlepath", "正在同步…", AppTheme.coralSoft, false)
+        case let .synced(date):
+            ("checkmark.icloud.fill", "已同步 · \(date.formatted(date: .omitted, time: .shortened))", AppTheme.positive, false)
+        case .waitingForAccount:
+            ("person.crop.circle.badge.exclamationmark", "请先在系统设置登录 iCloud", AppTheme.warning, true)
+        case .failed:
+            ("exclamationmark.icloud", "同步失败，请稍后重试", AppTheme.negative, true)
+        }
+    }
+
+    private func slotDescription(_ slot: ProfileSlot) -> String {
+        guard let session = slot.snapshot?.session else { return "空槽" }
+        let district = GameContent.district(session.currentDistrictID)
+        return "第 \(min(session.day, session.totalDays)) / \(session.totalDays) 周 · \(district.name)"
     }
 }
 

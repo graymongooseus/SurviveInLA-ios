@@ -26,6 +26,12 @@ struct MarketPanelView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 12)
 
+            if let event = store.activeWorldEvent {
+                worldEventBanner(event)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 12)
+            }
+
             switch store.selectedAction {
             case .trading:
                 tradingPanel
@@ -81,9 +87,40 @@ struct MarketPanelView: View {
                 }
             }
 
-            Text(store.session.actionThisWeek.map { "本周已选择\($0.rawValue)，完成后进入下一周" } ?? "每周只能选择一种赚钱方式")
+            Text(weeklyActionStatus)
                 .font(.caption2)
                 .foregroundStyle(.secondary)
+        }
+    }
+
+    private func worldEventBanner(_ event: WorldEvent) -> some View {
+        HStack(alignment: .top, spacing: 11) {
+            Image(systemName: "globe.americas.fill")
+                .font(.title3)
+                .foregroundStyle(AppTheme.warning)
+                .frame(width: 38, height: 38)
+                .background(AppTheme.warning.opacity(0.14), in: RoundedRectangle(cornerRadius: 11))
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(event.title)
+                        .font(.subheadline.weight(.bold))
+                    Spacer()
+                    Text("剩余 \(store.activeWorldEventRemainingWeeks) 周")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(AppTheme.warning)
+                }
+                Text(event.effectSummary)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+            }
+        }
+        .padding(12)
+        .background(AppTheme.warning.opacity(0.08), in: RoundedRectangle(cornerRadius: 15))
+        .overlay {
+            RoundedRectangle(cornerRadius: 15)
+                .stroke(AppTheme.warning.opacity(0.22), lineWidth: 1)
         }
     }
 
@@ -136,6 +173,7 @@ struct MarketPanelView: View {
 
     private var workPanel: some View {
         let job = store.currentJob
+        let isCompleted = store.session.actionThisWeek == .work
         return VStack(spacing: 0) {
             panelHeader(symbol: "hammer.fill", title: job.title, subtitle: store.currentDistrict.fullName)
 
@@ -144,32 +182,56 @@ struct MarketPanelView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 HStack {
-                    Label("工资 \(job.wage.usdText)", systemImage: "banknote.fill")
+                    Label(
+                        store.session.currentDistrictID == .figueroaCorridor
+                            ? "收入 $500–$700"
+                            : "工资 \(job.wage.usdText)",
+                        systemImage: "banknote.fill"
+                    )
                         .foregroundStyle(AppTheme.positive)
                     Spacer()
                     Label("健康 −\(job.healthCost)", systemImage: "heart.fill")
                         .foregroundStyle(.pink)
                 }
                 .font(.subheadline.weight(.semibold))
-                Text("实际收入可能因本周的小插曲略有变化。")
+                Text(
+                    store.session.currentDistrictID == .figueroaCorridor
+                        ? "扫黄事件有 30% 几率令当周收入翻倍；当前连续 \(store.session.consecutivePimpingWeeks ?? 0) / 3 周，第三周将触发 LAPD 钓鱼执法。"
+                        : "实际收入可能因本周的小插曲略有变化。"
+                )
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(
+                        store.session.currentDistrictID == .figueroaCorridor
+                            ? AppTheme.warning
+                            : Color.secondary
+                    )
             }
             .padding(14)
             .background(Color.white.opacity(0.055), in: RoundedRectangle(cornerRadius: 16))
             .padding(.horizontal, 20)
 
             primaryButton(
-                title: isFinalWeek ? "打完最后一周并结算" : "开始打工 · 进入下一周",
-                symbol: "hammer.fill"
+                title: isCompleted ? "本周打工已完成" : "开始打工 · 完成本周任务",
+                symbol: isCompleted ? "checkmark.circle.fill" : "hammer.fill",
+                isDisabled: isCompleted
             ) {
                 store.work()
+            }
+
+            if isCompleted {
+                primaryButton(
+                    title: isFinalWeek ? "完成第 52 周并结算" : "结束第 \(store.session.day) 周 · 进入下一周",
+                    symbol: isFinalWeek ? "flag.checkered" : "arrow.right.circle.fill"
+                ) {
+                    store.finishStationaryWeek()
+                }
             }
         }
     }
 
     private var investmentPanel: some View {
         let opportunity = store.currentInvestment
+        let isCompleted = store.session.actionThisWeek == .investment
         return VStack(spacing: 0) {
             panelHeader(
                 symbol: "chart.line.uptrend.xyaxis",
@@ -202,6 +264,7 @@ struct MarketPanelView: View {
                                 investmentAmount == amount ? AppTheme.coral : Color.white.opacity(0.07),
                                 in: RoundedRectangle(cornerRadius: 10)
                             )
+                            .disabled(isCompleted)
                     }
                 }
 
@@ -216,8 +279,9 @@ struct MarketPanelView: View {
             .padding(.horizontal, 20)
 
             primaryButton(
-                title: isFinalWeek ? "投资最后一周并结算" : "投入 \(investmentAmount.usdText) · 进入下一周",
-                symbol: "dollarsign.arrow.circlepath"
+                title: isCompleted ? "本周投资已完成" : "投入 \(investmentAmount.usdText) · 完成本周任务",
+                symbol: isCompleted ? "checkmark.circle.fill" : "dollarsign.arrow.circlepath",
+                isDisabled: isCompleted
             ) {
                 store.invest(investmentAmount)
             }
@@ -227,6 +291,15 @@ struct MarketPanelView: View {
                     || investmentAmount > store.session.cash
             )
             .opacity(store.session.cash < opportunity.minimumInvestment ? 0.45 : 1)
+
+            if isCompleted {
+                primaryButton(
+                    title: isFinalWeek ? "完成第 52 周并结算" : "结束第 \(store.session.day) 周 · 进入下一周",
+                    symbol: isFinalWeek ? "flag.checkered" : "arrow.right.circle.fill"
+                ) {
+                    store.finishStationaryWeek()
+                }
+            }
         }
     }
 
@@ -274,7 +347,12 @@ struct MarketPanelView: View {
         .padding(.bottom, 12)
     }
 
-    private func primaryButton(title: String, symbol: String, action: @escaping () -> Void) -> some View {
+    private func primaryButton(
+        title: String,
+        symbol: String,
+        isDisabled: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
             Label(title, systemImage: symbol)
                 .font(.headline)
@@ -282,8 +360,12 @@ struct MarketPanelView: View {
                 .frame(height: 54)
         }
         .buttonStyle(.plain)
-        .foregroundStyle(.white)
-        .background(AppTheme.coral, in: RoundedRectangle(cornerRadius: 17, style: .continuous))
+        .foregroundStyle(isDisabled ? Color.secondary : .white)
+        .background(
+            isDisabled ? Color.white.opacity(0.08) : AppTheme.coral,
+            in: RoundedRectangle(cornerRadius: 17, style: .continuous)
+        )
+        .disabled(isDisabled)
         .padding(.horizontal, 20)
         .padding(.top, 14)
         .padding(.bottom, 12)
@@ -302,6 +384,15 @@ struct MarketPanelView: View {
         let choices = investmentChoices
         if !choices.contains(investmentAmount) {
             investmentAmount = choices.first ?? store.currentInvestment.minimumInvestment
+        }
+    }
+
+    private var weeklyActionStatus: String {
+        switch store.session.actionThisWeek {
+        case .trading: "本周已选择倒卖，前往新地点后进入下一周"
+        case .work: "本周打工任务已完成，请进入下一周"
+        case .investment: "本周投资任务已完成，请进入下一周"
+        case nil: "每周只能选择一种赚钱方式"
         }
     }
 }

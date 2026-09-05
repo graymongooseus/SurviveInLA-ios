@@ -38,7 +38,16 @@ struct GameEngine: Sendable {
                     message: "跨过边境、一路辗转来到洛杉矶。你有一本外国护照、2,000 美元现金和 5,000 美元债务。五十二周，先活下来，再想办法翻身。"
                 )
             ],
-            actionThisWeek: nil
+            actionThisWeek: nil,
+            consecutivePimpingWeeks: 0,
+            activeWorldEvent: nil,
+            latestWorldEventID: nil,
+            latestWorldEventWeek: nil,
+            journey: JourneyStatistics(
+                startingNetWorth: balance.startingCash - balance.startingDebt,
+                startingHealth: balance.startingHealth,
+                visitedDistricts: [districtID]
+            )
         )
     }
 
@@ -52,7 +61,7 @@ struct GameEngine: Sendable {
 
         let total = quote.price * quantity
         guard session.cash >= total else { throw GameRuleError.insufficientCash }
-        try claimWeeklyAction(.trading, in: &session)
+        try claimWeeklyAction(.trading, allowsRepeat: true, in: &session)
 
         let oldPosition = session.inventory[commodityID]
         let oldQuantity = oldPosition?.quantity ?? 0
@@ -77,9 +86,11 @@ struct GameEngine: Sendable {
         guard var position = session.inventory[commodityID], position.quantity >= quantity else {
             throw GameRuleError.insufficientInventory
         }
-        try claimWeeklyAction(.trading, in: &session)
+        try claimWeeklyAction(.trading, allowsRepeat: true, in: &session)
 
-        session.cash += quote.price * quantity
+        let baseRevenue = quote.price * quantity
+        let revenue = scaled(baseRevenue, by: worldModifiers(for: session).tradeIncome)
+        session.cash += revenue
         position.quantity -= quantity
         if position.quantity == 0 {
             session.inventory.removeValue(forKey: commodityID)
@@ -88,7 +99,8 @@ struct GameEngine: Sendable {
         }
 
         if commodityID == .smuggledVape {
-            session.reputation = max(0, session.reputation - 5)
+            let reputationLoss = scaled(-5, by: worldModifiers(for: session).reputationChange)
+            session.reputation = max(0, session.reputation + reputationLoss)
             session.log.insert(
                 GameLogEntry(
                     day: session.day,
@@ -125,11 +137,14 @@ struct GameEngine: Sendable {
     func heal(_ points: Int, in session: inout GameSession) throws {
         try validateActiveSession(session, amount: points)
         guard session.health < 100 else { throw GameRuleError.healthAlreadyFull }
-        let restoredPoints = min(points, 100 - session.health)
+        let adjustedPoints = max(1, scaled(points, by: worldModifiers(for: session).healthChange))
+        let restoredPoints = min(adjustedPoints, 100 - session.health)
         let cost = restoredPoints * balance.treatmentCostPerPoint
         guard session.cash >= cost else { throw GameRuleError.insufficientCash }
         session.cash -= cost
         session.health += restoredPoints
+        session.journey?.healthRecovered += restoredPoints
+        session.journey?.treatmentSpending += cost
     }
 
     func expandCapacity(in session: inout GameSession) throws {
@@ -153,13 +168,19 @@ struct GameEngine: Sendable {
             return
         }
         guard destinationID != session.currentDistrictID else { throw GameRuleError.alreadyThere }
-        try claimWeeklyAction(.trading, in: &session)
+        try claimWeeklyAction(.trading, allowsRepeat: true, in: &session)
 
         let oldMarket = session.market
+        let modifiers = worldModifiers(for: session)
         session.day += 1
         session.currentDistrictID = destinationID
-        session.debt += Int((Double(session.debt) * balance.debtInterestRate).rounded(.down))
-        session.bank += Int((Double(session.bank) * balance.bankInterestRate).rounded(.down))
+        session.journey?.visitedDistricts.insert(destinationID)
+        accrueInterest(with: modifiers, in: &session)
+        if session.day == session.totalDays {
+            endJourney(session: &session)
+            return
+        }
+        updateWorldEvent(for: session.day, in: &session)
 
         let event = drawEvent(in: destinationID)
         session.market = makeMarket(
@@ -173,18 +194,25 @@ struct GameEngine: Sendable {
             GameLogEntry(
                 day: session.day,
                 title: "\(GameContent.district(destinationID).name) · \(event.title)",
-                message: event.message
+                message: event.message,
+                eventID: event.historyID
             ),
             at: 0
         )
         session.actionThisWeek = nil
     }
 
-    mutating func work(in session: inout GameSession) throws {
+    @discardableResult
+    mutating func work(in session: inout GameSession) throws -> GameEvent {
         guard !session.isFinished else { throw GameRuleError.gameFinished }
         try claimWeeklyAction(.work, in: &session)
 
         let job = GameContent.job(in: session.currentDistrictID)
+        if session.currentDistrictID == .figueroaCorridor {
+            return performPimpingWork(job: job, in: &session)
+        }
+
+        session.consecutivePimpingWeeks = 0
         let outcome = Int.random(in: 0 ..< 5, using: &random)
         let bonus: Int
         let extraHealthCost: Int
@@ -219,7 +247,8 @@ struct GameEngine: Sendable {
             outcomeText = "这一周没出岔子，工资按约定到账。"
         }
 
-        let income = max(0, job.wage + bonus)
+        let baseIncome = max(0, job.wage + bonus)
+        let income = scaled(baseIncome, by: worldModifiers(for: session).workIncome)
         let event = GameEvent(
             id: "work-\(session.day)-\(job.districtID.rawValue)",
             kind: .opportunity,
@@ -233,7 +262,7 @@ struct GameEngine: Sendable {
         )
         apply(event, to: &session)
         log(event, in: &session, at: session.currentDistrictID, week: session.day)
-        advanceStationaryWeek(session: &session)
+        return event
     }
 
     mutating func invest(_ amount: Int, in session: inout GameSession) throws {
@@ -246,7 +275,8 @@ struct GameEngine: Sendable {
         try claimWeeklyAction(.investment, in: &session)
 
         let percentage = investmentReturnPercentage(for: opportunity.risk)
-        let profit = amount * percentage / 100
+        let baseProfit = amount * percentage / 100
+        let profit = scaled(baseProfit, by: worldModifiers(for: session).investmentReturn)
         let resultText = profit >= 0
             ? "项目顺利结算，你赚到 +\(profit.usdText)。"
             : "行情没有站在你这边，你亏了 \((-profit).usdText)。"
@@ -261,11 +291,18 @@ struct GameEngine: Sendable {
         )
         apply(event, to: &session)
         log(event, in: &session, at: session.currentDistrictID, week: session.day)
+    }
+
+    mutating func finishStationaryWeek(in session: inout GameSession) throws {
+        guard !session.isFinished else { throw GameRuleError.gameFinished }
+        guard session.actionThisWeek == .work || session.actionThisWeek == .investment else {
+            throw GameRuleError.weeklyActionNotCompleted
+        }
         advanceStationaryWeek(session: &session)
     }
 
     mutating func endJourney(session: inout GameSession) {
-        guard !session.isFinished else { return }
+        guard !session.isFinished, session.day >= session.totalDays else { return }
 
         var liquidationTotal = 0
         for position in session.inventory.values {
@@ -273,18 +310,30 @@ struct GameEngine: Sendable {
                 ?? GameContent.commodity(position.commodityID).basePrice
             liquidationTotal += price * position.quantity
         }
+        liquidationTotal = scaled(liquidationTotal, by: worldModifiers(for: session).tradeIncome)
         session.cash += liquidationTotal
         session.inventory.removeAll()
+        // Settle the entire fare: cash first, then savings, then an explicit unpaid balance.
+        let cashPayment = min(max(0, session.cash), JourneySettlement.airfare)
+        session.cash -= cashPayment
+        let bankPayment = min(max(0, session.bank), JourneySettlement.airfare - cashPayment)
+        session.bank -= bankPayment
+        let ticketDebt = JourneySettlement.airfare - cashPayment - bankPayment
+        session.debt += ticketDebt
+        session.settlement = JourneySettlement(
+            liquidationIncome: liquidationTotal,
+            ticketCost: JourneySettlement.airfare,
+            ticketDebt: ticketDebt
+        )
         session.day = session.totalDays + 1
         session.actionThisWeek = nil
         session.latestEvent = nil
         session.log.insert(
             GameLogEntry(
                 day: session.totalDays,
-                title: "旅程结束",
-                message: liquidationTotal > 0
-                    ? "系统按最后一周的行情卖出了剩余货物，共收入 \(liquidationTotal.usdText)。"
-                    : "随身货物已经清空，开始计算最终成绩。"
+                title: "ICE 上门 · 单程广州",
+                message: "第 \(session.totalDays) 周，ICE 突然上门，把你带走。剩余货物清算收入 \(liquidationTotal.usdText)，回广州的单程机票扣除 500 美元。" + (ticketDebt > 0 ? "其中 \(ticketDebt.usdText) 无力支付，计入待偿债务。" : "") + "在这个故事里，你从此再也无法进入美国。",
+                eventID: "ending-ice-guangzhou"
             ),
             at: 0
         )
@@ -295,11 +344,97 @@ struct GameEngine: Sendable {
         guard amount > 0 else { throw GameRuleError.invalidQuantity }
     }
 
-    private func claimWeeklyAction(_ action: WeeklyAction, in session: inout GameSession) throws {
-        if let chosenAction = session.actionThisWeek, chosenAction != action {
-            throw GameRuleError.weeklyActionAlreadyChosen
+    private func claimWeeklyAction(
+        _ action: WeeklyAction,
+        allowsRepeat: Bool = false,
+        in session: inout GameSession
+    ) throws {
+        if let chosenAction = session.actionThisWeek {
+            guard allowsRepeat, chosenAction == action else {
+                throw GameRuleError.weeklyActionAlreadyChosen
+            }
         }
         session.actionThisWeek = action
+        if action != .work {
+            session.consecutivePimpingWeeks = 0
+        }
+    }
+
+    private mutating func performPimpingWork(
+        job: JobOpportunity,
+        in session: inout GameSession
+    ) -> GameEvent {
+        let streak = (session.consecutivePimpingWeeks ?? 0) + 1
+        session.consecutivePimpingWeeks = streak
+
+        if streak >= 3 {
+            let eventWeek = session.day
+            let returnWeek = min(session.totalDays, eventWeek + 2)
+            let event = GameEvent(
+                id: "lapd-sting-operation",
+                kind: .setback,
+                group: .money,
+                title: "LAPD 钓鱼执法",
+                message: "你连续第三周在菲格罗亚拉皮条，遇上了 LAPD 钓鱼执法。你被罚 1,000 美元并关押两周，时间直接来到第 \(returnWeek) 周。",
+                cashDelta: -1_000,
+                districtIDs: [.figueroaCorridor]
+            )
+            apply(event, to: &session)
+            log(event, in: &session, at: session.currentDistrictID, week: eventWeek)
+            session.consecutivePimpingWeeks = 0
+            skipStationaryWeeks(2, in: &session)
+            return event
+        }
+
+        let baseIncome = Int.random(in: 500 ... 700, using: &random)
+        let sweep = GameContent.marketEvents.first { $0.id == "figueroa-vice-sweep" }!
+        let triggerChance = sweep.triggerChance ?? 0.30
+        let didTriggerSweep = Double.random(in: 0 ..< 1, using: &random) < triggerChance
+        let multiplier = didTriggerSweep ? (sweep.workIncomeMultiplier ?? 2) : 1
+        let localIncome = Int((Double(baseIncome) * multiplier).rounded())
+        let income = scaled(localIncome, by: worldModifiers(for: session).workIncome)
+        let event = GameEvent(
+            id: didTriggerSweep ? sweep.id : "pimping-\(session.day)-figueroa",
+            kind: .opportunity,
+            group: didTriggerSweep ? .market : .money,
+            title: didTriggerSweep ? sweep.title : job.title,
+            message: didTriggerSweep
+                ? "\(sweep.message) 本周原本能赚 \(baseIncome.usdText)，扫黄后行情翻倍；实际收入 \(income.usdText)。"
+                : "\(job.detail) 本周收入 \(income.usdText)。连续第 \(streak) 周；连续三周会触发钓鱼执法。",
+            cashDelta: income,
+            healthDelta: -job.healthCost,
+            districtIDs: [.figueroaCorridor],
+            triggerChance: sweep.triggerChance,
+            workIncomeMultiplier: didTriggerSweep ? multiplier : nil
+        )
+        apply(event, to: &session)
+        log(event, in: &session, at: session.currentDistrictID, week: session.day)
+        return event
+    }
+
+    private mutating func skipStationaryWeeks(_ count: Int, in session: inout GameSession) {
+        for _ in 0 ..< count {
+            if session.day == session.totalDays {
+                endJourney(session: &session)
+                return
+            }
+
+            let oldMarket = session.market
+            let modifiers = worldModifiers(for: session)
+            session.day += 1
+            accrueInterest(with: modifiers, in: &session)
+            if session.day == session.totalDays {
+                endJourney(session: &session)
+                return
+            }
+            updateWorldEvent(for: session.day, in: &session)
+            session.market = makeMarket(
+                in: session.currentDistrictID,
+                previous: oldMarket,
+                quoteCount: session.day == session.totalDays ? GameContent.commodities.count : 5
+            )
+        }
+        session.actionThisWeek = nil
     }
 
     private mutating func advanceStationaryWeek(session: inout GameSession) {
@@ -310,9 +445,14 @@ struct GameEngine: Sendable {
         }
 
         let oldMarket = session.market
+        let modifiers = worldModifiers(for: session)
         session.day += 1
-        session.debt += Int((Double(session.debt) * balance.debtInterestRate).rounded(.down))
-        session.bank += Int((Double(session.bank) * balance.bankInterestRate).rounded(.down))
+        accrueInterest(with: modifiers, in: &session)
+        if session.day == session.totalDays {
+            endJourney(session: &session)
+            return
+        }
+        updateWorldEvent(for: session.day, in: &session)
         session.market = makeMarket(
             in: session.currentDistrictID,
             previous: oldMarket,
@@ -338,7 +478,8 @@ struct GameEngine: Sendable {
             GameLogEntry(
                 day: week,
                 title: "\(GameContent.district(districtID).name) · \(event.title)",
-                message: event.message
+                message: event.message,
+                eventID: event.historyID
             ),
             at: 0
         )
@@ -374,15 +515,85 @@ struct GameEngine: Sendable {
         .sorted { $0.price > $1.price }
     }
 
+    func activeWorldEvent(in session: GameSession) -> WorldEvent? {
+        guard let active = session.activeWorldEvent,
+              active.isActive(in: session.day) else { return nil }
+        return WorldEventCatalog.event(active.eventID)
+    }
+
+    private func worldModifiers(for session: GameSession) -> WorldEventModifiers {
+        activeWorldEvent(in: session)?.modifiers ?? .neutral
+    }
+
+    private func scaled(_ value: Int, by multiplier: Double) -> Int {
+        Int((Double(value) * multiplier).rounded())
+    }
+
+    private func accrueInterest(
+        with modifiers: WorldEventModifiers,
+        in session: inout GameSession
+    ) {
+        let debtInterest = Double(session.debt)
+            * balance.debtInterestRate
+            * modifiers.debtInterest
+        let bankInterest = Double(session.bank)
+            * balance.bankInterestRate
+            * modifiers.bankInterest
+        session.debt += Int(debtInterest.rounded(.down))
+        session.bank += Int(bankInterest.rounded(.down))
+    }
+
+    private mutating func updateWorldEvent(for week: Int, in session: inout GameSession) {
+        if let active = session.activeWorldEvent, !active.isActive(in: week) {
+            session.activeWorldEvent = nil
+        }
+        guard session.activeWorldEvent == nil,
+              let candidate = WorldEventCatalog.events.first(where: {
+                  $0.triggerWeeks.contains(week)
+              }) else { return }
+
+        let roll = Double.random(in: 0 ..< 1, using: &random)
+        guard roll < candidate.triggerChance else { return }
+
+        let endingWeek = min(
+            session.totalDays,
+            week + max(1, candidate.durationWeeks) - 1
+        )
+        session.activeWorldEvent = ActiveWorldEvent(
+            eventID: candidate.id,
+            startedWeek: week,
+            endingWeek: endingWeek
+        )
+        session.latestWorldEventID = candidate.id
+        session.latestWorldEventWeek = week
+        session.log.insert(
+            GameLogEntry(
+                day: week,
+                title: "世界事件 · \(candidate.title)",
+                message: "\(candidate.message) 持续至第 \(endingWeek) 周。\(candidate.effectSummary)",
+                eventID: candidate.id
+            ),
+            at: 0
+        )
+    }
+
     private mutating func drawEvent(in districtID: District.ID) -> GameEvent {
-        let eligibleEvents = GameContent.events.filter { $0.canOccur(in: districtID) }
+        let eligibleEvents = GameContent.events.filter {
+            $0.triggerChance == nil && $0.canOccur(in: districtID)
+        }
         return eligibleEvents.randomElement(using: &random)!
     }
 
     func apply(_ event: GameEvent, to session: inout GameSession) {
+        let modifiers = worldModifiers(for: session)
+        let healthDelta = scaled(event.healthDelta, by: modifiers.healthChange)
+        let reputationDelta = scaled(event.reputationDelta, by: modifiers.reputationChange)
         session.cash = max(0, session.cash + event.cashDelta)
-        session.health = min(100, max(0, session.health + event.healthDelta))
-        session.reputation = min(100, max(0, session.reputation + event.reputationDelta))
+        let oldHealth = session.health
+        session.health = min(100, max(0, session.health + healthDelta))
+        session.journey?.healthLost += max(0, oldHealth - session.health)
+        session.journey?.healthRecovered += max(0, session.health - oldHealth)
+        session.reputation = min(100, max(0, session.reputation + reputationDelta))
 
         if let commodityID = event.affectedCommodityID,
            let multiplier = event.marketPriceMultiplier,

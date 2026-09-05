@@ -92,7 +92,6 @@ struct District: Identifiable, Hashable, Sendable {
         case pasadenaRoseBowl
         case figueroaCorridor
         case hollywood
-        case silverLake
         case inglewood
         case culverCity
         case westwood
@@ -101,6 +100,7 @@ struct District: Identifiable, Hashable, Sendable {
         case dingPangZiPlaza
         case sanGabriel
         case rowlandHeights
+        case cityOfIndustry
         case irvine
         case littleSaigon
 
@@ -115,6 +115,8 @@ struct District: Identifiable, Hashable, Sendable {
                 self = .figueroaCorridor
             case "centuryCity":
                 self = .westwood
+            case "silverLake":
+                self = .cityOfIndustry
             default:
                 guard let id = Self(rawValue: rawValue) else {
                     throw DecodingError.dataCorruptedError(
@@ -139,6 +141,9 @@ struct District: Identifiable, Hashable, Sendable {
     let transitHint: String
     let marketRole: String
     let marketBiases: [Commodity.ID: Double]
+    let characterSummary: String
+    let gameplayHooks: [String]
+    let jobHooks: [String]
 
     var fullName: String {
         "\(name) · \(englishName)"
@@ -202,6 +207,8 @@ struct GameEvent: Identifiable, Hashable, Codable, Sendable {
     let marketPriceMultiplier: Double?
     let grantedQuantity: Int?
     let districtIDs: [District.ID]?
+    let triggerChance: Double?
+    let workIncomeMultiplier: Double?
 
     init(
         id: String,
@@ -215,7 +222,9 @@ struct GameEvent: Identifiable, Hashable, Codable, Sendable {
         affectedCommodityID: Commodity.ID? = nil,
         marketPriceMultiplier: Double? = nil,
         grantedQuantity: Int? = nil,
-        districtIDs: [District.ID]? = nil
+        districtIDs: [District.ID]? = nil,
+        triggerChance: Double? = nil,
+        workIncomeMultiplier: Double? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -229,6 +238,8 @@ struct GameEvent: Identifiable, Hashable, Codable, Sendable {
         self.marketPriceMultiplier = marketPriceMultiplier
         self.grantedQuantity = grantedQuantity
         self.districtIDs = districtIDs
+        self.triggerChance = triggerChance
+        self.workIncomeMultiplier = workIncomeMultiplier
     }
 
     func canOccur(in districtID: District.ID) -> Bool {
@@ -241,12 +252,14 @@ struct GameLogEntry: Identifiable, Hashable, Codable, Sendable {
     let day: Int
     let title: String
     let message: String
+    let eventID: String?
 
-    init(id: UUID = UUID(), day: Int, title: String, message: String) {
+    init(id: UUID = UUID(), day: Int, title: String, message: String, eventID: String? = nil) {
         self.id = id
         self.day = day
         self.title = title
         self.message = message
+        self.eventID = eventID
     }
 }
 
@@ -265,6 +278,13 @@ struct GameSession: Codable, Sendable {
     var latestEvent: GameEvent?
     var log: [GameLogEntry]
     var actionThisWeek: WeeklyAction?
+    var consecutivePimpingWeeks: Int?
+    var activeWorldEvent: ActiveWorldEvent?
+    var latestWorldEventID: String?
+    var latestWorldEventWeek: Int?
+    // Optional fields keep pre-ending saves readable without inventing past statistics.
+    var journey: JourneyStatistics?
+    var settlement: JourneySettlement?
 
     var usedCapacity: Int {
         inventory.values.reduce(0) { $0 + $1.quantity }
@@ -308,6 +328,7 @@ enum GameRuleError: LocalizedError, Equatable {
     case capacityAtMaximum
     case alreadyThere
     case weeklyActionAlreadyChosen
+    case weeklyActionNotCompleted
     case investmentTooSmall
     case gameFinished
 
@@ -322,7 +343,8 @@ enum GameRuleError: LocalizedError, Equatable {
         case .healthAlreadyFull: "当前健康已经满了。"
         case .capacityAtMaximum: "当前仓储容量已经达到上限。"
         case .alreadyThere: "你已经在这里了。"
-        case .weeklyActionAlreadyChosen: "本周已经选择了另一种赚钱方式。"
+        case .weeklyActionAlreadyChosen: "本周的赚钱任务已经完成，不能重复执行。"
+        case .weeklyActionNotCompleted: "请先完成本周的打工或投资任务。"
         case .investmentTooSmall: "投资金额没有达到最低门槛。"
         case .gameFinished: "本轮游戏已经结束。"
         }

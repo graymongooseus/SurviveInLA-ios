@@ -94,18 +94,19 @@ struct TradeSheetView: View {
                         .disabled(maximumQuantity == 0)
                     }
 
-                    Slider(
-                        value: Binding(
-                            get: { Double(max(1, quantity)) },
-                            set: { quantity = Int($0.rounded()) }
-                        ),
-                        in: 1 ... Double(max(1, maximumQuantity)),
-                        step: 1
-                    )
-                    .tint(AppTheme.coral)
-                    .disabled(maximumQuantity <= 1)
-                    .accessibilityLabel("交易数量")
-                    .accessibilityValue("\(quantity) 件，最多 \(maximumQuantity) 件")
+                    if maximumQuantity > 1 {
+                        Slider(
+                            value: Binding(
+                                get: { Double(quantity) },
+                                set: { quantity = Int($0.rounded()) }
+                            ),
+                            in: 1 ... Double(maximumQuantity),
+                            step: 1
+                        )
+                        .tint(AppTheme.coral)
+                        .accessibilityLabel("交易数量")
+                        .accessibilityValue("\(quantity) 件，最多 \(maximumQuantity) 件")
+                    }
 
                     Text(maximumQuantity > 0 ? "可交易 1–\(maximumQuantity) 件" : "暂无可交易数量")
                         .frame(maxWidth: .infinity, alignment: .leading)

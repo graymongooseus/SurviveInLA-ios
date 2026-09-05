@@ -45,6 +45,13 @@ struct DiaryView: View {
                         .padding(.vertical, 4)
                     }
                 }
+
+                Section("调试日志") {
+                    LabeledContent("存储位置", value: "Documents/DebugLogs")
+                    ShareLink(item: DebugLog.fileURL) {
+                        Label("导出 survive-in-la.log", systemImage: "square.and.arrow.up")
+                    }
+                }
             }
             .navigationTitle("生存日记")
             .toolbar {
@@ -242,67 +249,6 @@ struct ServiceCenterView: View {
         .overlay {
             RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .stroke(Color.white.opacity(0.1), lineWidth: 1)
-        }
-    }
-}
-
-struct GameResultOverlay: View {
-    @Bindable var store: GameStore
-
-    private var survived: Bool {
-        store.session.health > 0
-    }
-
-    var body: some View {
-        ZStack {
-            Color.black.opacity(0.76)
-                .ignoresSafeArea()
-
-            VStack(spacing: 18) {
-                Image(systemName: survived ? "sun.max.fill" : "heart.slash.fill")
-                    .font(.system(size: 48))
-                    .foregroundStyle(survived ? AppTheme.warning : AppTheme.negative)
-
-                VStack(spacing: 6) {
-                    Text(survived ? "五十二周结束" : "健康归零")
-                        .font(.largeTitle.weight(.black))
-                    Text(survived ? "你在洛杉矶留下了这份成绩单。" : "这一轮没能撑到最后。")
-                        .foregroundStyle(.secondary)
-                }
-
-                VStack(spacing: 10) {
-                    resultRow("现金", value: store.session.cash.usdText)
-                    resultRow("银行存款", value: store.session.bank.usdText)
-                    resultRow("剩余债务", value: "−\(store.session.debt.usdText)")
-                    Divider()
-                    resultRow("最终净资产", value: store.session.netWorth.usdText, emphasized: true)
-                }
-                .padding(16)
-                .background(Color.white.opacity(0.055), in: RoundedRectangle(cornerRadius: 18))
-
-                Button("重新开始") {
-                    withAnimation(.snappy) { store.restart() }
-                }
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-                .frame(height: 52)
-                .buttonStyle(.plain)
-                .foregroundStyle(.white)
-                .background(AppTheme.coral, in: RoundedRectangle(cornerRadius: 16))
-            }
-            .padding(24)
-            .background(.ultraThickMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
-            .padding(24)
-        }
-    }
-
-    private func resultRow(_ title: String, value: String, emphasized: Bool = false) -> some View {
-        HStack {
-            Text(title)
-                .foregroundStyle(emphasized ? .primary : .secondary)
-            Spacer()
-            Text(value)
-                .font((emphasized ? Font.title3 : Font.body).weight(.bold).monospacedDigit())
         }
     }
 }
