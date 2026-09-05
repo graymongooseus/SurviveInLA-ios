@@ -147,7 +147,9 @@
 2. 选择 iPhone 模拟器或已配置签名的 iPhone。
 3. 运行 `SurviveInLA` scheme。
 
-当前本地候选版本最低目标为 iOS 18，仅适配 iPhone；核心 App 没有第三方依赖，不需要获取玩家的实时位置。构建设置以检出的代码版本为准。
+最低目标为 iOS 17，仅适配 iPhone。项目没有第三方依赖，也不请求定位权限；联网功能仅使用 Apple 的 MapKit、可选 iCloud 存档同步和 StoreKit 内购服务。
+
+## 新版目录
 
 ```text
 SurviveInLA/
@@ -171,6 +173,7 @@ archive/         # 独立保存的历史参考资料
 - [洛杉矶随机事件](docs/LOS-ANGELES-EVENTS.md) · [世界事件表](docs/WORLD-EVENTS.md)
 - [终局故事与结算（含剧透）](docs/ENDING.md)
 - [系统架构](docs/ARCHITECTURE.md) · [1.1 开发路线图](docs/ROADMAP-1.1.md) · [历史路线图](docs/ROADMAP.md)
+- [奇遇商店内购配置](docs/IAP.md)
 - [App Store 发布清单](docs/APP-STORE-RELEASE-CHECKLIST.md)
 - [许可边界](docs/LICENSING.md)
 

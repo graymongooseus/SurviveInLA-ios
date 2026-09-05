@@ -48,7 +48,6 @@ struct AdventureShopView: View {
             }
             .background(AppTheme.ink)
             .navigationTitle("奇遇商店")
-            .navigationSubtitle("买一张命运门票，触发一次洛城奇遇")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("完成") { dismiss() }
