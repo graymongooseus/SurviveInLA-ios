@@ -43,6 +43,7 @@ struct HealthEventOverlay: View {
                 .overlay {
                     RoundedRectangle(cornerRadius: 28, style: .continuous)
                         .stroke(.white.opacity(0.2), lineWidth: 1)
+                        .allowsHitTesting(false)
                 }
                 .accessibilityAddTraits(.isModal)
             }
@@ -65,6 +66,7 @@ struct HealthEventOverlay: View {
                             endPoint: .bottom
                         )
                         .frame(height: height * 0.32)
+                        .allowsHitTesting(false)
                     }
                     .accessibilityLabel("\(event.title)事件插图")
             }

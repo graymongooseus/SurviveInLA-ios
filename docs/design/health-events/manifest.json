@@ -1,0 +1,128 @@
+[
+  {
+    "id": "extreme-heat",
+    "title": "高温警报",
+    "message": "内陆街区气温持续升高，你买了水并提前结束了户外奔波。",
+    "health": -8,
+    "cash": -12
+  },
+  {
+    "id": "wildfire-smoke",
+    "title": "山火烟尘",
+    "message": "风把远处山火烟尘带进城区，你买了 N95 并减少户外活动。",
+    "health": -7,
+    "cash": -18
+  },
+  {
+    "id": "unhealthy-air",
+    "title": "空气质量变差",
+    "message": "AQI 升高，长时间在室外跑货让你喉咙不舒服。",
+    "health": -4,
+    "cash": -10
+  },
+  {
+    "id": "metro-hard-stop",
+    "title": "列车急停",
+    "message": "Metro 列车突然制动，你扶得及时，但手腕还是扭了一下。",
+    "health": -3,
+    "cash": 0
+  },
+  {
+    "id": "freeway-gridlock",
+    "title": "高速堵死",
+    "message": "事故让通勤时间翻倍，你又累又饿，只能买点东西垫肚子。",
+    "health": -2,
+    "cash": -24
+  },
+  {
+    "id": "hillside-dehydration",
+    "title": "山坡脱水",
+    "message": "你抄近路翻过一段陡坡，日晒和缺水让身体吃不消。",
+    "health": -6,
+    "cash": -8
+  },
+  {
+    "id": "cooler-failure",
+    "title": "冷藏箱断电",
+    "message": "露天活动的冷藏箱断了电，你吃坏肚子并买了药。",
+    "health": -7,
+    "cash": -45
+  },
+  {
+    "id": "bike-path-fall",
+    "title": "自行车道摔倒",
+    "message": "你在拥挤的自行车道上避让行人，擦伤后买了简单的急救用品。",
+    "health": -6,
+    "cash": -35
+  },
+  {
+    "id": "rip-current",
+    "title": "离岸流",
+    "message": "海边突然出现离岸流，你听从救生员指示脱险，但体力消耗很大。",
+    "health": -12,
+    "cash": 0
+  },
+  {
+    "id": "earthquake-jolt",
+    "title": "地震晃动",
+    "message": "手机刚收到预警，货架就开始摇晃；你及时趴下掩护，但还是受了轻伤。",
+    "health": -5,
+    "cash": -25
+  },
+  {
+    "id": "sleep-debt",
+    "title": "连续缺觉",
+    "message": "赶早市又盯夜盘，你靠咖啡硬撑了一天。",
+    "health": -4,
+    "cash": -7
+  },
+  {
+    "id": "seasonal-flu",
+    "title": "季节性流感",
+    "message": "你开始发冷咳嗽，只能买药并放慢节奏。",
+    "health": -5,
+    "cash": -28
+  },
+  {
+    "id": "ding-pang-zi-kitchen-smoke",
+    "title": "后厨油烟呛到",
+    "message": "广场餐馆后厨正值高峰，油烟和热气让你一阵头晕。",
+    "health": -4,
+    "cash": -18
+  },
+  {
+    "id": "san-gabriel-kitchen-burn",
+    "title": "深夜厨房烫伤",
+    "message": "圣盖博餐馆夜班忙乱，你端热汤时烫伤了手，只能去买药处理。",
+    "health": -6,
+    "cash": -45
+  },
+  {
+    "id": "rowland-market-back-strain",
+    "title": "闭店搬货腰伤",
+    "message": "科利马路商铺闭店后你连续搬货，腰背开始隐隐作痛。",
+    "health": -5,
+    "cash": -25
+  },
+  {
+    "id": "industry-warehouse-rush-strain",
+    "title": "爆单分拣拉伤",
+    "message": "快递仓库突然爆单，你连续搬箱分拣，收工时腰背已经抬不起来。",
+    "health": -7,
+    "cash": -30
+  },
+  {
+    "id": "irvine-long-commute-fatigue",
+    "title": "长途通勤透支",
+    "message": "往返尔湾的长途通勤耗掉大半天，你又付了路费又累得够呛。",
+    "health": -6,
+    "cash": -30
+  },
+  {
+    "id": "little-saigon-kitchen-slip",
+    "title": "湿滑后厨摔倒",
+    "message": "小西贡餐馆后厨地面湿滑，你摔了一跤并买了简单的急救用品。",
+    "health": -5,
+    "cash": -35
+  }
+]

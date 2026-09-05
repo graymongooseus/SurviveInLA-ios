@@ -1,76 +1,70 @@
-# Design QA · 方案 1 地图优先主界面
+# Design QA · Surviving LA 开局序章
 
 final result: passed
 
 ## Evidence
 
-- Source visual truth: `docs/design/option-1-reference.png`
-- Implementation screenshot: `docs/design/option-1-implementation.png`
-- Side-by-side comparison: `docs/design/option-1-comparison.png`
-- Source pixels: 853 × 1844
-- Implementation pixels: 1206 × 2622
-- Simulator viewport: iPhone 17 Pro, 402 × 874 points, 3× density
-- Normalized comparison: both images resized to 426 × 922 and placed on one comparison canvas
-- State: dark mode, day 1, Koreatown, initial market, no alternate destination selected
-- Latest 10-location simulator capture: `docs/screenshots/ios-map-v1.png` (iPhone 16e)
-
-The generated reference intentionally omitted device chrome. The implementation keeps the native iOS status bar and Dynamic Island; those are operating-system surfaces rather than app-owned content.
+- Source visual truth: `/var/folders/jf/qf41cgdj4w5_g0r2g21dc0c40000gn/T/codex-clipboard-caa6a2d6-ee52-4f89-a450-7fa3499b128b.png`
+- Implementation screenshot: `docs/design/opening-story-implementation-v6.png`
+- Side-by-side comparison: `docs/design/opening-story-comparison-final.png`
+- Source pixels: 1170 × 2532
+- Implementation pixels: 1170 × 2532
+- Viewport: iPhone 16e, 390 × 844 points, 3× density
+- Density normalization: none; both captures are the same pixel size and native simulator density
+- State: dark mode, newly created Profile 01, week 1 opening overlay visible before the first action
 
 ## Full-view comparison
 
-The implementation preserves the source hierarchy: identity/day header, four high-priority player metrics, map as the main canvas, a persistent market sheet, three quote rows and one coral primary action. The market panel begins in the lower half of the viewport and leaves enough map visible to make travel the dominant spatial interaction.
+The implementation reproduces the supplied composition: dimmed Los Angeles map, rounded near-black card below the status bar, impressionist journey painting, coral chapter marker, large white title, three story paragraphs, coral callout, fixed starting-condition strip and coral primary button. The final side-by-side image was opened and reviewed as a single comparison input.
 
-Intentional product deviations:
-
-- A real MapKit surface replaces the fictional transit illustration so districts are geographically understandable and directly tappable.
-- System SF Symbols replace generated product illustrations to keep the first native build crisp, accessible and dependency-free.
-- Initial state uses the real classic starting values and day 1 instead of the mock's illustrative day-12 values.
-- Product names were adapted to modern legal resale goods rather than copying the legacy sensitive inventory.
+No actionable P0, P1 or P2 differences remain. The simulator clock differs from the static reference, which is operating-system state rather than app-owned content.
 
 ## Focused-region comparison
 
-No additional crop was required: the normalized full comparison keeps the smallest status labels, quote values, trend indicators and primary button legible. Interaction-sheet fidelity was checked separately by compiling and exercising the same store/engine paths in unit tests.
+No separate crop was needed because the equal-size 1170 × 2532 comparison keeps the smallest footer labels and all narrative lines readable. The hero-to-title transition and fixed footer were inspected at original resolution. The supplied 1536 × 1024 painting stays sharp, keeps its intended subjects visible, and is rendered as a real raster asset rather than a code approximation.
 
 ## Comparison history
 
 ### Pass 1
 
-- [P1] The first simulator launch was letterboxed because the generated Info.plist had no modern launch-screen declaration.
-  - Fix: enabled generated launch screen and scene manifest settings in the app target.
-  - Post-fix evidence: `docs/design/option-1-implementation.png` fills the complete device viewport.
-- [P2] Six persistent custom district labels overlapped around central Los Angeles.
-  - Fix: keep labels for the current, selected and two core nearby districts; secondary districts remain tappable map markers.
-  - Post-fix evidence: Koreatown, Downtown and Hollywood labels no longer collide.
-- [P2] Initial quote rows said “今日新价” and missed the directional signal shown by the reference.
-  - Fix: use each commodity's base price as the first comparison point, producing immediate percentage trends.
-  - Post-fix evidence: all three visible quote rows show readable green/red direction and percentage.
+- [P2] The first implementation overlapped the native status bar.
+  - Fix: constrained the overlay to the SwiftUI safe area and added an 8-point vertical inset.
+  - Post-fix evidence: `docs/design/opening-story-implementation-v3.png`.
+- [P2] Body density left too little of the closing callout visible above the fixed footer.
+  - Fix: reduced the hero to 220 points, tightened narrative spacing from 16 to 12 points, and set the callout to a 16-point bold system face.
+  - Post-fix evidence: `docs/design/opening-story-implementation-v6.png` shows two callout lines, matching the reference's intentional continuation below the footer edge.
 
 ### Pass 2
 
-No actionable P0, P1 or P2 differences remain for the `0.1` vertical-slice scope.
+No actionable P0, P1 or P2 findings remain in `docs/design/opening-story-comparison-final.png`.
 
 ## Required fidelity surfaces
 
-- **Fonts and typography:** Native system typography preserves the reference's bold Chinese hierarchy, monospaced financial digits and readable small labels. No clipping or unintended wrapping is visible.
-- **Spacing and layout rhythm:** Four app-owned regions are clearly separated. The bottom panel, row dividers, touch targets and corner radii are internally consistent.
-- **Colors and tokens:** Coral primary actions, green positive values, red debt/negative values, dark panels and muted map treatment align with the source direction and use centralized SwiftUI tokens.
-- **Image and asset fidelity:** MapKit is intentionally native rather than rasterized. Standard interface and inventory symbols use SF Symbols. No placeholder or broken asset is visible.
-- **Copy and content:** Title, day, money, debt, health, reputation, district, market and action labels are complete and legible. Runtime values correctly reflect the actual game state.
+- **Fonts and typography:** Native Chinese system typography matches the reference hierarchy and optical weight: black rounded display title, bold section lead, callout body, muted supporting copy and monospaced financial digits. Wrapping is intentional and persistent controls do not truncate.
+- **Spacing and layout rhythm:** Safe-area placement, 28-point card radius, 20-point narrative insets, tightened 12-point story rhythm, fixed statistics strip and 54-point CTA preserve the supplied vertical composition.
+- **Colors and visual tokens:** Existing `AppTheme` ink, coral, positive green, negative red and warning amber map cleanly to the reference and maintain readable contrast.
+- **Image quality and asset fidelity:** The exact selected impressionist painting is used from the asset catalog with aspect-fill cropping and a dark native gradient. No placeholder, emoji, handcrafted SVG or CSS-style drawing replaces it.
+- **Copy and content:** The visible text covers unemployment, delivery/factory prospects, credit and friend debt, Bosphorus transit, Sucre airport, border arrest, detention, Los Angeles, $1,000 cash, $5,000 growing debt and the 52-week goal. The app name is consistently `Surviving LA` on user-facing screens and metadata.
 
-## Follow-up polish
+## Interaction verification
 
-- [P3] Commission a production app icon and compact palm/sunset brand mark.
-- [P3] Add a custom map configuration or subtle route overlay after travel rules stabilize.
-- [P3] Evaluate whether select commodities deserve bespoke illustrations after the content list is final.
+- Creating Profile 01 presents the sequence before gameplay.
+- “开始第 1 周” dismisses the overlay and reveals the interactive map.
+- Accessibility exposes the image description, full story, statistics, button label and button hint.
+- Native simulator build succeeded.
+- All 46 unit tests passed with 0 failures.
+- Browser console is not applicable to this native SwiftUI app; no app crash or runtime UI error appeared during simulator verification.
 
 ## Implementation checklist
 
-- [x] Full-screen modern iOS presentation
-- [x] Map-first hierarchy
-- [x] Legible status metrics and debt warning
-- [x] Real quote trends
-- [x] Tappable districts and market rows
-- [x] Ten localized Los Angeles districts
-- [x] Native service center, diary and final settlement surfaces
-- [x] Native symbols and dynamic text styles
-- [x] Simulator build and rule tests
+- [x] User-facing name updated to `Surviving LA`
+- [x] Option 2 painting used in the opening overlay
+- [x] Full opening copy rendered as native text
+- [x] Fixed $1,000 / $5,000 / 52-week summary and CTA
+- [x] First-week CTA enters the playable map
+- [x] Equal-size visual comparison passed
+- [x] Build and 46 tests passed
+
+## Follow-up polish
+
+- [P3] If later devices use materially larger Dynamic Type settings, consider a dedicated accessibility layout with a larger scrollable narrative region.
