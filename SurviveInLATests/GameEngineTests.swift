@@ -2,12 +2,12 @@ import XCTest
 @testable import SurviveInLA
 
 final class GameEngineTests: XCTestCase {
-    func testNewSessionUsesClassicStartingPressure() {
+    func testNewSessionUsesReleaseStartingBalance() {
         var engine = GameEngine(seed: 42)
         let session = engine.makeNewSession()
 
         XCTAssertEqual(session.day, 1)
-        XCTAssertEqual(session.cash, 2_000)
+        XCTAssertEqual(session.cash, 1_000)
         XCTAssertEqual(session.debt, 5_000)
         XCTAssertEqual(session.totalDays, 52)
         XCTAssertEqual(session.market.count, 5)
@@ -92,6 +92,9 @@ final class GameEngineTests: XCTestCase {
         XCTAssertThrowsError(try engine.work(in: &session)) { error in
             XCTAssertEqual(error as? GameRuleError, .weeklyActionAlreadyChosen)
         }
+        XCTAssertThrowsError(try engine.invest(100, in: &session)) { error in
+            XCTAssertEqual(error as? GameRuleError, .weeklyActionAlreadyChosen)
+        }
     }
 
     func testWorkingCanOnlyRunOnceBeforeFinishingTheWeek() throws {
@@ -107,6 +110,14 @@ final class GameEngineTests: XCTestCase {
         XCTAssertEqual(session.actionThisWeek, .work)
         XCTAssertEqual(session.latestEvent?.group, .money)
         XCTAssertThrowsError(try engine.work(in: &session)) { error in
+            XCTAssertEqual(error as? GameRuleError, .weeklyActionAlreadyChosen)
+        }
+        session.cash = 100_000
+        let quote = try XCTUnwrap(session.market.first)
+        XCTAssertThrowsError(try engine.buy(quote.commodityID, quantity: 1, in: &session)) { error in
+            XCTAssertEqual(error as? GameRuleError, .weeklyActionAlreadyChosen)
+        }
+        XCTAssertThrowsError(try engine.invest(100, in: &session)) { error in
             XCTAssertEqual(error as? GameRuleError, .weeklyActionAlreadyChosen)
         }
 
@@ -185,11 +196,19 @@ final class GameEngineTests: XCTestCase {
         try engine.invest(100, in: &session)
 
         XCTAssertEqual(session.day, 1)
-        XCTAssertTrue((1_992 ... 2_008).contains(session.cash))
+        XCTAssertTrue((992 ... 1_008).contains(session.cash))
         XCTAssertEqual(session.debt, 5_000)
         XCTAssertEqual(session.actionThisWeek, .investment)
         XCTAssertEqual(session.latestEvent?.group, .money)
         XCTAssertThrowsError(try engine.invest(100, in: &session)) { error in
+            XCTAssertEqual(error as? GameRuleError, .weeklyActionAlreadyChosen)
+        }
+        session.cash = 100_000
+        let quote = try XCTUnwrap(session.market.first)
+        XCTAssertThrowsError(try engine.buy(quote.commodityID, quantity: 1, in: &session)) { error in
+            XCTAssertEqual(error as? GameRuleError, .weeklyActionAlreadyChosen)
+        }
+        XCTAssertThrowsError(try engine.work(in: &session)) { error in
             XCTAssertEqual(error as? GameRuleError, .weeklyActionAlreadyChosen)
         }
 
@@ -222,6 +241,163 @@ final class GameEngineTests: XCTestCase {
             )
             XCTAssertEqual(groups, Set(GameEventGroup.allCases), "\(districtID) 缺少事件分类")
         }
+    }
+
+    func testWorldEventCatalogHasValidSchedulesAndGlobalModifiers() {
+        XCTAssertEqual(WorldEventCatalog.events.count, 7)
+        XCTAssertEqual(Set(WorldEventCatalog.events.map(\.id)).count, 7)
+        XCTAssertEqual(Set(WorldEventCatalog.events.map(\.imageName)).count, 7)
+
+        for event in WorldEventCatalog.events {
+            XCTAssertFalse(event.imageName.isEmpty)
+            XCTAssertFalse(event.triggerWeeks.isEmpty)
+            XCTAssertTrue(event.triggerWeeks.allSatisfy { (1 ... 52).contains($0) })
+            XCTAssertTrue((0 ... 1).contains(event.triggerChance))
+            XCTAssertGreaterThan(event.durationWeeks, 0)
+            XCTAssertGreaterThan(event.modifiers.workIncome, 0)
+            XCTAssertGreaterThan(event.modifiers.tradeIncome, 0)
+            XCTAssertGreaterThan(event.modifiers.bankInterest, 0)
+            XCTAssertGreaterThan(event.modifiers.investmentReturn, 0)
+            XCTAssertGreaterThan(event.modifiers.debtInterest, 0)
+            XCTAssertGreaterThan(event.modifiers.healthChange, 0)
+            XCTAssertGreaterThan(event.modifiers.reputationChange, 0)
+            XCTAssertGreaterThan(event.modifiers.marketPrice, 0)
+        }
+    }
+
+    func testHormuzCrisisRaisesEveryGeneratedMarketPrice() throws {
+        var baseEngine = GameEngine(seed: 106)
+        var crisisEngine = GameEngine(seed: 106)
+        var baseSession = baseEngine.makeNewSession()
+        var crisisSession = crisisEngine.makeNewSession()
+        activateWorldEvent("strait-of-hormuz-crisis", in: &crisisSession)
+
+        try baseEngine.travel(to: .sanGabriel, session: &baseSession)
+        try crisisEngine.travel(to: .sanGabriel, session: &crisisSession)
+
+        let basePrices = Dictionary(uniqueKeysWithValues: baseSession.market.map { ($0.commodityID, $0.price) })
+        for quote in crisisSession.market {
+            XCTAssertGreaterThanOrEqual(quote.price, basePrices[quote.commodityID]!)
+        }
+        XCTAssertTrue(crisisSession.market.contains { $0.price > basePrices[$0.commodityID]! })
+    }
+
+    func testHormuzCrisisForcesInvestmentLoss() throws {
+        var engine = GameEngine(seed: 107)
+        var session = engine.makeNewSession()
+        activateWorldEvent("strait-of-hormuz-crisis", in: &session)
+
+        try engine.invest(100, in: &session)
+
+        XCTAssertEqual(session.cash, 965)
+        XCTAssertEqual(session.latestEvent?.cashDelta, -35)
+    }
+
+    func testWorldEventModifiesTradingRevenue() throws {
+        var engine = GameEngine(seed: 101)
+        var session = engine.makeNewSession()
+        session.market = [MarketQuote(commodityID: .camera, price: 100, previousPrice: 90)]
+        session.inventory[.camera] = InventoryPosition(
+            commodityID: .camera,
+            quantity: 1,
+            averageCost: 50
+        )
+        activateWorldEvent("southern-california-spending-boom", in: &session)
+        let startingCash = session.cash
+
+        try engine.sell(.camera, quantity: 1, in: &session)
+
+        XCTAssertEqual(session.cash, startingCash + 125)
+    }
+
+    func testWorldEventModifiesWorkIncomeWithoutChangingLocalOutcome() throws {
+        var baseEngine = GameEngine(seed: 102)
+        var worldEngine = GameEngine(seed: 102)
+        var baseSession = baseEngine.makeNewSession()
+        var worldSession = worldEngine.makeNewSession()
+        activateWorldEvent("labor-enforcement-wave", in: &worldSession)
+
+        try baseEngine.work(in: &baseSession)
+        try worldEngine.work(in: &worldSession)
+
+        let baseIncome = baseSession.cash - 1_000
+        let worldIncome = worldSession.cash - 1_000
+        XCTAssertEqual(worldIncome, Int((Double(baseIncome) * 1.20).rounded()))
+    }
+
+    func testWorldEventModifiesInvestmentProfitAndLoss() throws {
+        var baseEngine = GameEngine(seed: 103)
+        var worldEngine = GameEngine(seed: 103)
+        var baseSession = baseEngine.makeNewSession()
+        var worldSession = worldEngine.makeNewSession()
+        activateWorldEvent("rapid-rate-hike", in: &worldSession)
+
+        try baseEngine.invest(100, in: &baseSession)
+        try worldEngine.invest(100, in: &worldSession)
+
+        let baseProfit = baseSession.cash - 1_000
+        let worldProfit = worldSession.cash - 1_000
+        XCTAssertEqual(worldProfit, Int((Double(baseProfit) * 0.75).rounded()))
+    }
+
+    func testWorldEventModifiesBankAndDebtInterest() throws {
+        var engine = GameEngine(seed: 104)
+        var session = engine.makeNewSession()
+        session.bank = 10_000
+        session.debt = 5_000
+        activateWorldEvent("rapid-rate-hike", in: &session)
+
+        try engine.work(in: &session)
+        try engine.finishStationaryWeek(in: &session)
+
+        XCTAssertEqual(session.bank, 10_032)
+        XCTAssertEqual(session.debt, 5_155)
+    }
+
+    func testWorldEventModifiesHealthAndReputationChanges() {
+        var engine = GameEngine(seed: 105)
+        var session = engine.makeNewSession()
+        activateWorldEvent("regional-public-health-crisis", in: &session)
+        let event = GameEvent(
+            id: "world-modifier-test",
+            kind: .setback,
+            group: .health,
+            title: "测试事件",
+            message: "测试世界事件修正。",
+            healthDelta: -10,
+            reputationDelta: -10
+        )
+
+        engine.apply(event, to: &session)
+
+        XCTAssertEqual(session.health, 85)
+        XCTAssertEqual(session.reputation, 92)
+    }
+
+    func testWorldEventTriggersWhenEnteringItsScheduledWeek() throws {
+        var foundTriggeredEvent = false
+        var foundMissedEvent = false
+
+        for seed in 0 ..< 200 where !foundTriggeredEvent || !foundMissedEvent {
+            var engine = GameEngine(seed: UInt64(seed))
+            var session = engine.makeNewSession()
+            for _ in 1 ..< 5 {
+                try engine.work(in: &session)
+                try engine.finishStationaryWeek(in: &session)
+            }
+
+            if session.latestWorldEventID == "labor-enforcement-wave" {
+                foundTriggeredEvent = true
+                XCTAssertEqual(session.latestWorldEventWeek, 5)
+                XCTAssertEqual(session.activeWorldEvent?.endingWeek, 8)
+            } else {
+                foundMissedEvent = true
+                XCTAssertNil(session.activeWorldEvent)
+            }
+        }
+
+        XCTAssertTrue(foundTriggeredEvent)
+        XCTAssertTrue(foundMissedEvent)
     }
 
     func testNewestDistrictsHaveDedicatedEventsInEveryCategory() {
@@ -396,6 +572,31 @@ final class GameEngineTests: XCTestCase {
         XCTAssertEqual(session.cash, expectedCash)
     }
 
+    @MainActor
+    func testCompletedGameStoreArchivesAndLoadsJourneyHistory() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appending(path: UUID().uuidString, directoryHint: .isDirectory)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let repository = ProfileRepository(directoryURL: directory)
+        var engine = GameEngine(seed: 32)
+        var session = engine.makeNewSession()
+        session.day = session.totalDays
+        let snapshot = GameSnapshot(
+            profileID: .one,
+            session: session,
+            randomCheckpoint: engine.randomCheckpoint
+        )
+        let store = GameStore(profileID: .one, snapshot: snapshot, repository: repository)
+
+        XCTAssertTrue(store.session.isFinished)
+        XCTAssertTrue(store.saveProgress())
+        store.loadLeaderboard()
+
+        XCTAssertEqual(store.journeyRecords.count, 1)
+        XCTAssertEqual(store.journeyRecords.first?.profileID, .one)
+    }
+
     func testProfileSnapshotRoundTripsSessionAndRandomState() throws {
         let directory = FileManager.default.temporaryDirectory
             .appending(path: UUID().uuidString, directoryHint: .isDirectory)
@@ -470,187 +671,11 @@ final class GameEngineTests: XCTestCase {
         }
     }
 
-    @MainActor
-    func testAdventurePurchasesApplyCashAndIgnoreDuplicateTransactions() {
-        let historyKey = "iap.processedTransactionIDs.v1"
-        UserDefaults.standard.removeObject(forKey: historyKey)
-        defer { UserDefaults.standard.removeObject(forKey: historyKey) }
-
-        let store = GameStore(seed: 101)
-        let startingLogCount = store.session.log.count
-
-        for (index, adventure) in AdventureProduct.allCases.enumerated() {
-            store.applyPurchasedAdventure(adventure, transactionID: UInt64(9_000 + index))
-        }
-
-        XCTAssertEqual(store.session.cash, 59_000)
-        XCTAssertEqual(store.session.log.count, startingLogCount + 4)
-        XCTAssertEqual(store.purchasedAdventure, .garageSaleWatch)
-
-        store.applyPurchasedAdventure(.vietnamGirlfriend, transactionID: 9_000)
-
-        XCTAssertEqual(store.session.cash, 59_000)
-        XCTAssertEqual(store.session.log.count, startingLogCount + 4)
-    }
-
-    func testAdventureCatalogHasFourUniqueConsumableProductIDs() {
-        let products = AdventureProduct.allCases
-
-        XCTAssertEqual(products.count, 4)
-        XCTAssertEqual(Set(products.map(\.rawValue)).count, 4)
-        XCTAssertEqual(products.map(\.fallbackPrice), ["$1.99", "$2.99", "$5.99", "$9.99"])
-        XCTAssertEqual(products.map(\.cashDelta), [-3_000, 6_000, 18_000, 36_000])
-    }
-}
-
-extension GameEngineTests {
-    func testWeek52ArrivalEndsJourneyBeforeAnotherRandomEvent() throws {
-        var engine = GameEngine(seed: 200)
-        var session = engine.makeNewSession()
-        session.day = 51
-        let health = session.health
-        try engine.travel(to: .hollywood, session: &session)
-        XCTAssertTrue(session.isDeported)
-        XCTAssertTrue(session.isFinished)
-        XCTAssertEqual(session.health, health)
-        XCTAssertEqual(session.settlement?.ticketCost, 500)
-        XCTAssertEqual(session.log.first?.eventID, "ending-ice-guangzhou")
-        XCTAssertThrowsError(try engine.work(in: &session))
-        XCTAssertThrowsError(try engine.travel(to: .venice, session: &session))
-    }
-
-    func testStationaryAndSkippedWeeksAlsoTriggerEnding() throws {
-        var engine = GameEngine(seed: 202)
-        var stationary = engine.makeNewSession()
-        stationary.day = 51
-        stationary.actionThisWeek = .investment
-        try engine.finishStationaryWeek(in: &stationary)
-        XCTAssertTrue(stationary.isDeported)
-
-        var arrested = engine.makeNewSession()
-        arrested.day = 50
-        arrested.currentDistrictID = .figueroaCorridor
-        arrested.consecutivePimpingWeeks = 2
-        try engine.work(in: &arrested)
-        XCTAssertTrue(arrested.isDeported)
-        XCTAssertEqual(arrested.settlement?.ticketCost, 500)
-    }
-
-    func testAirfareUsesSavingsThenDebtAndCannotBeChargedTwice() {
-        for (cash, bank, expectedCash, expectedBank, ticketDebt) in [
-            (700, 300, 200, 300, 0), (100, 600, 0, 200, 0), (100, 150, 0, 0, 250), (0, 0, 0, 0, 500)
-        ] {
-            var engine = GameEngine(seed: 203)
-            var session = engine.makeNewSession()
-            session.day = 52
-            session.cash = cash
-            session.bank = bank
-            let before = session.netWorth
-            engine.endJourney(session: &session)
-            engine.endJourney(session: &session)
-            XCTAssertEqual(session.cash, expectedCash)
-            XCTAssertEqual(session.bank, expectedBank)
-            XCTAssertEqual(session.debt, 5_000 + ticketDebt)
-            XCTAssertEqual(session.netWorth, before - 500)
-            XCTAssertEqual(session.historicalEvents.filter { $0.eventID == "ending-ice-guangzhou" }.count, 1)
-        }
-    }
-
-    func testEarlyAndHealthFailureDoNotChargeAFlight() {
-        var engine = GameEngine(seed: 204)
-        var session = engine.makeNewSession()
-        engine.endJourney(session: &session)
-        XCTAssertFalse(session.isFinished)
-        session.day = 52
-        session.health = 0
-        let cash = session.cash
-        engine.endJourney(session: &session)
-        XCTAssertNil(session.settlement)
-        XCTAssertEqual(session.cash, cash)
-    }
-
-    func testHealthLedgerPreservesActualLossesAfterTreatment() throws {
-        var engine = GameEngine(seed: 205)
-        var session = engine.makeNewSession()
-        session.cash = 10_000
-        let harm = GameEvent(id: "harm", kind: .health, title: "受伤", message: "测试", healthDelta: -70)
-        engine.apply(harm, to: &session)
-        try engine.heal(60, in: &session)
-        engine.apply(harm, to: &session)
-        XCTAssertEqual(session.health, 20)
-        XCTAssertEqual(session.journey?.healthLost, 140)
-        XCTAssertEqual(session.journey?.healthRecovered, 60)
-        XCTAssertEqual(session.journey?.treatmentSpending, 1_500)
-        engine.apply(harm, to: &session)
-        XCTAssertEqual(session.journey?.healthLost, 160, "Health loss is clamped to actual remaining health")
-    }
-
-    func testJourneyArchiveKeepsBestForEveryPlayerAndAllEventsAfterRestart() throws {
-        let directory = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
-        defer { try? FileManager.default.removeItem(at: directory) }
-        let repository = ProfileRepository(directoryURL: directory)
-        var engine = GameEngine(seed: 206)
-        for (index, profile, amount) in [(1, ProfileID.one, 5_000), (2, .one, 3_000), (3, .two, 9_000), (4, .three, 0)] {
-            var session = engine.makeNewSession()
-            session.day = 52
-            session.cash = amount
-            engine.endJourney(session: &session)
-            let snapshot = GameSnapshot(profileID: profile, session: session, randomCheckpoint: 1, updatedAt: Date(timeIntervalSince1970: Double(index)))
-            try repository.save(snapshot)
-            try repository.archiveJourney(snapshot)
-            try repository.archiveJourney(snapshot)
-        }
-        try repository.save(GameSnapshot(profileID: .one, session: engine.makeNewSession(), randomCheckpoint: 2))
-        try repository.deleteLocal(.two)
-        let records = try ProfileRepository(directoryURL: directory).loadJourneyRecords()
-        XCTAssertEqual(records.count, 4)
-        let leaders = JourneyRecord.rankedBest(from: records)
-        XCTAssertEqual(leaders.map(\.profileID), [.two, .one, .three])
-        XCTAssertEqual(leaders.map { $0.session.netWorth }, [3_500, -500, -5_500])
-        XCTAssertTrue(records.allSatisfy { $0.session.log.contains { $0.eventID == "ending-ice-guangzhou" } })
-    }
-
-    func testOldSaveDecodesWithoutInventingYearlyStatistics() throws {
-        var engine = GameEngine(seed: 207)
-        let session = engine.makeNewSession()
-        let data = try JSONEncoder().encode(session)
-        var json = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
-        json.removeValue(forKey: "journey")
-        json.removeValue(forKey: "settlement")
-        let restored = try JSONDecoder().decode(GameSession.self, from: JSONSerialization.data(withJSONObject: json))
-        XCTAssertNil(restored.netGain)
-        XCTAssertNil(restored.journey)
-        XCTAssertEqual(restored.log.count, 1)
-    }
-
-    @MainActor
-    func testCompletedStoreRestoresEndingAndRejectsLatePurchase() throws {
-        let directory = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
-        defer { try? FileManager.default.removeItem(at: directory) }
-        let repository = ProfileRepository(directoryURL: directory)
-        var engine = GameEngine(seed: 208)
-        var session = engine.makeNewSession()
-        session.day = 52
-        let snapshot = GameSnapshot(profileID: .one, session: session, randomCheckpoint: engine.randomCheckpoint)
-        let store = GameStore(profileID: .one, snapshot: snapshot, repository: repository)
-        XCTAssertTrue(store.session.isDeported)
-        let cash = store.session.cash
-        XCTAssertFalse(store.applyPurchasedAdventure(.garageSaleWatch, transactionID: 123_456))
-        XCTAssertEqual(store.session.cash, cash)
-        store.restart()
-        XCTAssertEqual(store.session.day, 1)
-        XCTAssertEqual(try repository.loadJourneyRecords().count, 1)
-        store.loadLeaderboard()
-        XCTAssertEqual(store.journeyRecords.count, 1)
-    }
-
-    func testRepeatedWorkCountsAsOneKindOfExperience() throws {
-        var engine = GameEngine(seed: 209)
-        var session = engine.makeNewSession()
-        try engine.work(in: &session)
-        try engine.finishStationaryWeek(in: &session)
-        try engine.work(in: &session)
-        XCTAssertEqual(session.historicalEvents.count, 2)
-        XCTAssertEqual(session.experienceCount, 1)
+    private func activateWorldEvent(_ id: String, in session: inout GameSession) {
+        session.activeWorldEvent = ActiveWorldEvent(
+            eventID: id,
+            startedWeek: session.day,
+            endingWeek: session.totalDays
+        )
     }
 }

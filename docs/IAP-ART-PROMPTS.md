@@ -10,13 +10,13 @@
 
 ## 越南女朋友
 
-小西贡日落，一位成年越南女子背对镜头拖行李远去，一位成年华人男子手持空信封；苦涩、克制、带黑色幽默，不物化人物。
+小西贡日落，一位成年华人男子打开越南女友留下的信封，里面露出一张 3,000 美元支票；她已不在身边，只有远处逐渐淡入夕阳街景的身影暗示她不知去向。不得出现他向她交钱或她向他要钱的画面。
 
 输出：`SurviveInLA/Resources/Assets.xcassets/AdventureVietnam.imageset/AdventureVietnam.png`
 
-## CVS 六合彩
+## 便利店乐透刮刮卡
 
-南加州雨夜连锁药房氛围但无可读品牌标识，一位华人移民男子刚意识到手中彩票中奖；惊喜而非赌场狂欢。
+南加州雨夜街角便利店氛围且无可读品牌标识，一位华人移民男子刚意识到手中乐透刮刮卡中奖；惊喜而非赌场狂欢。
 
 输出：`SurviveInLA/Resources/Assets.xcassets/AdventureLottery.imageset/AdventureLottery.png`
 

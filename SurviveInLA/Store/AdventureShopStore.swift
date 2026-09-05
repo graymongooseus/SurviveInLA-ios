@@ -19,12 +19,24 @@ enum AdventurePurchaseError: LocalizedError {
 @MainActor
 @Observable
 final class AdventureShopStore {
+    @ObservationIgnored
+    private var directGrantSequence = UInt64(Date.now.timeIntervalSince1970 * 1_000_000)
+
     private(set) var products: [String: Product] = [:]
     private(set) var isLoading = false
     private(set) var purchasingProductID: String?
     var notice: UserNotice?
 
+    var usesDirectGrantMode: Bool {
+#if DEBUG
+        ProcessInfo.processInfo.environment["SURVIVE_IN_LA_USE_STOREKIT"] != "1"
+#else
+        false
+#endif
+    }
+
     func loadProducts() async {
+        guard !usesDirectGrantMode else { return }
         guard products.isEmpty, !isLoading else { return }
         isLoading = true
         defer { isLoading = false }
@@ -43,10 +55,16 @@ final class AdventureShopStore {
 
     func purchase(
         _ adventure: AdventureProduct,
-        grant: @escaping @MainActor (AdventureProduct, UInt64) -> Bool
+        grant: @escaping @MainActor (AdventureProduct, UInt64) -> Void
     ) async {
         purchasingProductID = adventure.rawValue
         defer { purchasingProductID = nil }
+
+        if usesDirectGrantMode {
+            directGrantSequence &+= 1
+            grant(adventure, directGrantSequence)
+            return
+        }
 
         do {
             guard let product = products[adventure.rawValue] else {
@@ -56,7 +74,8 @@ final class AdventureShopStore {
             switch try await product.purchase() {
             case .success(let verification):
                 let transaction = try verified(verification)
-                if grant(adventure, transaction.id) { await transaction.finish() }
+                grant(adventure, transaction.id)
+                await transaction.finish()
             case .pending:
                 notice = UserNotice(
                     title: "等待确认",
@@ -73,17 +92,10 @@ final class AdventureShopStore {
     }
 
     func listenForTransactions(
-        grant: @escaping @MainActor (AdventureProduct, UInt64) -> Bool
+        grant: @escaping @MainActor (AdventureProduct, UInt64) -> Void
     ) async {
-        // A purchase approved after an ending is delivered to the next active run.
-        for await update in Transaction.unfinished {
-            guard !Task.isCancelled else { return }
-            if let transaction = try? verified(update),
-               let adventure = AdventureProduct(rawValue: transaction.productID),
-               grant(adventure, transaction.id) {
-                await transaction.finish()
-            }
-        }
+        guard !usesDirectGrantMode else { return }
+
         for await update in Transaction.updates {
             guard !Task.isCancelled else { return }
 
@@ -92,7 +104,8 @@ final class AdventureShopStore {
                 guard let adventure = AdventureProduct(rawValue: transaction.productID) else {
                     continue
                 }
-                if grant(adventure, transaction.id) { await transaction.finish() }
+                grant(adventure, transaction.id)
+                await transaction.finish()
             } catch {
                 notice = UserNotice(title: "交易验证失败", message: error.localizedDescription)
             }
@@ -100,6 +113,11 @@ final class AdventureShopStore {
     }
 
     func syncPurchases() async {
+        guard !usesDirectGrantMode else {
+            notice = UserNotice(title: "正在使用测试模式", message: "点击商品会直接发放剧情和存款，不会连接 App Store。")
+            return
+        }
+
         do {
             try await AppStore.sync()
             notice = UserNotice(

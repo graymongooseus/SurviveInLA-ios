@@ -35,7 +35,7 @@ struct GameEngine: Sendable {
                 GameLogEntry(
                     day: 1,
                     title: "抵达丁胖子广场",
-                    message: "跨过边境、一路辗转来到洛杉矶。你有一本外国护照、2,000 美元现金和 5,000 美元债务。五十二周，先活下来，再想办法翻身。"
+                    message: "跨过边境、一路辗转来到洛杉矶。你有一本外国护照、1,000 美元现金和 5,000 美元债务。五十二周，先活下来，再想办法翻身。"
                 )
             ],
             actionThisWeek: nil,
@@ -187,7 +187,8 @@ struct GameEngine: Sendable {
             in: destinationID,
             previous: oldMarket,
             quoteCount: session.day == session.totalDays ? GameContent.commodities.count : 5,
-            preferredCommodityID: event.group == .market ? event.affectedCommodityID : nil
+            preferredCommodityID: event.group == .market ? event.affectedCommodityID : nil,
+            priceMultiplier: worldModifiers(for: session).marketPrice
         )
         apply(event, to: &session)
         session.log.insert(
@@ -274,9 +275,13 @@ struct GameEngine: Sendable {
         guard session.cash >= amount else { throw GameRuleError.insufficientCash }
         try claimWeeklyAction(.investment, in: &session)
 
-        let percentage = investmentReturnPercentage(for: opportunity.risk)
+        let sampledPercentage = investmentReturnPercentage(for: opportunity.risk)
+        let modifiers = worldModifiers(for: session)
+        let percentage = modifiers.investmentReturnCap.map {
+            min(sampledPercentage, $0)
+        } ?? sampledPercentage
         let baseProfit = amount * percentage / 100
-        let profit = scaled(baseProfit, by: worldModifiers(for: session).investmentReturn)
+        let profit = scaled(baseProfit, by: modifiers.investmentReturn)
         let resultText = profit >= 0
             ? "项目顺利结算，你赚到 +\(profit.usdText)。"
             : "行情没有站在你这边，你亏了 \((-profit).usdText)。"
@@ -431,7 +436,8 @@ struct GameEngine: Sendable {
             session.market = makeMarket(
                 in: session.currentDistrictID,
                 previous: oldMarket,
-                quoteCount: session.day == session.totalDays ? GameContent.commodities.count : 5
+                quoteCount: session.day == session.totalDays ? GameContent.commodities.count : 5,
+                priceMultiplier: worldModifiers(for: session).marketPrice
             )
         }
         session.actionThisWeek = nil
@@ -456,7 +462,8 @@ struct GameEngine: Sendable {
         session.market = makeMarket(
             in: session.currentDistrictID,
             previous: oldMarket,
-            quoteCount: session.day == session.totalDays ? GameContent.commodities.count : 5
+            quoteCount: session.day == session.totalDays ? GameContent.commodities.count : 5,
+            priceMultiplier: worldModifiers(for: session).marketPrice
         )
         session.actionThisWeek = nil
     }
@@ -489,7 +496,8 @@ struct GameEngine: Sendable {
         in districtID: District.ID,
         previous: [MarketQuote],
         quoteCount: Int = 5,
-        preferredCommodityID: Commodity.ID? = nil
+        preferredCommodityID: Commodity.ID? = nil,
+        priceMultiplier: Double = 1
     ) -> [MarketQuote] {
         let district = GameContent.district(districtID)
         var available = GameContent.commodities.shuffled(using: &random)
@@ -506,7 +514,10 @@ struct GameEngine: Sendable {
 
         return available.map { commodity in
             let swing = Double.random(in: 0.78 ... 1.24, using: &random)
-            let rawPrice = Double(commodity.basePrice) * district.priceBias(for: commodity.id) * swing
+            let rawPrice = Double(commodity.basePrice)
+                * district.priceBias(for: commodity.id)
+                * swing
+                * priceMultiplier
             let boundedPrice = min(commodity.maximumPrice, max(commodity.minimumPrice, Int(rawPrice.rounded())))
             let previousPrice = previous.first(where: { $0.commodityID == commodity.id })?.price
                 ?? commodity.basePrice

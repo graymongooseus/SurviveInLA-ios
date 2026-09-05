@@ -4,14 +4,16 @@
 
 | 商品 ID | 价格 | 游戏内结果 |
 | --- | ---: | ---: |
-| `com.graymongooseus.SurviveInLA.adventure.vietnam` | $1.99 | -$3,000 |
+| `com.graymongooseus.SurviveInLA.adventure.vietnam` | $1.99 | +$3,000 |
 | `com.graymongooseus.SurviveInLA.adventure.lottery` | $2.99 | +$6,000 |
 | `com.graymongooseus.SurviveInLA.adventure.options` | $5.99 | +$18,000 |
 | `com.graymongooseus.SurviveInLA.adventure.watch` | $9.99 | +$36,000 |
 
 ## 本地测试
 
-共享 Scheme 已关联项目根目录的 `Products.storekit`。在 Xcode 运行应用，进入游戏后点顶部黄色闪光按钮即可打开商店。购买会使用 StoreKit 测试环境，不产生真实扣款。
+Debug 构建默认使用直接发放模式：进入游戏后点顶部黄色闪光按钮打开商店，点击任一商品就会直接触发剧情并把对应金额写入游戏存款，不请求 App Store，也不产生真实扣款。
+
+如需在 Debug 构建中测试完整 StoreKit 流程，在 Scheme 的环境变量中加入 `SURVIVE_IN_LA_USE_STOREKIT=1`。共享 Scheme 已关联项目根目录的 `Products.storekit`。
 
 ## 上架前
 

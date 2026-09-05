@@ -7,6 +7,14 @@ struct UserNotice: Identifiable, Sendable {
     let message: String
 }
 
+struct WorldEventNotice: Identifiable, Sendable {
+    let id = UUID()
+    let eventID: String
+    let triggeredWeek: Int
+    let endingWeek: Int
+    let localNotice: UserNotice?
+}
+
 @MainActor
 @Observable
 final class GameStore {
@@ -25,6 +33,7 @@ final class GameStore {
     var isIntroductionPresented = false
     var tradeContext: TradeContext?
     var notice: UserNotice?
+    var worldEventNotice: WorldEventNotice?
     var purchasedAdventure: AdventureProduct?
     var journeyRecords: [JourneyRecord] = []
     var leaderboardError: String?
@@ -32,10 +41,13 @@ final class GameStore {
     var treatmentCostPerPoint: Int { engine.balance.treatmentCostPerPoint }
     var maximumCapacity: Int { engine.balance.maximumCapacity }
     var capacityUpgradeCost: Int { engine.capacityUpgradeCost(for: session) }
+    var bankInterestRate: Double { engine.balance.bankInterestRate }
+    var debtInterestRate: Double { engine.balance.debtInterestRate }
     var activeWorldEvent: WorldEvent? { engine.activeWorldEvent(in: session) }
     var activeWorldEventRemainingWeeks: Int {
-        guard activeWorldEvent != nil, let active = session.activeWorldEvent else { return 0 }
-        return max(0, active.endingWeek - session.day + 1)
+        guard let active = session.activeWorldEvent,
+              active.isActive(in: session.day) else { return 0 }
+        return active.endingWeek - session.day + 1
     }
 
     init(
@@ -126,16 +138,32 @@ final class GameStore {
         pendingTravelNoticeTask?.cancel()
         DebugLog.record("travel.begin", "\(debugContext) destination=\(selectedDestinationID.rawValue)")
         do {
+            let previousWorldEventID = session.latestWorldEventID
+            let previousWorldEventWeek = session.latestWorldEventWeek
             try engine.travel(to: selectedDestinationID, session: &session)
             selectedDestinationID = session.currentDistrictID
             isMarketExpanded = session.day == session.totalDays
 
-            if !session.isFinished, let event = session.latestEvent {
-                let eventNotice = UserNotice(title: event.title, message: event.message)
+            let worldNotice = worldEventNoticeIfChanged(
+                previousID: previousWorldEventID,
+                previousWeek: previousWorldEventWeek
+            )
+            let localNotice = session.latestEvent.map {
+                UserNotice(title: $0.title, message: $0.message)
+            }
+            if var worldNotice {
+                worldNotice = WorldEventNotice(
+                    eventID: worldNotice.eventID,
+                    triggeredWeek: worldNotice.triggeredWeek,
+                    endingWeek: worldNotice.endingWeek,
+                    localNotice: localNotice
+                )
+                worldEventNotice = worldNotice
+            } else if let localNotice {
                 pendingTravelNoticeTask = Task { @MainActor [weak self] in
                     try? await Task.sleep(for: .milliseconds(850))
                     guard !Task.isCancelled else { return }
-                    self?.notice = eventNotice
+                    self?.notice = localNotice
                 }
             }
             saveProgress()
@@ -149,9 +177,24 @@ final class GameStore {
     func work() {
         DebugLog.record("work.begin", debugContext)
         do {
+            let previousWorldEventID = session.latestWorldEventID
+            let previousWorldEventWeek = session.latestWorldEventWeek
             let event = try engine.work(in: &session)
             selectedDestinationID = session.currentDistrictID
-            notice = UserNotice(title: event.title, message: event.message)
+            let localNotice = UserNotice(title: event.title, message: event.message)
+            if let worldNotice = worldEventNoticeIfChanged(
+                previousID: previousWorldEventID,
+                previousWeek: previousWorldEventWeek
+            ) {
+                worldEventNotice = WorldEventNotice(
+                    eventID: worldNotice.eventID,
+                    triggeredWeek: worldNotice.triggeredWeek,
+                    endingWeek: worldNotice.endingWeek,
+                    localNotice: localNotice
+                )
+            } else {
+                notice = localNotice
+            }
             saveProgress()
             DebugLog.record("work.success", debugContext)
         } catch {
@@ -176,8 +219,16 @@ final class GameStore {
 
     func finishStationaryWeek() {
         do {
+            let previousWorldEventID = session.latestWorldEventID
+            let previousWorldEventWeek = session.latestWorldEventWeek
             try engine.finishStationaryWeek(in: &session)
             selectedDestinationID = session.currentDistrictID
+            if let worldNotice = worldEventNoticeIfChanged(
+                previousID: previousWorldEventID,
+                previousWeek: previousWorldEventWeek
+            ) {
+                worldEventNotice = worldNotice
+            }
             saveProgress()
             DebugLog.record("stationary_week.finished", debugContext)
         } catch {
@@ -210,7 +261,12 @@ final class GameStore {
         )
         session.latestEvent = event
         session.log.append(
-            GameLogEntry(day: min(session.day, session.totalDays), title: event.title, message: event.message, eventID: "iap-\(adventure.rawValue)")
+            GameLogEntry(
+                day: min(session.day, session.totalDays),
+                title: event.title,
+                message: event.message,
+                eventID: "iap-\(adventure.rawValue)"
+            )
         )
         saveProgress()
 
@@ -275,6 +331,7 @@ final class GameStore {
         isIntroductionPresented = true
         tradeContext = nil
         notice = nil
+        worldEventNotice = nil
         purchasedAdventure = nil
         saveProgress()
     }
@@ -288,14 +345,17 @@ final class GameStore {
         }
         guard let profileID else { return true }
         let snapshot = GameSnapshot(
-                profileID: profileID,
-                session: session,
-                randomCheckpoint: engine.randomCheckpoint
-            )
+            profileID: profileID,
+            session: session,
+            randomCheckpoint: engine.randomCheckpoint
+        )
         do {
             try repository.archiveJourney(snapshot)
         } catch {
-            notice = UserNotice(title: "成绩尚未保存", message: "请稍后重试。保存成功前不会重开本局。\n\(error.localizedDescription)")
+            notice = UserNotice(
+                title: "成绩尚未保存",
+                message: "请稍后重试。保存成功前不会重开本局。\n\(error.localizedDescription)"
+            )
             return false
         }
         onSave?(snapshot)
@@ -305,14 +365,19 @@ final class GameStore {
     func loadLeaderboard() {
         leaderboardError = nil
         do {
-            // Also include completed slots that have not been opened since this update.
             for id in ProfileID.allCases {
-                if let snapshot = try repository.load(id) { try repository.archiveJourney(snapshot) }
+                if let snapshot = try repository.load(id) {
+                    try repository.archiveJourney(snapshot)
+                }
             }
             if let profileID {
-                try repository.archiveJourney(GameSnapshot(
-                    profileID: profileID, session: session, randomCheckpoint: engine.randomCheckpoint
-                ))
+                try repository.archiveJourney(
+                    GameSnapshot(
+                        profileID: profileID,
+                        session: session,
+                        randomCheckpoint: engine.randomCheckpoint
+                    )
+                )
             }
             journeyRecords = try repository.loadJourneyRecords()
         } catch {
@@ -334,6 +399,25 @@ final class GameStore {
     private func showLatestEvent() {
         guard let event = session.latestEvent else { return }
         notice = UserNotice(title: event.title, message: event.message)
+    }
+
+    private func worldEventNoticeIfChanged(
+        previousID: String?,
+        previousWeek: Int?
+    ) -> WorldEventNotice? {
+        guard session.latestWorldEventID != previousID
+                || session.latestWorldEventWeek != previousWeek,
+              let eventID = session.latestWorldEventID,
+              WorldEventCatalog.event(eventID) != nil,
+              let triggeredWeek = session.latestWorldEventWeek,
+              let active = session.activeWorldEvent else { return nil }
+
+        return WorldEventNotice(
+            eventID: eventID,
+            triggeredWeek: triggeredWeek,
+            endingWeek: active.endingWeek,
+            localNotice: nil
+        )
     }
 
     private var debugContext: String {

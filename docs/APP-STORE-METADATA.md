@@ -2,41 +2,43 @@
 
 ## 基本信息
 
-- 名称：洛杉矶浮生记
-- 副标题：在南加州用 52 周翻身
+- 名称：Surviving LA
+- 副标题：Survive, Trade, Start Again
 - 主分类：游戏
 - 子分类：模拟、策略
-- 关键词：洛杉矶,生存,模拟,策略,交易,经营,单机,地图,买卖,人生
+- 关键词：los angeles,survival,simulation,strategy,trading,management,offline,life,city,map
 
 ## 促销文本
 
-从丁胖子广场出发，在 52 周内穿梭南加州，靠交易、打工与投资还清债务，写下属于你的洛杉矶生存日记。
+Cross Los Angeles in 52 weeks. Trade goods, take jobs, make risky investments, and survive the city’s turns of fortune long enough to clear your debt.
 
 ## 应用描述
 
-《洛杉矶浮生记》是一款虚构的单机生存与交易策略游戏。
+Surviving LA is a fictional, single-player survival and trading strategy game.
 
-你将在 52 周内穿梭于洛杉矶及南加州的 15 个地点，观察不同市场的价格变化，在倒卖、打工和投资之间做出选择。现金、债务、健康、库存和随机事件会共同改变每一局的走向。
+You have 52 weeks to cross Los Angeles and Southern California, watch prices shift between 15 distinct locations, and choose whether to trade, work, or invest. Cash, debt, health, inventory, and random events shape every run.
 
-游戏特色：
+Features:
 
-- 15 个具有不同价格倾向的南加州地点
-- 倒卖、打工、投资三种每周行动
-- 银行、诊所、仓储和主动还债等城市服务
-- 随机事件与可回看的生存日记
-- 三个独立的本地存档
-- 无广告、无内购、无账号，离线也可游玩
+- 15 Southern California locations with distinct market tendencies
+- Trading, jobs, and investments as weekly actions
+- Banks, clinics, storage upgrades, and debt repayment
+- Random events and a survival diary you can revisit
+- Three independent save slots
+- Optional one-time story adventures available as consumable in-app purchases
+- No ads or account required
 
-本作所有交易、货币和情节均为虚构游戏内容，不代表真实商品交易或财务建议。
+All goods, currencies, investments, winnings, and story events are fictional game content. The game does not offer real-money gambling, cash prizes, brokerage, or financial advice.
 
 ## App Review Notes
 
-This is a fictional, single-player survival and trading strategy game. It contains no real-money transactions, user accounts, ads, in-app purchases, analytics, or network backend. All profile data is stored locally on the device. MapKit is used only to display a public map; the app does not request or use the user's location.
+Surviving LA is a fictional, single-player survival and trading strategy game. It does not provide real-money gambling, brokerage, financial services, user-generated content, or external purchases.
 
-To begin testing, select any of the three profile cards, create a new game, and use the bottom action bar to switch among Market, Work, and Investment. City services are available from the Services button. No sign-in or review account is required.
+No sign-in or review account is required. To begin testing, choose any profile slot, start a new game, and use the bottom bar to switch between Market, Work, and Investment. City services are available from the Services button.
 
-The source code and GPL-2.0 license information are available at:
-https://github.com/graymongooseus/SurviveInLA-ios
+The app offers four optional consumable in-app purchases. Each one unlocks a one-time fictional story event and adds virtual in-game cash to the current save. They do not award real money, withdrawable value, or transferable items.
+
+All save data remains on-device unless the user voluntarily enables the optional iCloud sync feature. MapKit only displays a public map; the app does not request the user's location.
 
 ## 提交前仍需填写
 

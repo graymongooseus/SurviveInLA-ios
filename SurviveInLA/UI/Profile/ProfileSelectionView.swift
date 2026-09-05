@@ -132,13 +132,13 @@ struct ProfileSelectionView: View {
                 .font(.system(size: 34, weight: .bold))
                 .foregroundStyle(AppTheme.coralSoft)
 
-            Text("洛杉矶浮生记")
+            Text("Surviving LA")
                 .font(.system(size: 38, weight: .black, design: .rounded))
                 .tracking(-1.2)
                 .minimumScaleFactor(0.82)
                 .lineLimit(1)
 
-            Text("SURVIVE IN LA")
+            Text("SURVIVING LA")
                 .font(.system(size: 11, weight: .bold, design: .rounded))
                 .tracking(5)
                 .foregroundStyle(AppTheme.coralSoft.opacity(0.9))

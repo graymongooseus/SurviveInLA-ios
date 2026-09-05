@@ -1,10 +1,10 @@
-# 洛杉矶浮生记 · Survive in LA
+# Surviving LA
 
-《北京浮生记》的原生 iOS 重制项目。新版本使用 SwiftUI + MapKit，将经典的“移动、交易、负债、随机事件”循环改造成适合单手操作的现代 iPhone 游戏。
+受经典城市生存经营玩法启发的原生 iOS 游戏。新版使用 SwiftUI + MapKit，将“移动、交易、负债、随机事件”循环改造成适合单手操作的现代 iPhone 游戏。
 
 ## 当前状态
 
-`0.2` 可玩 iOS 基础版已经包含：
+`1.0 (2)` TestFlight 候选版已经包含：
 
 - 地图优先的主界面
 - 15 个大洛杉矶区域，使用稳定 ID 和中英文地名
@@ -12,7 +12,7 @@
 - 买入、卖出、库存容量与平均成本
 - 52 周旅程、债务与存款利息
 - 56 条分地区随机事件（市场 25、健康 18、钱财 13）
-- 6 个按特定周次和独立概率触发的世界事件，影响七类全局数值
+- 7 个按特定周次和独立概率触发的世界事件，影响八类全局数值
 - 银行存取款、主动还债、诊所治疗和仓储升级
 - 生存日记、健康失败、第 52 周 ICE 遣返终章、年度账单与回国尾声
 - 本机全部 Profile 最高成绩、历次旅程及历史事件档案（重开保留）
@@ -60,6 +60,8 @@ archive/          # 原版《北京浮生记》历史工程
 - [隐私政策](docs/PRIVACY.md)
 - [用户支持](docs/SUPPORT.md)
 
-## 许可
+## 许可边界
 
-本项目从《北京浮生记》GPL-2.0 源码派生，继续遵守原工程的 [`license.txt`](archive/beijing-fusheng-v1.2.2/license.txt)。发布或分发衍生版本时，需要同时满足 GPL-2.0 对应源码和许可声明要求。
+`SurviveInLA/` 中的 Swift App 按开发者确认由新代码独立实现，不编译、链接或复制归档中的 Windows/MFC 源码；除另有说明外，新版代码未授予开源许可，保留所有权利。
+
+`archive/beijing-fusheng-v1.2.2/` 是独立保存的历史参考资料，继续适用其中的 [`license.txt`](archive/beijing-fusheng-v1.2.2/license.txt)（GPL-2.0）。归档内容不属于 iOS App target，也不会进入提交给 App Store 的二进制。详细边界与发布注意事项见 [`docs/LICENSING.md`](docs/LICENSING.md)。

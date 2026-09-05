@@ -3,7 +3,7 @@ import CoreLocation
 
 struct GameBalance: Sendable {
     var totalDays = 52
-    var startingCash = 2_000
+    var startingCash = 1_000
     var startingDebt = 5_000
     var startingHealth = 100
     var startingReputation = 100

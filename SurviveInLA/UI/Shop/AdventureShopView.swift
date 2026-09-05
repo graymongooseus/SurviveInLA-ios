@@ -21,24 +21,34 @@ struct AdventureShopView: View {
                         ) {
                             Task {
                                 await shopStore.purchase(adventure) { purchased, transactionID in
-                                    let delivered = gameStore.applyPurchasedAdventure(purchased, transactionID: transactionID)
+                                    gameStore.applyPurchasedAdventure(purchased, transactionID: transactionID)
                                     dismiss()
-                                    return delivered
                                 }
                             }
                         }
                     }
 
-                    Button("同步 App Store 交易") {
-                        Task { await shopStore.syncPurchases() }
+                    if shopStore.usesDirectGrantMode {
+                        Label("测试模式：点击后直接存入游戏账户", systemImage: "hammer.fill")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundStyle(AppTheme.warning)
+                            .padding(.top, 8)
+                    } else {
+                        Button {
+                            Task { await shopStore.syncPurchases() }
+                        } label: {
+                            Label("重新连接 App Store", systemImage: "arrow.clockwise")
+                        }
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(AppTheme.coralSoft)
+                        .padding(.top, 8)
                     }
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(AppTheme.coralSoft)
-                    .padding(.top, 4)
 
-                    Text("奇遇属于消耗型内购。每次购买只触发一次事件；已发放的奇遇不会被重复恢复。")
+                    Text(shopStore.usesDirectGrantMode
+                         ? "Debug 构建不会请求 App Store；正式版会在完成 App Store 购买后发放剧情和存款。"
+                         : "每项都是一次性剧情：购买成功后立即写入当前存档并改变游戏存款。已发放的剧情不会重复恢复。")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.42))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
                         .padding(.bottom, 28)
@@ -46,9 +56,20 @@ struct AdventureShopView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
             }
-            .background(AppTheme.ink)
+            .background {
+                ZStack {
+                    AppTheme.ink
+                    RadialGradient(
+                        colors: [AppTheme.coral.opacity(0.11), .clear],
+                        center: .topLeading,
+                        startRadius: 20,
+                        endRadius: 420
+                    )
+                }
+                .ignoresSafeArea()
+            }
             .navigationTitle("奇遇商店")
-            .navigationSubtitle("买一张命运门票，触发一次洛城奇遇")
+            .navigationSubtitle("当前存款 \(gameStore.session.cash.usdText) · 每次购买触发一次")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("完成") { dismiss() }
@@ -78,13 +99,24 @@ private struct AdventureProductRow: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            Image(adventure.imageName)
-                .resizable()
-                .scaledToFill()
-                .frame(width: 124, height: 124)
-                .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .accessibilityLabel(adventure.accessibilitySummary)
+            ZStack(alignment: .topLeading) {
+                Image(adventure.imageName)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 124, height: 124)
+                    .clipped()
+                    .accessibilityLabel(adventure.accessibilitySummary)
+
+                Text(adventure.sequenceLabel)
+                    .font(.caption2.weight(.black).monospacedDigit())
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 5)
+                    .background(.black.opacity(0.62), in: RoundedRectangle(cornerRadius: 8))
+                    .padding(8)
+                    .accessibilityHidden(true)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
             VStack(alignment: .leading, spacing: 7) {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
@@ -92,10 +124,17 @@ private struct AdventureProductRow: View {
                         .font(.headline)
                         .foregroundStyle(.white)
                         .lineLimit(1)
+                        .minimumScaleFactor(0.72)
+                        .layoutPriority(1)
                     Spacer(minLength: 2)
-                    Text(adventure.resultLabel)
-                        .font(.caption.weight(.bold).monospacedDigit())
-                        .foregroundStyle(adventure.cashDelta >= 0 ? AppTheme.positive : AppTheme.negative)
+                    VStack(alignment: .trailing, spacing: 1) {
+                        Text("剧情入账")
+                            .font(.system(size: 9, weight: .semibold))
+                            .foregroundStyle(.white.opacity(0.38))
+                        Text(adventure.resultLabel)
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(adventure.cashDelta >= 0 ? AppTheme.positive : AppTheme.negative)
+                    }
                 }
 
                 Text(adventure.storeSummary)
@@ -106,18 +145,30 @@ private struct AdventureProductRow: View {
 
                 Button(action: purchase) {
                     HStack(spacing: 8) {
-                        if isPurchasing {
+                        if isLoading || isPurchasing {
                             ProgressView()
                                 .controlSize(.small)
                                 .tint(.white)
                         }
-                        Text(isPurchasing ? "请求中…" : price)
-                            .font(.subheadline.weight(.bold).monospacedDigit())
+                        if isLoading {
+                            Text("连接 App Store…")
+                        } else if isPurchasing {
+                            Text("正在解锁…")
+                        } else {
+                            Text("解锁奇遇")
+                            Spacer()
+                            Text(price)
+                                .monospacedDigit()
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.black))
+                        }
                     }
+                    .font(.subheadline.weight(.bold))
+                    .padding(.horizontal, 14)
                     .frame(maxWidth: .infinity)
                     .frame(height: 39)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(AdventurePurchaseButtonStyle())
                 .foregroundStyle(.white)
                 .background(AppTheme.coral, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
                 .disabled(isLoading || isAnotherPurchaseActive)
@@ -126,7 +177,13 @@ private struct AdventureProductRow: View {
             }
         }
         .padding(10)
-        .background(AppTheme.panel)
+        .background(
+            LinearGradient(
+                colors: [AppTheme.panel.opacity(0.98), AppTheme.panel.opacity(0.82)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
@@ -185,7 +242,7 @@ struct PurchasedAdventureOverlay: View {
                         .fixedSize(horizontal: false, vertical: true)
 
                     HStack {
-                        Text("本次奇遇为你带来")
+                        Text("游戏存款变化")
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(.white.opacity(0.5))
                         Spacer()
@@ -225,6 +282,15 @@ struct PurchasedAdventureOverlay: View {
         .shadow(color: .black.opacity(0.55), radius: 30, y: 14)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .safeAreaPadding(.vertical, 10)
+    }
+}
+
+private struct AdventurePurchaseButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.985 : 1)
+            .brightness(configuration.isPressed ? -0.08 : 0)
+            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }
 }
 

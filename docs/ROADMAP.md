@@ -60,7 +60,7 @@
 
 - [x] App 图标与本地隐私说明
 - [ ] 最终商店截图与公开支持/隐私 URL
-- [x] GPL-2.0 声明、原作者署名和对应源码归档
+- [x] 独立 Swift 实现与 GPL-2.0 历史源码归档的许可边界说明
 - [ ] 注册 Bundle ID 并在 App Store Connect 创建独立 App 记录
 - [ ] TestFlight 测试
 - 崩溃监控与最小化匿名分析

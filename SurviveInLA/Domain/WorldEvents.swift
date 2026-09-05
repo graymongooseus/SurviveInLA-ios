@@ -8,6 +8,30 @@ struct WorldEventModifiers: Hashable, Codable, Sendable {
     let debtInterest: Double
     let healthChange: Double
     let reputationChange: Double
+    let marketPrice: Double
+    let investmentReturnCap: Int?
+
+    init(
+        workIncome: Double,
+        tradeIncome: Double,
+        bankInterest: Double,
+        investmentReturn: Double,
+        debtInterest: Double,
+        healthChange: Double,
+        reputationChange: Double,
+        marketPrice: Double = 1,
+        investmentReturnCap: Int? = nil
+    ) {
+        self.workIncome = workIncome
+        self.tradeIncome = tradeIncome
+        self.bankInterest = bankInterest
+        self.investmentReturn = investmentReturn
+        self.debtInterest = debtInterest
+        self.healthChange = healthChange
+        self.reputationChange = reputationChange
+        self.marketPrice = marketPrice
+        self.investmentReturnCap = investmentReturnCap
+    }
 
     static let neutral = WorldEventModifiers(
         workIncome: 1,
@@ -24,13 +48,14 @@ struct WorldEvent: Identifiable, Hashable, Sendable {
     let id: String
     let title: String
     let message: String
+    let imageName: String
     let triggerWeeks: [Int]
     let triggerChance: Double
     let durationWeeks: Int
     let modifiers: WorldEventModifiers
 
     var effectSummary: String {
-        [
+        var effects = [
             effect("打工", modifiers.workIncome),
             effect("倒卖", modifiers.tradeIncome),
             effect("存款利息", modifiers.bankInterest),
@@ -38,7 +63,14 @@ struct WorldEvent: Identifiable, Hashable, Sendable {
             effect("债务利息", modifiers.debtInterest),
             effect("健康变动", modifiers.healthChange),
             effect("声望变动", modifiers.reputationChange)
-        ].joined(separator: " · ")
+        ]
+        if modifiers.marketPrice != 1 {
+            effects.append(effect("消费品报价", modifiers.marketPrice))
+        }
+        if let cap = modifiers.investmentReturnCap {
+            effects.append("投资回报上限 \(cap)%")
+        }
+        return effects.joined(separator: " · ")
     }
 
     private func effect(_ label: String, _ multiplier: Double) -> String {
@@ -63,6 +95,7 @@ enum WorldEventCatalog {
             id: "labor-enforcement-wave",
             title: "劳工执法整顿",
             message: "南加州展开劳工执法行动，正规临工工资上涨，但灰色交易和投资变得谨慎。",
+            imageName: "WorldLaborEnforcement",
             triggerWeeks: [5],
             triggerChance: 0.80,
             durationWeeks: 4,
@@ -76,6 +109,7 @@ enum WorldEventCatalog {
             id: "port-logistics-gridlock",
             title: "港口物流大拥堵",
             message: "港口与仓储周转失灵，货物流通变慢，搬运工作增加，但倒卖和投资回报承压。",
+            imageName: "WorldPortGridlock",
             triggerWeeks: [12],
             triggerChance: 0.65,
             durationWeeks: 5,
@@ -89,6 +123,7 @@ enum WorldEventCatalog {
             id: "southern-california-spending-boom",
             title: "南加州消费热潮",
             message: "游客与本地消费同时升温，工作、交易和投资机会增加，但借贷成本也开始抬头。",
+            imageName: "WorldSpendingBoom",
             triggerWeeks: [20],
             triggerChance: 0.55,
             durationWeeks: 6,
@@ -102,6 +137,7 @@ enum WorldEventCatalog {
             id: "rapid-rate-hike",
             title: "利率快速上升",
             message: "市场利率突然走高，存款收益明显增加，但债务膨胀、消费降温，投资回报也更加保守。",
+            imageName: "WorldRateHike",
             triggerWeeks: [28],
             triggerChance: 0.50,
             durationWeeks: 8,
@@ -115,6 +151,7 @@ enum WorldEventCatalog {
             id: "regional-public-health-crisis",
             title: "区域公共卫生危机",
             message: "公共卫生危机让客流和工作机会锐减，身体损耗加重，社区关系也更难维持。",
+            imageName: "WorldHealthCrisis",
             triggerWeeks: [36],
             triggerChance: 0.40,
             durationWeeks: 6,
@@ -128,6 +165,7 @@ enum WorldEventCatalog {
             id: "holiday-economy-surge",
             title: "节日经济旺季",
             message: "节庆活动带来大量客流，临工、倒卖和投资全面升温，但忙碌也让健康消耗加快。",
+            imageName: "WorldHolidaySurge",
             triggerWeeks: [44],
             triggerChance: 0.70,
             durationWeeks: 5,
@@ -135,6 +173,21 @@ enum WorldEventCatalog {
                 workIncome: 1.25, tradeIncome: 1.30, bankInterest: 1.08,
                 investmentReturn: 1.15, debtInterest: 1.05,
                 healthChange: 1.10, reputationChange: 1.25
+            )
+        ),
+        WorldEvent(
+            id: "strait-of-hormuz-crisis",
+            title: "霍尔木兹海峡危机",
+            message: "霍尔木兹海峡航运受阻，能源与运输成本急升，洛杉矶日常消费品价格大幅上涨；恐慌抛售席卷股市，所有投资都会出现明显亏损。",
+            imageName: "WorldHormuzCrisis",
+            triggerWeeks: [49],
+            triggerChance: 0.55,
+            durationWeeks: 3,
+            modifiers: WorldEventModifiers(
+                workIncome: 1, tradeIncome: 1, bankInterest: 1,
+                investmentReturn: 1, debtInterest: 1,
+                healthChange: 1, reputationChange: 1,
+                marketPrice: 1.55, investmentReturnCap: -35
             )
         )
     ]

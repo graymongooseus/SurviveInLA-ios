@@ -10,7 +10,7 @@
       "internalID" : "A1C3EB9B-497C-4D01-B171-1D7A7F2E8D01",
       "localizations" : [
         {
-          "description" : "触发越南女朋友借走三千美元后失联的洛城奇遇。",
+          "description" : "触发越南女友留下三千美元支票后不知去向的洛城奇遇。",
           "displayName" : "越南女朋友",
           "locale" : "zh_CN"
         }
@@ -25,8 +25,8 @@
       "internalID" : "79D5838E-253D-4E46-BF3D-62C514427202",
       "localizations" : [
         {
-          "description" : "触发在 CVS 买六合彩中奖六千美元的洛城奇遇。",
-          "displayName" : "CVS 六合彩",
+          "description" : "触发在便利店购买乐透刮刮卡中奖六千美元的洛城奇遇。",
+          "displayName" : "便利店乐透刮刮卡",
           "locale" : "zh_CN"
         }
       ],

@@ -12,7 +12,7 @@ struct SurviveInLAApp: App {
                 if let store = profileManager.activeStore {
                     GameHomeView(
                         store: store,
-                        exitToProfiles: profileManager.closeActiveProfile
+                        profileManager: profileManager
                     )
                     .transition(.opacity)
                 } else {

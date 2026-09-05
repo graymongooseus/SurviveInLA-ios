@@ -1,4 +1,4 @@
-# 《洛杉矶浮生记》用户支持
+# Surviving LA 用户支持
 
 如果遇到闪退、存档异常、界面错位或游戏规则问题，请在 [GitHub Issues](https://github.com/graymongooseus/SurviveInLA-ios/issues) 提交反馈。
 

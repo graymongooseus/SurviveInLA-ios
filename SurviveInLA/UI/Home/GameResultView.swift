@@ -2,7 +2,6 @@ import SwiftUI
 
 struct GameResultOverlay: View {
     @Bindable var store: GameStore
-    var exitToProfiles: (() -> Void)?
     @State private var showsSummary = false
     @State private var showsLeaderboard = false
     @State private var confirmsRestart = false
@@ -12,15 +11,10 @@ struct GameResultOverlay: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Label("洛杉矶浮生记 / 终章", systemImage: "sun.horizon.fill")
+                Label("Surviving LA / 终章", systemImage: "sun.horizon.fill")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(AppTheme.coralSoft)
                 Spacer()
-                if let exitToProfiles {
-                    Button("返回存档", action: exitToProfiles)
-                        .font(.caption.weight(.semibold))
-                        .tint(.white.opacity(0.7))
-                }
             }
             .padding(.horizontal, 24)
             .padding(.vertical, 14)
