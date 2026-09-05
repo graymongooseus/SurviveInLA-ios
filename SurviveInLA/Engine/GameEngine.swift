@@ -259,7 +259,8 @@ struct GameEngine: Sendable {
             cashDelta: income,
             healthDelta: -(job.healthCost + extraHealthCost),
             reputationDelta: reputationDelta,
-            districtIDs: [session.currentDistrictID]
+            districtIDs: [session.currentDistrictID],
+            baseCashDelta: baseIncome
         )
         apply(event, to: &session)
         log(event, in: &session, at: session.currentDistrictID, week: session.day)
@@ -292,7 +293,8 @@ struct GameEngine: Sendable {
             title: opportunity.title,
             message: "\(opportunity.detail) \(resultText)",
             cashDelta: profit,
-            districtIDs: [session.currentDistrictID]
+            districtIDs: [session.currentDistrictID],
+            baseCashDelta: baseProfit
         )
         apply(event, to: &session)
         log(event, in: &session, at: session.currentDistrictID, week: session.day)
@@ -374,7 +376,8 @@ struct GameEngine: Sendable {
 
         if streak >= 3 {
             let eventWeek = session.day
-            let returnWeek = min(session.totalDays, eventWeek + 2)
+            let skippedWeeks = 2
+            let returnWeek = min(session.totalDays, eventWeek + skippedWeeks)
             let event = GameEvent(
                 id: "lapd-sting-operation",
                 kind: .setback,
@@ -382,12 +385,13 @@ struct GameEngine: Sendable {
                 title: "LAPD 钓鱼执法",
                 message: "你连续第三周在菲格罗亚拉皮条，遇上了 LAPD 钓鱼执法。你被罚 1,000 美元并关押两周，时间直接来到第 \(returnWeek) 周。",
                 cashDelta: -1_000,
-                districtIDs: [.figueroaCorridor]
+                districtIDs: [.figueroaCorridor],
+                skippedWeeks: skippedWeeks
             )
             apply(event, to: &session)
             log(event, in: &session, at: session.currentDistrictID, week: eventWeek)
             session.consecutivePimpingWeeks = 0
-            skipStationaryWeeks(2, in: &session)
+            skipStationaryWeeks(skippedWeeks, in: &session)
             return event
         }
 
@@ -410,7 +414,8 @@ struct GameEngine: Sendable {
             healthDelta: -job.healthCost,
             districtIDs: [.figueroaCorridor],
             triggerChance: sweep.triggerChance,
-            workIncomeMultiplier: didTriggerSweep ? multiplier : nil
+            workIncomeMultiplier: didTriggerSweep ? multiplier : nil,
+            baseCashDelta: localIncome
         )
         apply(event, to: &session)
         log(event, in: &session, at: session.currentDistrictID, week: session.day)

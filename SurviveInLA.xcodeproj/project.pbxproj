@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B10100000000000000000001 /* HealthEventOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10200000000000000000001 /* HealthEventOverlay.swift */; };
 		A00100000000000000000001 /* SurviveInLAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000001 /* SurviveInLAApp.swift */; };
 		A00100000000000000000002 /* GameModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000002 /* GameModels.swift */; };
 		A00100000000000000000003 /* GameContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000003 /* GameContent.swift */; };
@@ -25,7 +26,7 @@
 		A00100000000000000000010 /* ProfilePersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000012 /* ProfilePersistence.swift */; };
 		A00100000000000000000011 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000013 /* ProfileManager.swift */; };
 		A00100000000000000000012 /* ProfileSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000014 /* ProfileSelectionView.swift */; };
-		A00100000000000000000013 /* GameEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000016 /* GameEvents.swift */; };
+		A00100000000000000000013 /* LocationEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000016 /* LocationEvents.swift */; };
 		A00100000000000000000014 /* DistrictCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000017 /* DistrictCatalog.swift */; };
 		A00100000000000000000015 /* WorldEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000018 /* WorldEvents.swift */; };
 		A00100000000000000000016 /* WorldEventOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000019 /* WorldEventOverlay.swift */; };
@@ -47,6 +48,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B10200000000000000000001 /* HealthEventOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthEventOverlay.swift; sourceTree = "<group>"; };
 		A00200000000000000000001 /* SurviveInLAApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurviveInLAApp.swift; sourceTree = "<group>"; };
 		A00200000000000000000002 /* GameModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModels.swift; sourceTree = "<group>"; };
 		A00200000000000000000003 /* GameContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameContent.swift; sourceTree = "<group>"; };
@@ -68,7 +70,7 @@
 		A00200000000000000000013 /* ProfileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		A00200000000000000000014 /* ProfileSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSelectionView.swift; sourceTree = "<group>"; };
 		A00200000000000000000015 /* SurviveInLA.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SurviveInLA.entitlements; sourceTree = "<group>"; };
-		A00200000000000000000016 /* GameEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEvents.swift; sourceTree = "<group>"; };
+		A00200000000000000000016 /* LocationEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationEvents.swift; sourceTree = "<group>"; };
 		A00200000000000000000017 /* DistrictCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DistrictCatalog.swift; sourceTree = "<group>"; };
 		A00200000000000000000018 /* WorldEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldEvents.swift; sourceTree = "<group>"; };
 		A00200000000000000000019 /* WorldEventOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldEventOverlay.swift; sourceTree = "<group>"; };
@@ -134,7 +136,7 @@
 				A00200000000000000000002 /* GameModels.swift */,
 				A00200000000000000000003 /* GameContent.swift */,
 				A00200000000000000000017 /* DistrictCatalog.swift */,
-				A00200000000000000000016 /* GameEvents.swift */,
+				A00200000000000000000016 /* LocationEvents.swift */,
 				A00200000000000000000018 /* WorldEvents.swift */,
 				A0020000000000000000001A /* JourneyResult.swift */,
 				A0020000000000000000001B /* InAppPurchaseModels.swift */,
@@ -178,6 +180,7 @@
 				A0020000000000000000000A /* CityMapView.swift */,
 				A00200000000000000000011 /* SupportViews.swift */,
 				A00200000000000000000019 /* WorldEventOverlay.swift */,
+				B10200000000000000000001 /* HealthEventOverlay.swift */,
 				A0020000000000000000001D /* GameResultView.swift */,
 			);
 			path = Home;
@@ -361,10 +364,11 @@
 				A00100000000000000000010 /* ProfilePersistence.swift in Sources */,
 				A00100000000000000000011 /* ProfileManager.swift in Sources */,
 				A00100000000000000000012 /* ProfileSelectionView.swift in Sources */,
-				A00100000000000000000013 /* GameEvents.swift in Sources */,
+				A00100000000000000000013 /* LocationEvents.swift in Sources */,
 				A00100000000000000000014 /* DistrictCatalog.swift in Sources */,
 				A00100000000000000000015 /* WorldEvents.swift in Sources */,
 				A00100000000000000000016 /* WorldEventOverlay.swift in Sources */,
+				B10100000000000000000001 /* HealthEventOverlay.swift in Sources */,
 				A00100000000000000000017 /* JourneyResult.swift in Sources */,
 				A00100000000000000000018 /* InAppPurchaseModels.swift in Sources */,
 				A00100000000000000000019 /* AdventureShopStore.swift in Sources */,
@@ -398,7 +402,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -411,7 +415,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -436,7 +440,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -469,7 +473,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -492,7 +496,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -513,7 +517,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

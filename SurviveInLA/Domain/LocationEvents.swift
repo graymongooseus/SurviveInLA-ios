@@ -1,7 +1,16 @@
-// 此文件是游戏随机事件的唯一代码数据源。
-// 面向策划核对的表格见 docs/LOS-ANGELES-EVENTS.md。
+// 56 条地点事件的唯一代码数据源：市场 25、健康 18、钱财 13。
+extension GameEvent {
+    // 从稳定 ID 关联插图，不向存档新增必填字段。
+    var healthEventImageName: String? {
+        guard LocationEventCatalog.healthEvents.contains(where: { $0.id == id }) else { return nil }
+        return "Event_\(id)"
+    }
+}
 
-extension GameContent {
+// 面向策划核对的表格见 docs/LOS-ANGELES-EVENTS.md。
+// 修改下方数值后，事件弹窗会自动更新基础效果；请保留稳定 ID。
+
+enum LocationEventCatalog {
     static let marketEvents: [GameEvent] = [
         GameEvent(
             id: "studio-camera-rush", kind: .opportunity, group: .market,

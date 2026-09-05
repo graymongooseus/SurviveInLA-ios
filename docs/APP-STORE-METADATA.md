@@ -3,47 +3,49 @@
 ## 基本信息
 
 - 名称：Surviving LA
-- 副标题：Survive, Trade, Start Again
+- 副标题：Survive and Achieve the Dream
+- 主要语言：简体中文
 - 主分类：游戏
 - 子分类：模拟、策略
-- 关键词：los angeles,survival,simulation,strategy,trading,management,offline,life,city,map
+- 关键词：洛杉矶,生存,模拟,策略,经营,交易,打工,投资,城市,单机
+
+> Apple 的副标题最多 30 个字符。`Survive and Achieve the American Dream` 超出限制，因此采用 29 个字符的版本。
 
 ## 促销文本
 
-Cross Los Angeles in 52 weeks. Trade goods, take jobs, make risky investments, and survive the city’s turns of fortune long enough to clear your debt.
+在洛杉矶生存 52 周。倒卖商品、打工或投资，在现金、债务、健康与城市事件之间做出选择，努力活下来并实现自己的美国梦。
 
 ## 应用描述
 
-Surviving LA is a fictional, single-player survival and trading strategy game.
+《Surviving LA》是一款虚构的单人生存经营与交易策略游戏。
 
-You have 52 weeks to cross Los Angeles and Southern California, watch prices shift between 15 distinct locations, and choose whether to trade, work, or invest. Cash, debt, health, inventory, and random events shape every run.
+你有 52 周时间穿梭洛杉矶和南加州，在 15 个地点观察价格变化，并在每周选择倒卖商品、打工或投资。现金、债务、健康、库存和城市事件都会改变这一局的命运。
 
-Features:
+游戏特色：
 
-- 15 Southern California locations with distinct market tendencies
-- Trading, jobs, and investments as weekly actions
-- Banks, clinics, storage upgrades, and debt repayment
-- Random events and a survival diary you can revisit
-- Three independent save slots
-- Optional one-time story adventures available as consumable in-app purchases
-- No ads or account required
+- 15 个具有不同市场倾向的南加州地点
+- 倒卖、打工和投资三类每周行动，每周只能选择一项
+- 银行、诊所、仓库升级与债务偿还
+- 丰富的虚构城市事件与可回顾的生存日记
+- 三个互相独立的本地存档
+- 四种可选的固定额度游戏币充值包
+- 无广告，无需注册账号
 
-All goods, currencies, investments, winnings, and story events are fictional game content. The game does not offer real-money gambling, cash prizes, brokerage, or financial advice.
+所有商品、货币、投资和故事事件均为虚构游戏内容。本游戏不提供真钱赌博、现金奖励、证券经纪、金融服务或投资建议。内购只会固定发放商品页面标示数额的游戏现金，不含抽奖或随机奖励，且不能提现或转让。
 
 ## App Review Notes
 
-Surviving LA is a fictional, single-player survival and trading strategy game. It does not provide real-money gambling, brokerage, financial services, user-generated content, or external purchases.
+《Surviving LA》是一款虚构的单人生存经营与交易策略游戏，不提供真钱赌博、现金奖励、证券经纪、金融服务、用户生成内容或站外购买。
 
-No sign-in or review account is required. To begin testing, choose any profile slot, start a new game, and use the bottom bar to switch between Market, Work, and Investment. City services are available from the Services button.
+本应用无需登录，也不需要审核账号。测试时请选择任一存档位并开始新游戏。每周可以在倒卖、打工和投资中选择一项行动；城市服务可通过顶部“服务中心”按钮进入。
 
-The app offers four optional consumable in-app purchases. Each one unlocks a one-time fictional story event and adds virtual in-game cash to the current save. They do not award real money, withdrawable value, or transferable items.
+应用提供四种可选的消耗型游戏币充值包。每次购买都会固定发放商品页面明确标示的游戏现金数额，不存在抽奖、随机结果、赔率或中奖机制。游戏现金只可用于游戏内操作，不可提现、转让或兑换现实价值。
 
-All save data remains on-device unless the user voluntarily enables the optional iCloud sync feature. MapKit only displays a public map; the app does not request the user's location.
+存档默认保存在设备本地；用户可自行选择启用 iCloud 同步。MapKit 仅用于显示公开地图，本应用不会请求或读取用户的实时位置。
 
 ## 提交前仍需填写
 
-- 版权：请由账号持有人确认法定名称后填写，例如 `2026 [权利人名称]`。
-- 隐私政策 URL：发布仓库更新后使用 `docs/PRIVACY.md` 的公开链接。
-- 支持 URL：发布仓库更新后使用 `docs/SUPPORT.md` 的公开链接。
+- 隐私政策 URL：使用公开可访问的 `docs/PRIVACY.md` 页面。
+- 支持 URL：使用公开可访问的 `docs/SUPPORT.md` 页面。
 - 联系人姓名、电话和邮箱：填写能及时回复 App Review 的真实联系方式。
-- 年龄分级：根据最终保留的商品、事件和边境叙事如实回答新版问卷。
+- 年龄分级：根据最终保留的虚构事件、暴力、性暗示、药物和赌博暗示如实回答问卷；“游戏币充值包”不应申报为抽奖。

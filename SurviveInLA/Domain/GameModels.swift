@@ -209,6 +209,9 @@ struct GameEvent: Identifiable, Hashable, Codable, Sendable {
     let districtIDs: [District.ID]?
     let triggerChance: Double?
     let workIncomeMultiplier: Double?
+    // 动态打工、投资事件保留世界倍率修正前的现金效果。
+    let baseCashDelta: Int?
+    let skippedWeeks: Int?
 
     init(
         id: String,
@@ -224,7 +227,9 @@ struct GameEvent: Identifiable, Hashable, Codable, Sendable {
         grantedQuantity: Int? = nil,
         districtIDs: [District.ID]? = nil,
         triggerChance: Double? = nil,
-        workIncomeMultiplier: Double? = nil
+        workIncomeMultiplier: Double? = nil,
+        baseCashDelta: Int? = nil,
+        skippedWeeks: Int? = nil
     ) {
         self.id = id
         self.kind = kind
@@ -240,6 +245,43 @@ struct GameEvent: Identifiable, Hashable, Codable, Sendable {
         self.districtIDs = districtIDs
         self.triggerChance = triggerChance
         self.workIncomeMultiplier = workIncomeMultiplier
+        self.baseCashDelta = baseCashDelta
+        self.skippedWeeks = skippedWeeks
+    }
+
+    var baseEffectSummary: String {
+        var effects: [String] = []
+        let baseCash = baseCashDelta ?? cashDelta
+        if baseCash != 0 {
+            let amount = baseCash.magnitude.formatted(
+                .currency(code: "USD")
+                    .precision(.fractionLength(0))
+                    .locale(Locale(identifier: "en_US"))
+            )
+            effects.append("现金 \(baseCash > 0 ? "+" : "−")\(amount)")
+        }
+        if healthDelta != 0 {
+            effects.append("健康 \(healthDelta > 0 ? "+" : "−")\(healthDelta.magnitude)")
+        }
+        if reputationDelta != 0 {
+            effects.append("声望 \(reputationDelta > 0 ? "+" : "−")\(reputationDelta.magnitude)")
+        }
+        if let commodityID = affectedCommodityID {
+            let name = GameContent.commodity(commodityID).name
+            if let multiplier = marketPriceMultiplier {
+                effects.append("\(name)价格 ×\(multiplier.formatted(.number.precision(.fractionLength(2)).locale(Locale(identifier: "en_US"))))（受价格上下限限制）")
+            }
+            if let quantity = grantedQuantity, quantity > 0 {
+                effects.append("免费获得最多 \(quantity) 份\(name)（受剩余仓储容量限制）")
+            }
+        }
+        if let multiplier = workIncomeMultiplier {
+            effects.append("当周打工收入 ×\(multiplier.formatted(.number.precision(.fractionLength(0 ... 2)).locale(Locale(identifier: "en_US"))))")
+        }
+        if let skippedWeeks, skippedWeeks > 0 {
+            effects.append("跳过 \(skippedWeeks) 周（债务与存款继续计息）")
+        }
+        return effects.isEmpty ? "无数值变化" : effects.joined(separator: "\n")
     }
 
     func canOccur(in districtID: District.ID) -> Bool {

@@ -46,6 +46,14 @@ struct GameHomeView: View {
                     .zIndex(11)
             }
 
+            if store.worldEventNotice == nil, let event = store.notice?.healthEvent {
+                HealthEventOverlay(event: event) {
+                    withAnimation(.snappy) { store.notice = nil }
+                }
+                .transition(.opacity)
+                .zIndex(11)
+            }
+
             if let adventure = store.purchasedAdventure {
                 PurchasedAdventureOverlay(adventure: adventure) {
                     withAnimation(.snappy) { store.dismissPurchasedAdventure() }
@@ -80,7 +88,10 @@ struct GameHomeView: View {
                 store.applyPurchasedAdventure(adventure, transactionID: transactionID)
             }
         }
-        .alert(item: $store.notice) { notice in
+        .alert(item: Binding(
+            get: { store.notice?.healthEvent == nil ? store.notice : nil },
+            set: { if store.notice?.healthEvent == nil { store.notice = $0 } }
+        )) { notice in
             Alert(
                 title: Text(notice.title),
                 message: Text(notice.message),
@@ -104,7 +115,7 @@ private struct HeaderView: View {
                 .foregroundStyle(AppTheme.coralSoft)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text("洛杉矶浮生记")
+                Text("Surviving LA")
                     .font(.title2.weight(.bold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.72)
@@ -119,7 +130,7 @@ private struct HeaderView: View {
             HStack(spacing: 8) {
                 headerButton(
                     symbol: "storefront.fill",
-                    label: "奇遇商店",
+                    label: "游戏币商店",
                     tint: AppTheme.warning,
                     action: openAdventureShop
                 )
@@ -153,66 +164,172 @@ private struct OpeningStoryOverlay: View {
     @Bindable var store: GameStore
 
     var body: some View {
-        ZStack {
-            Color.black.opacity(0.78)
-                .ignoresSafeArea()
+        GeometryReader { proxy in
+            ZStack {
+                Color.black.opacity(0.84)
+                    .ignoresSafeArea()
 
-            VStack(spacing: 20) {
-                Image(systemName: "globe.americas.fill")
-                    .font(.system(size: 48))
-                    .foregroundStyle(AppTheme.coralSoft)
-
-                VStack(spacing: 8) {
-                    Text("抵达丁胖子广场")
-                        .font(.largeTitle.weight(.black))
-                    Text("洛杉矶 · 第 1 周")
-                        .font(.headline)
-                        .foregroundStyle(.secondary)
-                }
-
-                Text("你从墨西哥一侧翻过边境围栏进入美国。一路辗转之后，你终于来到洛杉矶的丁胖子广场。没人保证这里会有新生活，但你已经没有回头路。")
-                    .font(.body)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                VStack(spacing: 10) {
-                    storyRow("身上现金", value: "$1,000", symbol: "banknote.fill", tint: AppTheme.positive)
-                    storyRow("欠下债务", value: "$5,000", symbol: "exclamationmark.triangle.fill", tint: AppTheme.negative)
-                    storyRow("随身证件", value: "一本外国护照", symbol: "person.text.rectangle.fill", tint: .cyan)
-                    storyRow("生存期限", value: "52 周", symbol: "calendar", tint: AppTheme.warning)
-                }
-                .padding(16)
-                .background(Color.white.opacity(0.055), in: RoundedRectangle(cornerRadius: 18))
-
-                Text("每周只能选择一种赚钱方式：倒卖、打工或投资。")
-                    .font(.subheadline.weight(.semibold))
-                    .multilineTextAlignment(.center)
-
-                Button("开始第 1 周") {
-                    withAnimation(.snappy) { store.dismissIntroduction() }
-                }
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-                .frame(height: 54)
-                .buttonStyle(.plain)
-                .foregroundStyle(.white)
-                .background(AppTheme.coral, in: RoundedRectangle(cornerRadius: 17))
+                storyCard
+                    .frame(maxWidth: 560, maxHeight: .infinity)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
             }
-            .padding(24)
-            .background(.ultraThickMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
-            .padding(24)
         }
     }
 
-    private func storyRow(_ title: String, value: String, symbol: String, tint: Color) -> some View {
-        HStack {
-            Label(title, systemImage: symbol)
-                .foregroundStyle(tint)
-            Spacer()
-            Text(value)
-                .font(.body.weight(.bold).monospacedDigit())
+    private var storyCard: some View {
+        VStack(spacing: 0) {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    hero
+                    narrative
+                }
+            }
+
+            Rectangle()
+                .fill(Color.white.opacity(0.13))
+                .frame(height: 1)
+
+            startingConditions
+
+            Button {
+                withAnimation(.snappy) { store.dismissIntroduction() }
+            } label: {
+                HStack {
+                    Text("开始第 1 周")
+                        .font(.title3.weight(.bold))
+                    Spacer()
+                    Image(systemName: "arrow.right")
+                        .font(.title2.weight(.bold))
+                }
+                .padding(.horizontal, 20)
+                .frame(maxWidth: .infinity)
+                .frame(height: 54)
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.white)
+            .background(AppTheme.coral, in: RoundedRectangle(cornerRadius: 17, style: .continuous))
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
+            .accessibilityHint("关闭序章并进入游戏地图")
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(AppTheme.ink)
+        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .stroke(Color.white.opacity(0.14), lineWidth: 1)
+        }
+        .shadow(color: .black.opacity(0.45), radius: 28, y: 18)
+    }
+
+    private var hero: some View {
+        ZStack(alignment: .bottomLeading) {
+            Image("OpeningJourney")
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity)
+                .frame(height: 220)
+                .clipped()
+                .accessibilityLabel("从工厂、博斯普鲁斯海峡和机场一路通往边境的旅程")
+
+            LinearGradient(
+                colors: [.clear, AppTheme.ink.opacity(0.4), AppTheme.ink],
+                startPoint: .center,
+                endPoint: .bottom
+            )
+
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 12) {
+                    Text("序 章")
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(AppTheme.coralSoft)
+                        .tracking(2)
+                    Rectangle()
+                        .fill(AppTheme.coralSoft.opacity(0.7))
+                        .frame(width: 30, height: 1)
+                }
+
+                Text("没有回头路")
+                    .font(.system(.largeTitle, design: .rounded, weight: .black))
+                    .foregroundStyle(.white)
+
+                Text("一张机票，一笔债，五十二周求生")
+                    .font(.headline)
+                    .foregroundStyle(.white.opacity(0.64))
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 14)
+        }
+        .frame(height: 220)
+    }
+
+    private var narrative: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("四十岁这年，你丢了工作。")
+                .font(.title3.weight(.bold))
+                .foregroundStyle(.white)
+
+            storyParagraph("留在国内，眼前是送外卖；去广东流水线打螺丝，又像把余生拧进一台看不到尽头的机器。你不甘心，于是刷空信用贷，又向朋友借来 5,000 美元，买下一张没有退路的机票。")
+
+            storyParagraph("飞机掠过博斯普鲁斯海峡，辗转降落在苏克雷元帅国际机场。一路的车票、食宿和“门路费”很快榨干了积蓄。几经波折，你终于翻过边境围栏，却在落地的第一刻被巡逻警察逮捕。")
+
+            storyParagraph("漫长的拘留磨掉了时间，也磨掉了你对美国的幻想。等铁门再次打开，你站在陌生的洛杉矶街头，口袋里只剩 1,000 美元；向朋友借来的 5,000 美元，却仍在按周增加。")
+
+            HStack(alignment: .top, spacing: 14) {
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(AppTheme.coral)
+                    .frame(width: 3)
+
+                Text("没有工作，没有身份，也没有退路。接下来的 52 周，你必须在债务吞掉自己之前活下来——")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(.white.opacity(0.92))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.bottom, 8)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 16)
+    }
+
+    private func storyParagraph(_ text: String) -> some View {
+        Text(text)
+            .font(.callout)
+            .foregroundStyle(.white.opacity(0.7))
+            .lineSpacing(4)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var startingConditions: some View {
+        HStack(spacing: 0) {
+            storyStat("身上现金", value: "$1,000", tint: AppTheme.positive)
+            statDivider
+            storyStat("欠下债务", value: "$5,000", tint: AppTheme.negative)
+            statDivider
+            storyStat("生存期限", value: "52 周", tint: AppTheme.warning)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+    }
+
+    private var statDivider: some View {
+        Rectangle()
+            .fill(Color.white.opacity(0.13))
+            .frame(width: 1, height: 34)
+    }
+
+    private func storyStat(_ title: String, value: String, tint: Color) -> some View {
+        VStack(spacing: 4) {
+            Text(title)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.white.opacity(0.38))
+            Text(value)
+                .font(.headline.weight(.bold).monospacedDigit())
+                .foregroundStyle(tint)
+                .minimumScaleFactor(0.76)
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 

@@ -358,13 +358,14 @@ struct MarketPanelView: View {
                 .font(.headline)
                 .frame(maxWidth: .infinity)
                 .frame(height: 54)
+                .foregroundStyle(isDisabled ? Color.secondary : .white)
+                .background(
+                    isDisabled ? Color.white.opacity(0.08) : AppTheme.coral,
+                    in: RoundedRectangle(cornerRadius: 17, style: .continuous)
+                )
+                .contentShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
         }
         .buttonStyle(.plain)
-        .foregroundStyle(isDisabled ? Color.secondary : .white)
-        .background(
-            isDisabled ? Color.white.opacity(0.08) : AppTheme.coral,
-            in: RoundedRectangle(cornerRadius: 17, style: .continuous)
-        )
         .disabled(isDisabled)
         .padding(.horizontal, 20)
         .padding(.top, 14)

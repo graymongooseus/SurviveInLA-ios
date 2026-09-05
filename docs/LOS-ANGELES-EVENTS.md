@@ -4,10 +4,19 @@
 
 ## 文件与协作约定
 
-- 游戏实际调用的唯一代码数据源：[GameEvents.swift](../SurviveInLA/Domain/GameEvents.swift)。
+- 游戏实际调用的唯一代码数据源：[LocationEvents.swift](../SurviveInLA/Domain/LocationEvents.swift)。
+- 可直接使用 `LocationEventCatalog.events`，或使用 `marketEvents`、`healthEvents`、`moneyEvents` 取得分类列表。
 - 游戏仍通过 `GameContent.events`、`marketEvents`、`healthEvents` 和 `moneyEvents` 调用，现有调用方无需修改。
 - 稳定 ID 用于存档和协作定位，修改标题、文案、数值或地点时不要改 ID；新增事件时使用新的唯一 ID。
 - 本表用于逐条核对。确定修改后，应同时更新代码数据源与本表，并运行事件完整性测试。
+
+## 修改与弹窗显示
+
+- 在 `LocationEvents.swift` 中按稳定 ID 找到事件，修改 `title`、`message`、地点范围和数值字段即可。
+- `cashDelta`、`healthDelta`、`reputationDelta` 表示基础增减值；`marketPriceMultiplier` 表示商品价格倍率；`grantedQuantity` 表示最多赠送数量；`workIncomeMultiplier` 表示打工收入倍率。
+- 所有地点事件弹窗都先显示“基础效果”，再显示剧情。效果由 `GameEvent.baseEffectSummary` 从数值字段生成，无需在剧情里重复维护数值。
+- 同周触发世界事件时，合并弹窗中的地点事件使用相同效果说明。价格上下限、赠品仓储限制会同时标明。
+- 打工和投资结算保留世界倍率修正前的基础现金数值；特殊执法事件明确列出现金处罚和跳过周数。新增字段均为可选，兼容旧存档。
 
 ## 事件规模与触发规则
 

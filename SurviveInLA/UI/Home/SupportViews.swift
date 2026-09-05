@@ -10,7 +10,7 @@ struct DiaryView: View {
             List {
                 Section {
                     NavigationLink {
-                        InGameSettingsView(profileManager: profileManager)
+                        GameSettingsView(manager: profileManager)
                     } label: {
                         Label("游戏设置", systemImage: "gearshape.fill")
                     }
@@ -70,93 +70,6 @@ struct DiaryView: View {
             }
         }
         .preferredColorScheme(.dark)
-    }
-}
-
-private struct InGameSettingsView: View {
-    @Bindable var profileManager: ProfileManager
-
-    var body: some View {
-        List {
-            Section {
-                LabeledContent {
-                    Label("已开启", systemImage: "checkmark.circle.fill")
-                        .foregroundStyle(AppTheme.positive)
-                } label: {
-                    Label("自动保存", systemImage: "arrow.triangle.2.circlepath")
-                }
-
-                LabeledContent {
-                    Label("本局禁用", systemImage: "lock.fill")
-                        .foregroundStyle(.secondary)
-                } label: {
-                    Label("读取存档", systemImage: "tray.and.arrow.down.fill")
-                }
-            } header: {
-                Text("游戏进度")
-            } footer: {
-                Text("进入一局游戏后，每次操作都会自动保存；本局中不能切换或重新读取存档。")
-            }
-
-            Section {
-                Toggle(isOn: iCloudBinding) {
-                    Label("iCloud 同步存档", systemImage: "icloud.fill")
-                }
-                .tint(AppTheme.coral)
-
-                if profileManager.isICloudSyncEnabled {
-                    HStack(spacing: 10) {
-                        Image(systemName: syncStatus.symbol)
-                            .foregroundStyle(syncStatus.tint)
-                            .frame(width: 22)
-                        Text(syncStatus.text)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                        if syncStatus.allowsRetry {
-                            Button("重试") { profileManager.syncWithICloud() }
-                                .font(.subheadline.weight(.semibold))
-                        }
-                    }
-                }
-            } header: {
-                Text("云端备份")
-            } footer: {
-                Text("开启后，最新自动存档会同步到使用同一 Apple ID 的设备。")
-            }
-
-            Section("诊断") {
-                ShareLink(item: DebugLog.fileURL) {
-                    Label("导出运行日志", systemImage: "square.and.arrow.up")
-                }
-            }
-        }
-        .navigationTitle("游戏设置")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private var iCloudBinding: Binding<Bool> {
-        Binding(
-            get: { profileManager.isICloudSyncEnabled },
-            set: { profileManager.setICloudSyncEnabled($0) }
-        )
-    }
-
-    private var syncStatus: (symbol: String, text: String, tint: Color, allowsRetry: Bool) {
-        switch profileManager.iCloudSyncState {
-        case .disabled:
-            ("icloud.slash", "同步已关闭", .secondary, false)
-        case .ready:
-            ("arrow.triangle.2.circlepath", "等待同步", AppTheme.coralSoft, true)
-        case .syncing:
-            ("arrow.triangle.2.circlepath", "正在同步…", AppTheme.coralSoft, false)
-        case let .synced(date):
-            ("checkmark.icloud.fill", "已同步 · \(date.formatted(date: .omitted, time: .shortened))", AppTheme.positive, false)
-        case .waitingForAccount:
-            ("person.crop.circle.badge.exclamationmark", "请先在系统设置登录 iCloud", AppTheme.warning, true)
-        case .failed:
-            ("exclamationmark.icloud", "同步失败，请稍后重试", AppTheme.negative, true)
-        }
     }
 }
 

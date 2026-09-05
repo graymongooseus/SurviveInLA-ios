@@ -40,7 +40,7 @@
 
 ## 内容数据文件
 
-十五个地点的坐标、交通、市场倾向、区域特色、故事钩子和打工候选统一存放在 `SurviveInLA/Domain/DistrictCatalog.swift`。实际可执行的工作与地区投资也在同一目录中维护，事件则继续由 `GameEvents.swift` 单独管理。
+十五个地点的坐标、交通、市场倾向、区域特色、故事钩子和打工候选统一存放在 `SurviveInLA/Domain/DistrictCatalog.swift`。实际可执行的工作与地区投资也在同一目录中维护，事件则继续由 `LocationEvents.swift` 单独管理。
 
 ## 开局位置
 

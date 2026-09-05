@@ -18,7 +18,10 @@ enum GameContent {
     static let districts = DistrictCatalog.districts
     static let jobs = DistrictCatalog.jobs
     static let investments = DistrictCatalog.investments
-
+    static let marketEvents = LocationEventCatalog.marketEvents
+    static let healthEvents = LocationEventCatalog.healthEvents
+    static let moneyEvents = LocationEventCatalog.moneyEvents
+    static let events = LocationEventCatalog.events
 
     static func commodity(_ id: Commodity.ID) -> Commodity {
         commodities.first(where: { $0.id == id })!

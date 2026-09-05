@@ -1,4 +1,5 @@
 import XCTest
+import UIKit
 @testable import SurviveInLA
 
 final class GameEngineTests: XCTestCase {
@@ -170,6 +171,7 @@ final class GameEngineTests: XCTestCase {
         let event = try engine.work(in: &session)
 
         XCTAssertEqual(event.id, "lapd-sting-operation")
+        XCTAssertEqual(event.baseEffectSummary, "现金 −$1,000\n跳过 2 周（债务与存款继续计息）")
         XCTAssertEqual(session.cash, 1_000)
         XCTAssertEqual(session.day, 5)
         XCTAssertEqual(session.debt, 5_412)
@@ -241,6 +243,143 @@ final class GameEngineTests: XCTestCase {
             )
             XCTAssertEqual(groups, Set(GameEventGroup.allCases), "\(districtID) 缺少事件分类")
         }
+    }
+
+    func testEveryLocationEventNoticeIncludesBaseEffectsBeforeStory() {
+        XCTAssertEqual(LocationEventCatalog.events.count, 56)
+        XCTAssertEqual(LocationEventCatalog.events, GameContent.events)
+        for event in LocationEventCatalog.events {
+            XCTAssertNotEqual(event.baseEffectSummary, "无数值变化", event.id)
+            let notice = UserNotice(event: event)
+            XCTAssertTrue(notice.message.hasPrefix("基础效果\n"), event.id)
+            XCTAssertTrue(notice.message.hasSuffix("\n\n" + event.message), event.id)
+        }
+    }
+
+    @MainActor
+    func testAllHealthCardsHaveBundledArtworkAndPreserveEventData() throws {
+        for event in GameContent.healthEvents {
+            let name = try XCTUnwrap(event.healthEventImageName, event.id)
+            let image = try XCTUnwrap(UIImage(named: name), "Missing bundled artwork: \(name)")
+            XCTAssertEqual(image.size.width / image.size.height, 1.5, accuracy: 0.01, event.id)
+            XCTAssertEqual(UserNotice(event: event).healthEvent, event)
+            // 旧存档只保存事件内容；新插图仍能按稳定 ID 恢复关联。
+            let restored = try JSONDecoder().decode(GameEvent.self, from: JSONEncoder().encode(event))
+            XCTAssertEqual(restored.healthEventImageName, name)
+        }
+        for event in GameContent.marketEvents + GameContent.moneyEvents {
+            XCTAssertNil(UserNotice(event: event).healthEvent, event.id)
+        }
+        XCTAssertNil(UserNotice(title: "错误", message: "请重试").healthEvent)
+    }
+
+    @MainActor
+    func testHealthCardFollowsWorldEventWithoutApplyingEffectsAgain() throws {
+        let event = try XCTUnwrap(GameContent.healthEvents.first)
+        let store = GameStore(seed: 42)
+        store.worldEventNotice = WorldEventNotice(
+            eventID: "regional-public-health-crisis", triggeredWeek: 36, endingWeek: 41,
+            localNotice: UserNotice(event: event)
+        )
+        let cash = store.session.cash
+        let health = store.session.health
+        store.dismissWorldEvent()
+        XCTAssertNil(store.worldEventNotice)
+        XCTAssertEqual(store.notice?.healthEvent, event)
+        XCTAssertEqual(store.session.cash, cash)
+        XCTAssertEqual(store.session.health, health)
+        store.notice = nil
+        store.dismissWorldEvent()
+        XCTAssertNil(store.notice)
+    }
+
+    @MainActor
+    func testFatalTravelKeepsHealthCardUntilDismissed() throws {
+        var foundFatalEvent = false
+        for seed in 0 ..< 100 where !foundFatalEvent {
+            let store = GameStore(seed: UInt64(seed))
+            store.session.health = 1
+            store.select(.hollywood)
+            store.travel()
+            guard store.session.health == 0, store.session.latestEvent?.group == .health else { continue }
+            foundFatalEvent = true
+            XCTAssertEqual(store.notice?.healthEvent, store.session.latestEvent)
+            XCTAssertTrue(store.saveProgress())
+            XCTAssertNotNil(store.notice?.healthEvent)
+            store.notice = nil
+            XCTAssertTrue(store.session.isFinished)
+        }
+        XCTAssertTrue(foundFatalEvent)
+    }
+
+    @MainActor
+    func testFinalWeekDoesNotRepeatPreviousHealthCard() {
+        let store = GameStore(seed: 42)
+        store.session.day = 51
+        store.session.latestEvent = GameContent.healthEvents.first
+        store.select(.hollywood)
+        store.travel()
+        XCTAssertTrue(store.session.isFinished)
+        XCTAssertNil(store.notice)
+    }
+
+    func testLocationEventEffectsIncludeLossesGainsPricesGiftsAndWorkMultiplier() throws {
+        let examples = [
+            ("sleep-debt", "现金 −$7\n健康 −4"),
+            ("ding-pang-zi-referral-shift", "现金 +$110\n声望 +1"),
+            ("industry-damaged-shipment", "现金 −$190\n声望 −1"),
+            ("studio-camera-rush", "二手相机价格 ×1.90（受价格上下限限制）"),
+            ("camera-estate-sale", "二手相机价格 ×0.55（受价格上下限限制）"),
+            ("community-leftovers", "声望 +1\n免费获得最多 6 份国产辣条（受剩余仓储容量限制）"),
+            ("figueroa-vice-sweep", "当周打工收入 ×2")
+        ]
+        for (id, expected) in examples {
+            let event = try XCTUnwrap(LocationEventCatalog.events.first { $0.id == id })
+            XCTAssertEqual(event.baseEffectSummary, expected, id)
+        }
+    }
+
+    @MainActor
+    func testTravelNoticesIncludeEffectsInStandaloneAndWorldEventPopups() async throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appending(path: UUID().uuidString, directoryHint: .isDirectory)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        var sawStandalone = false
+        var sawWorldEvent = false
+        for seed in 0 ..< 100 where !sawStandalone || !sawWorldEvent {
+            let store = GameStore(seed: UInt64(seed), repository: ProfileRepository(directoryURL: directory))
+            store.session.day = 4
+            store.select(.hollywood)
+            store.travel()
+            let event = try XCTUnwrap(store.session.latestEvent)
+            let expected = UserNotice(event: event).message
+            if let worldNotice = store.worldEventNotice {
+                XCTAssertEqual(worldNotice.localNotice?.message, expected)
+                sawWorldEvent = true
+            } else if !sawStandalone {
+                try await Task.sleep(for: .milliseconds(1_100))
+                XCTAssertEqual(store.notice?.message, expected)
+                sawStandalone = true
+            }
+        }
+        XCTAssertTrue(sawStandalone)
+        XCTAssertTrue(sawWorldEvent)
+    }
+
+    @MainActor
+    func testWorkAndInvestmentPopupsIncludeBaseEffects() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appending(path: UUID().uuidString, directoryHint: .isDirectory)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let store = GameStore(seed: 14, repository: ProfileRepository(directoryURL: directory))
+        store.work()
+        let work = try XCTUnwrap(store.session.latestEvent)
+        XCTAssertEqual(store.notice?.message, UserNotice(event: work).message)
+        XCTAssertTrue(store.notice?.message.contains("健康 −") == true)
+        store.finishStationaryWeek()
+        store.invest(100)
+        let investment = try XCTUnwrap(store.session.latestEvent)
+        XCTAssertEqual(store.notice?.message, UserNotice(event: investment).message)
     }
 
     func testWorldEventCatalogHasValidSchedulesAndGlobalModifiers() {
@@ -323,6 +462,8 @@ final class GameEngineTests: XCTestCase {
         let baseIncome = baseSession.cash - 1_000
         let worldIncome = worldSession.cash - 1_000
         XCTAssertEqual(worldIncome, Int((Double(baseIncome) * 1.20).rounded()))
+        XCTAssertEqual(worldSession.latestEvent?.baseCashDelta, baseIncome)
+        XCTAssertEqual(worldSession.latestEvent?.baseEffectSummary, baseSession.latestEvent?.baseEffectSummary)
     }
 
     func testWorldEventModifiesInvestmentProfitAndLoss() throws {
@@ -338,6 +479,8 @@ final class GameEngineTests: XCTestCase {
         let baseProfit = baseSession.cash - 1_000
         let worldProfit = worldSession.cash - 1_000
         XCTAssertEqual(worldProfit, Int((Double(baseProfit) * 0.75).rounded()))
+        XCTAssertEqual(worldSession.latestEvent?.baseCashDelta, baseProfit)
+        XCTAssertEqual(worldSession.latestEvent?.baseEffectSummary, baseSession.latestEvent?.baseEffectSummary)
     }
 
     func testWorldEventModifiesBankAndDebtInterest() throws {
@@ -433,6 +576,9 @@ final class GameEngineTests: XCTestCase {
 
         XCTAssertNil(event.group)
         XCTAssertNil(event.affectedCommodityID)
+        XCTAssertNil(event.baseCashDelta)
+        XCTAssertNil(event.skippedWeeks)
+        XCTAssertEqual(event.baseEffectSummary, "现金 −$10")
         XCTAssertTrue(event.canOccur(in: .koreatown))
     }
 
@@ -573,6 +719,25 @@ final class GameEngineTests: XCTestCase {
     }
 
     @MainActor
+    func testFinishingWorkReturnsStoreToTradingSoPlayerCanMove() {
+        let directory = FileManager.default.temporaryDirectory
+            .appending(path: UUID().uuidString, directoryHint: .isDirectory)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let store = GameStore(seed: 14, repository: ProfileRepository(directoryURL: directory))
+        store.selectedAction = .work
+        store.work()
+
+        XCTAssertEqual(store.session.actionThisWeek, .work)
+        store.finishStationaryWeek()
+
+        XCTAssertEqual(store.session.day, 2)
+        XCTAssertNil(store.session.actionThisWeek)
+        XCTAssertEqual(store.selectedAction, .trading)
+        XCTAssertEqual(store.selectedDestinationID, store.session.currentDistrictID)
+    }
+
+    @MainActor
     func testCompletedGameStoreArchivesAndLoadsJourneyHistory() throws {
         let directory = FileManager.default.temporaryDirectory
             .appending(path: UUID().uuidString, directoryHint: .isDirectory)
@@ -669,6 +834,36 @@ final class GameEngineTests: XCTestCase {
         XCTAssertThrowsError(try engine.work(in: &session)) { error in
             XCTAssertEqual(error as? GameRuleError, .weeklyActionAlreadyChosen)
         }
+    }
+
+    func testInAppPurchaseCatalogContainsOnlyFixedCurrencyPacks() {
+        XCTAssertEqual(
+            AdventureProduct.allCases.map(\.rawValue),
+            [
+                "com.graymongooseus.SurviveInLA.currency.starter",
+                "com.graymongooseus.SurviveInLA.currency.survivor",
+                "com.graymongooseus.SurviveInLA.currency.builder",
+                "com.graymongooseus.SurviveInLA.currency.dream",
+            ]
+        )
+        XCTAssertEqual(AdventureProduct.allCases.map(\.cashDelta), [3_000, 6_000, 18_000, 36_000])
+        XCTAssertTrue(AdventureProduct.allCases.allSatisfy { $0.cashDelta > 0 })
+    }
+
+    @MainActor
+    func testPurchasedCurrencyIsDeliveredExactlyOncePerTransaction() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appending(path: UUID().uuidString, directoryHint: .isDirectory)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let store = GameStore(seed: 91, repository: ProfileRepository(directoryURL: directory))
+        let transactionID = UInt64(Date.now.timeIntervalSince1970 * 1_000_000)
+        let startingCash = store.session.cash
+
+        XCTAssertTrue(store.applyPurchasedAdventure(.starterCash, transactionID: transactionID))
+        XCTAssertEqual(store.session.cash, startingCash + 3_000)
+        XCTAssertTrue(store.applyPurchasedAdventure(.starterCash, transactionID: transactionID))
+        XCTAssertEqual(store.session.cash, startingCash + 3_000)
     }
 
     private func activateWorldEvent(_ id: String, in session: inout GameSession) {

@@ -226,7 +226,7 @@ struct GameResultOverlay: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
-            Text("净赚含事件与奇遇奖励；健康损耗按每次实际减少累计，可能超过 100 点。回国计划为角色的故事走向。")
+            Text("净赚含事件与游戏币充值；健康损耗按每次实际减少累计，可能超过 100 点。回国计划为角色的故事走向。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

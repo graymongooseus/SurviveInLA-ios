@@ -103,7 +103,7 @@ struct WorldEventOverlay: View {
                 }
             }
 
-            if let localNotice = notice.localNotice {
+            if let localNotice = notice.localNotice, localNotice.healthEvent == nil {
                 VStack(alignment: .leading, spacing: 5) {
                     Label("同时发生 · \(localNotice.title)", systemImage: "mappin.and.ellipse")
                         .font(.subheadline.weight(.bold))
@@ -118,7 +118,7 @@ struct WorldEventOverlay: View {
             }
 
             Button("知道了") {
-                withAnimation(.snappy) { store.worldEventNotice = nil }
+                withAnimation(.snappy) { store.dismissWorldEvent() }
             }
             .font(.headline)
             .frame(maxWidth: .infinity)

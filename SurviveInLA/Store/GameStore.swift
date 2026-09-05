@@ -5,6 +5,22 @@ struct UserNotice: Identifiable, Sendable {
     let id = UUID()
     let title: String
     let message: String
+    var event: GameEvent? = nil
+
+    var healthEvent: GameEvent? {
+        guard let event, event.healthEventImageName != nil else { return nil }
+        return event
+    }
+}
+
+extension UserNotice {
+    init(event: GameEvent) {
+        self.init(
+            title: event.title,
+            message: "基础效果\n\(event.baseEffectSummary)\n\n\(event.message)",
+            event: event
+        )
+    }
 }
 
 struct WorldEventNotice: Identifiable, Sendable {
@@ -149,7 +165,7 @@ final class GameStore {
                 previousWeek: previousWorldEventWeek
             )
             let localNotice = session.latestEvent.map {
-                UserNotice(title: $0.title, message: $0.message)
+                UserNotice(event: $0)
             }
             if var worldNotice {
                 worldNotice = WorldEventNotice(
@@ -159,14 +175,18 @@ final class GameStore {
                     localNotice: localNotice
                 )
                 worldEventNotice = worldNotice
-            } else if let localNotice {
+            } else if let localNotice, !session.isFinished {
                 pendingTravelNoticeTask = Task { @MainActor [weak self] in
                     try? await Task.sleep(for: .milliseconds(850))
                     guard !Task.isCancelled else { return }
                     self?.notice = localNotice
                 }
             }
-            saveProgress()
+            let didSave = saveProgress()
+            // 终局仍先展示本次健康事件，让玩家看清健康归零的原因。
+            if didSave, session.health <= 0, worldNotice == nil, localNotice?.healthEvent != nil {
+                notice = localNotice
+            }
             DebugLog.record("travel.success", debugContext)
         } catch {
             DebugLog.record("travel.failure", "\(debugContext) error=\(error.localizedDescription)")
@@ -181,7 +201,7 @@ final class GameStore {
             let previousWorldEventWeek = session.latestWorldEventWeek
             let event = try engine.work(in: &session)
             selectedDestinationID = session.currentDistrictID
-            let localNotice = UserNotice(title: event.title, message: event.message)
+            let localNotice = UserNotice(event: event)
             if let worldNotice = worldEventNoticeIfChanged(
                 previousID: previousWorldEventID,
                 previousWeek: previousWorldEventWeek
@@ -223,6 +243,7 @@ final class GameStore {
             let previousWorldEventWeek = session.latestWorldEventWeek
             try engine.finishStationaryWeek(in: &session)
             selectedDestinationID = session.currentDistrictID
+            selectedAction = .trading
             if let worldNotice = worldEventNoticeIfChanged(
                 previousID: previousWorldEventID,
                 previousWeek: previousWorldEventWeek
@@ -241,6 +262,14 @@ final class GameStore {
         isIntroductionPresented = false
     }
 
+    func dismissWorldEvent() {
+        let localNotice = worldEventNotice?.localNotice
+        worldEventNotice = nil
+        if localNotice?.healthEvent != nil {
+            notice = localNotice
+        }
+    }
+
     @discardableResult
     func applyPurchasedAdventure(_ adventure: AdventureProduct, transactionID: UInt64) -> Bool {
         guard !session.isFinished else { return false }
@@ -256,7 +285,7 @@ final class GameStore {
             kind: adventure.cashDelta >= 0 ? .opportunity : .setback,
             group: .money,
             title: adventure.eventTitle,
-            message: "\(adventure.narrative) 本次现金变化：\(adventure.resultLabel)。",
+            message: adventure.narrative,
             cashDelta: adventure.cashDelta
         )
         session.latestEvent = event
@@ -340,7 +369,7 @@ final class GameStore {
     func saveProgress() -> Bool {
         if session.isFinished {
             pendingTravelNoticeTask?.cancel()
-            notice = nil
+            if notice?.healthEvent == nil { notice = nil }
             tradeContext = nil
         }
         guard let profileID else { return true }
@@ -398,7 +427,7 @@ final class GameStore {
 
     private func showLatestEvent() {
         guard let event = session.latestEvent else { return }
-        notice = UserNotice(title: event.title, message: event.message)
+        notice = UserNotice(event: event)
     }
 
     private func worldEventNoticeIfChanged(

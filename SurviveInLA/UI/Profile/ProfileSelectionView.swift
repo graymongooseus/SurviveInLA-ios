@@ -187,85 +187,94 @@ struct ProfileSelectionView: View {
 private struct ProfileSettingsView: View {
     @Bindable var manager: ProfileManager
     @Environment(\.dismiss) private var dismiss
-    @State private var pendingDeletion: ProfileID?
 
     var body: some View {
         NavigationStack {
-            List {
-                Section {
-                    Toggle(isOn: iCloudBinding) {
-                        Label("iCloud 同步存档", systemImage: "icloud.fill")
+            GameSettingsView(manager: manager)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("完成") { dismiss() }
                     }
-                    .tint(AppTheme.coral)
+                }
+        }
+        .preferredColorScheme(.dark)
+    }
+}
 
-                    if manager.isICloudSyncEnabled {
-                        HStack(spacing: 10) {
-                            Image(systemName: syncStatus.symbol)
-                                .foregroundStyle(syncStatus.tint)
-                                .frame(width: 22)
-                            Text(syncStatus.text)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                            Spacer()
-                            if syncStatus.allowsRetry {
-                                Button("重试") {
-                                    manager.syncWithICloud()
-                                }
-                                .font(.subheadline.weight(.semibold))
+struct GameSettingsView: View {
+    @Bindable var manager: ProfileManager
+    @State private var pendingDeletion: ProfileID?
+
+    var body: some View {
+        List {
+            Section {
+                Toggle(isOn: iCloudBinding) {
+                    Label("iCloud 同步存档", systemImage: "icloud.fill")
+                }
+                .tint(AppTheme.coral)
+
+                if manager.isICloudSyncEnabled {
+                    HStack(spacing: 10) {
+                        Image(systemName: syncStatus.symbol)
+                            .foregroundStyle(syncStatus.tint)
+                            .frame(width: 22)
+                        Text(syncStatus.text)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        if syncStatus.allowsRetry {
+                            Button("重试") {
+                                manager.syncWithICloud()
                             }
+                            .font(.subheadline.weight(.semibold))
                         }
                     }
-                } header: {
-                    Text("云端存档")
-                } footer: {
-                    Text("开启后，三个 Profile 会在同一 Apple ID 的设备间同步。仍然只保留每个槽位的最新进度。")
                 }
-
-                Section {
-                    ForEach(manager.slots) { slot in
-                        HStack(spacing: 12) {
-                            Image(systemName: slot.isEmpty ? "tray" : "person.crop.square.filled.and.at.rectangle")
-                                .foregroundStyle(slot.isEmpty ? Color.secondary : AppTheme.coralSoft)
-                                .frame(width: 28)
-
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(slot.id.displayName)
-                                    .font(.subheadline.weight(.bold))
-                                Text(slotDescription(slot))
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-
-                            Spacer()
-
-                            if !slot.isEmpty {
-                                Button(role: .destructive) {
-                                    pendingDeletion = slot.id
-                                } label: {
-                                    Label("删除", systemImage: "trash")
-                                        .labelStyle(.iconOnly)
-                                        .frame(width: 36, height: 36)
-                                }
-                                .buttonStyle(.borderless)
-                                .accessibilityLabel("删除 \(slot.id.displayName) 存档")
-                            }
-                        }
-                        .padding(.vertical, 4)
-                    }
-                } header: {
-                    Text("存档管理")
-                } footer: {
-                    Text("删除后会从本机和 iCloud 同时移除，下一次选择该槽位时将从第 1 周重新开始。")
-                }
+            } header: {
+                Text("云端存档")
+            } footer: {
+                Text("开启后，三个 Profile 会在同一 Apple ID 的设备间同步。仍然只保留每个槽位的最新进度。")
             }
-            .navigationTitle("设置")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("完成") { dismiss() }
+
+            Section {
+                ForEach(manager.slots) { slot in
+                    HStack(spacing: 12) {
+                        Image(systemName: slot.isEmpty ? "tray" : "person.crop.square.filled.and.at.rectangle")
+                            .foregroundStyle(slot.isEmpty ? Color.secondary : AppTheme.coralSoft)
+                            .frame(width: 28)
+
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(slot.id.displayName)
+                                .font(.subheadline.weight(.bold))
+                            Text(slotDescription(slot))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Spacer()
+
+                        if !slot.isEmpty {
+                            Button(role: .destructive) {
+                                pendingDeletion = slot.id
+                            } label: {
+                                Label("删除", systemImage: "trash")
+                                    .labelStyle(.iconOnly)
+                                    .frame(width: 36, height: 36)
+                            }
+                            .buttonStyle(.borderless)
+                            .accessibilityLabel("删除 \(slot.id.displayName) 存档")
+                        }
+                    }
+                    .padding(.vertical, 4)
                 }
+            } header: {
+                Text("存档管理")
+            } footer: {
+                Text("删除后会从本机和 iCloud 同时移除，下一次选择该槽位时将从第 1 周重新开始。")
             }
         }
+        .navigationTitle("游戏设置")
+        .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(.dark)
         .alert(item: $pendingDeletion) { profileID in
             Alert(
