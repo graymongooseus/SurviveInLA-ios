@@ -50,7 +50,7 @@ https://github.com/graymongooseus/SurviveInLA-ios
 4. 奇遇商店四个消耗型商品的 Sandbox 价格、成功发奖、取消、待批准和重启后补发。
 5. 健康归零与第 52 周结局、排行榜、历次旅程以及重新开始。
 
-反馈时请附上 iPhone 型号、iOS 版本、App 版本 `1.0.0 (3)` 和复现步骤。
+反馈时请附上 iPhone 型号、iOS 版本、App 版本 `1.1 (2)` 和复现步骤。
 
 ## 提交前仍需填写
 

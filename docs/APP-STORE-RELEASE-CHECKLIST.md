@@ -1,6 +1,6 @@
 # TestFlight / App Store 发布清单
 
-最后检查：2026 年 9 月 4 日
+最后检查：2026 年 9 月 5 日
 
 ## 已通过的本地质量门
 
@@ -12,7 +12,7 @@
 - [x] App 图标为 1024 × 1024 PNG，不含 alpha 通道。
 - [x] App 显示名为“洛杉矶浮生记”。
 - [x] Bundle ID 为 `com.graymongooseus.SurviveInLA`。
-- [x] 版本号为 `1.0.0 (3)`。
+- [x] 版本号为 `1.1 (2)`。
 - [x] 已加入隐私清单，声明 `UserDefaults` 的 app-only 使用原因。
 - [x] 不使用第三方 SDK、广告、分析或用户追踪。
 - [x] 不请求用户定位；MapKit 只展示公开地图。
@@ -24,7 +24,7 @@
 - [ ] 在 Apple Developer 后台注册显式 Bundle ID：`com.graymongooseus.SurviveInLA`。
 - [ ] 为该 App ID 启用 iCloud Key-value storage；确认 provisioning profile 包含相应 entitlement。
 - [ ] 在 App Store Connect 新建独立 App 记录，不要上传到 `D·Diary: Life Coordinates`。
-- [ ] 确认 App Store Connect 中不存在更高的 Build 号；若 Build 3 已用，继续递增。
+- [ ] 确认 App Store Connect 中不存在更高的 Build 号；若 1.1 的 Build 2 已用，继续递增。
 - [ ] 确认 Apple Developer 协议均已签署。
 - [ ] 完成 Paid Apps Agreement、税务和收款资料，否则内购无法完整测试或销售。
 - [ ] 决定是否在欧盟发布；若发布，先补齐 EU trader status。
@@ -46,7 +46,7 @@
 | 主要语言 | Chinese (Simplified) |
 | Bundle ID | `com.graymongooseus.SurviveInLA` |
 | SKU | `survive-in-la-ios` |
-| 版本 | `1.0.0` |
+| 版本 | `1.1` |
 | 主分类 | Games |
 | 子分类 | Simulation / Strategy |
 | 价格 | Free（包含可选消耗型内购） |
