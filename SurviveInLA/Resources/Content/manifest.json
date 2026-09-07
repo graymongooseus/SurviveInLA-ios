@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "2026.09.06.2",
+  "localeFile": "localisation/zh-Hans.json",
+  "locationFiles": [
+    "events/locations/market.json",
+    "events/locations/health.json",
+    "events/locations/money.json"
+  ],
+  "worldFiles": [
+    "events/world/economy.json"
+  ],
+  "lifeChoiceFiles": [
+    "events/life-choices/choices.json"
+  ],
+  "worldSchedule": {
+    "firstWeek": 5,
+    "intervalWeeks": 4,
+    "occurrenceChance": 1,
+    "luckScale": 3
+  },
+  "lifeChoiceStages": [
+    {
+      "id": 1,
+      "firstWeek": 8,
+      "lastWeek": 12
+    },
+    {
+      "id": 2,
+      "firstWeek": 18,
+      "lastWeek": 25
+    },
+    {
+      "id": 3,
+      "firstWeek": 31,
+      "lastWeek": 38
+    },
+    {
+      "id": 4,
+      "firstWeek": 44,
+      "lastWeek": 51
+    }
+  ],
+  "investmentEventFiles": [
+    "events/npcs/ff-investment.json"
+  ]
+}

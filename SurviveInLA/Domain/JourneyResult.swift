@@ -7,6 +7,11 @@ struct JourneyStatistics: Codable, Sendable {
     var healthRecovered = 0
     var treatmentSpending = 0
     var visitedDistricts: Set<District.ID>
+    var housingSpending: Int? = nil
+    var vehicleSpending: Int? = nil
+    var drivingIncome: Int? = nil
+    var keyChoices: [String]? = nil
+    var dreamInvestmentSpending: Int? = nil
 }
 
 struct JourneySettlement: Codable, Sendable {
@@ -49,7 +54,8 @@ struct JourneyRecord: Identifiable, Codable, Sendable {
 }
 
 extension GameSession {
-    var isDeported: Bool { settlement != nil && health > 0 }
+    var isDeported: Bool { settlement != nil && health > 0 && rootedEnding != true }
+    var isRootedInLosAngeles: Bool { rootedEnding == true && health > 0 }
     var netGain: Int? { journey.map { netWorth - $0.startingNetWorth } }
     var historicalEvents: [GameLogEntry] {
         log.filter { $0.eventID != nil }.sorted { $0.day < $1.day }
@@ -57,6 +63,7 @@ extension GameSession {
     var experienceCount: Int { Set(historicalEvents.compactMap(\.eventID)).count }
 
     var homecomingTitle: String {
+        if isRootedInLosAngeles { return "你在洛杉矶扎下了根" }
         if health <= 0 { return "先把自己找回来" }
         if netWorth <= 0 { return "行李很轻，日子还重" }
         if health < 40 { return "本钱有了，身体要慢慢还" }
@@ -66,6 +73,9 @@ extension GameSession {
     }
 
     var homecomingStory: String {
+        if isRootedInLosAngeles {
+            return "第五十二周结束时，门外没有 ICE，也没有那张飞往广州的单程票。你付过房租、考到驾照、解决了车、置办了吃饭的工具，也终于把钱投进一处真正属于未来的物业。\n\n这一年没有把你变成传奇，却让你从一个随时可能被城市推走的人，变成了一个在这里有工作、有资产、有明天的人。\n\n洛杉矶没有第五十三周，但你的生活有。"
+        }
         if health <= 0 {
             return "你终于倒在了一个再普通不过的日子里。手机还亮着，下一笔生意却已经和你无关。洛杉矶的这一程提前结束；账上的数字留在这里，身体没能陪你走到第五十二周。若人生还有下一次开局，记得给自己留一点喘息的时间。"
         }

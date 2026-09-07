@@ -1,0 +1,406 @@
+[
+  {
+    "affectedCommodityID": "camera",
+    "cashDelta": 0,
+    "districtIDs": [
+      "hollywood",
+      "culverCity"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "studio-camera-rush",
+    "kind": "opportunity",
+    "marketPriceMultiplier": 1.9,
+    "reputationDelta": 0,
+    "titleKey": "event.studio-camera-rush.title",
+    "messageKey": "event.studio-camera-rush.message"
+  },
+  {
+    "affectedCommodityID": "camera",
+    "cashDelta": 0,
+    "districtIDs": [
+      "culverCity",
+      "pasadenaRoseBowl",
+      "santaMonica"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "camera-estate-sale",
+    "kind": "setback",
+    "marketPriceMultiplier": 0.55,
+    "reputationDelta": 0,
+    "titleKey": "event.camera-estate-sale.title",
+    "messageKey": "event.camera-estate-sale.message"
+  },
+  {
+    "affectedCommodityID": "concertTickets",
+    "cashDelta": 0,
+    "districtIDs": [
+      "hollywood",
+      "inglewood"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "headline-ticket-rush",
+    "kind": "opportunity",
+    "marketPriceMultiplier": 2.4,
+    "reputationDelta": 0,
+    "titleKey": "event.headline-ticket-rush.title",
+    "messageKey": "event.headline-ticket-rush.message"
+  },
+  {
+    "affectedCommodityID": "concertTickets",
+    "cashDelta": 0,
+    "districtIDs": [
+      "hollywood",
+      "inglewood"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "extra-show-added",
+    "kind": "setback",
+    "marketPriceMultiplier": 0.45,
+    "reputationDelta": 0,
+    "titleKey": "event.extra-show-added.title",
+    "messageKey": "event.extra-show-added.message"
+  },
+  {
+    "affectedCommodityID": "vinyl",
+    "cashDelta": 0,
+    "districtIDs": [
+      "hollywood",
+      "pasadenaRoseBowl"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "vinyl-pop-up",
+    "kind": "opportunity",
+    "marketPriceMultiplier": 1.85,
+    "reputationDelta": 0,
+    "titleKey": "event.vinyl-pop-up.title",
+    "messageKey": "event.vinyl-pop-up.message"
+  },
+  {
+    "affectedCommodityID": "vinyl",
+    "cashDelta": 0,
+    "districtIDs": [
+      "hollywood",
+      "pasadenaRoseBowl"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "vinyl-reissue",
+    "kind": "setback",
+    "marketPriceMultiplier": 0.55,
+    "reputationDelta": 0,
+    "titleKey": "event.vinyl-reissue.title",
+    "messageKey": "event.vinyl-reissue.message"
+  },
+  {
+    "affectedCommodityID": "vintageJacket",
+    "cashDelta": 0,
+    "districtIDs": [
+      "pasadenaRoseBowl",
+      "hollywood",
+      "venice"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "vintage-stylist-rush",
+    "kind": "opportunity",
+    "marketPriceMultiplier": 2.05,
+    "reputationDelta": 0,
+    "titleKey": "event.vintage-stylist-rush.title",
+    "messageKey": "event.vintage-stylist-rush.message"
+  },
+  {
+    "affectedCommodityID": "vintageJacket",
+    "cashDelta": 0,
+    "districtIDs": [
+      "pasadenaRoseBowl",
+      "dingPangZiPlaza"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "vintage-rack-sale",
+    "kind": "setback",
+    "marketPriceMultiplier": 0.5,
+    "reputationDelta": 0,
+    "titleKey": "event.vintage-rack-sale.title",
+    "messageKey": "event.vintage-rack-sale.message"
+  },
+  {
+    "affectedCommodityID": "beautySet",
+    "cashDelta": 0,
+    "districtIDs": [
+      "koreatown",
+      "santaMonica",
+      "irvine",
+      "dingPangZiPlaza"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "beauty-viral",
+    "kind": "opportunity",
+    "marketPriceMultiplier": 2,
+    "reputationDelta": 0,
+    "titleKey": "event.beauty-viral.title",
+    "messageKey": "event.beauty-viral.message"
+  },
+  {
+    "affectedCommodityID": "beautySet",
+    "cashDelta": 0,
+    "districtIDs": [
+      "koreatown",
+      "dingPangZiPlaza",
+      "littleSaigon"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "beauty-overstock",
+    "kind": "setback",
+    "marketPriceMultiplier": 0.5,
+    "reputationDelta": 0,
+    "titleKey": "event.beauty-overstock.title",
+    "messageKey": "event.beauty-overstock.message"
+  },
+  {
+    "affectedCommodityID": "importedSnacks",
+    "cashDelta": 0,
+    "districtIDs": [
+      "westwood",
+      "koreatown",
+      "figueroaCorridor",
+      "irvine"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "campus-snack-rush",
+    "kind": "opportunity",
+    "marketPriceMultiplier": 1.75,
+    "reputationDelta": 0,
+    "titleKey": "event.campus-snack-rush.title",
+    "messageKey": "event.campus-snack-rush.message"
+  },
+  {
+    "cashDelta": 0,
+    "districtIDs": [
+      "figueroaCorridor"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "figueroa-vice-sweep",
+    "kind": "opportunity",
+    "reputationDelta": 0,
+    "triggerChance": 0.3,
+    "workIncomeMultiplier": 2,
+    "titleKey": "event.figueroa-vice-sweep.title",
+    "messageKey": "event.figueroa-vice-sweep.message"
+  },
+  {
+    "affectedCommodityID": "importedSnacks",
+    "cashDelta": 0,
+    "districtIDs": [
+      "figueroaCorridor",
+      "koreatown",
+      "westwood",
+      "sanGabriel",
+      "littleSaigon"
+    ],
+    "grantedQuantity": 6,
+    "group": "market",
+    "healthDelta": 0,
+    "id": "community-leftovers",
+    "kind": "opportunity",
+    "luckDelta": 1,
+    "reputationDelta": 0,
+    "titleKey": "event.community-leftovers.title",
+    "messageKey": "event.community-leftovers.message"
+  },
+  {
+    "affectedCommodityID": "gameConsole",
+    "cashDelta": 0,
+    "districtIDs": [
+      "culverCity",
+      "westwood"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "console-shortage",
+    "kind": "opportunity",
+    "marketPriceMultiplier": 2.1,
+    "reputationDelta": 0,
+    "titleKey": "event.console-shortage.title",
+    "messageKey": "event.console-shortage.message"
+  },
+  {
+    "affectedCommodityID": "gameConsole",
+    "cashDelta": 0,
+    "districtIDs": [
+      "culverCity",
+      "westwood"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "console-refresh",
+    "kind": "setback",
+    "marketPriceMultiplier": 0.55,
+    "reputationDelta": 0,
+    "titleKey": "event.console-refresh.title",
+    "messageKey": "event.console-refresh.message"
+  },
+  {
+    "affectedCommodityID": "sneakers",
+    "cashDelta": 0,
+    "districtIDs": [
+      "inglewood",
+      "venice",
+      "santaMonica"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "sneaker-game-day",
+    "kind": "opportunity",
+    "marketPriceMultiplier": 2.15,
+    "reputationDelta": 0,
+    "titleKey": "event.sneaker-game-day.title",
+    "messageKey": "event.sneaker-game-day.message"
+  },
+  {
+    "affectedCommodityID": "sneakers",
+    "cashDelta": 0,
+    "districtIDs": [
+      "figueroaCorridor",
+      "venice",
+      "rowlandHeights"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "sneaker-restock",
+    "kind": "setback",
+    "marketPriceMultiplier": 0.55,
+    "reputationDelta": 0,
+    "titleKey": "event.sneaker-restock.title",
+    "messageKey": "event.sneaker-restock.message"
+  },
+  {
+    "affectedCommodityID": "usedTesla",
+    "cashDelta": 0,
+    "districtIDs": [
+      "santaMonica",
+      "culverCity",
+      "inglewood",
+      "irvine"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "used-ev-demand",
+    "kind": "opportunity",
+    "marketPriceMultiplier": 1.45,
+    "reputationDelta": 0,
+    "titleKey": "event.used-ev-demand.title",
+    "messageKey": "event.used-ev-demand.message"
+  },
+  {
+    "affectedCommodityID": "smuggledVape",
+    "cashDelta": 0,
+    "group": "market",
+    "healthDelta": 0,
+    "id": "vape-enforcement",
+    "kind": "opportunity",
+    "marketPriceMultiplier": 2.5,
+    "reputationDelta": 0,
+    "titleKey": "event.vape-enforcement.title",
+    "messageKey": "event.vape-enforcement.message"
+  },
+  {
+    "affectedCommodityID": "importedSnacks",
+    "cashDelta": 0,
+    "districtIDs": [
+      "dingPangZiPlaza"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "ding-pang-zi-gift-box-rush",
+    "kind": "opportunity",
+    "marketPriceMultiplier": 1.85,
+    "reputationDelta": 0,
+    "titleKey": "event.ding-pang-zi-gift-box-rush.title",
+    "messageKey": "event.ding-pang-zi-gift-box-rush.message"
+  },
+  {
+    "affectedCommodityID": "beautySet",
+    "cashDelta": 0,
+    "districtIDs": [
+      "sanGabriel"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "san-gabriel-wedding-beauty-rush",
+    "kind": "opportunity",
+    "marketPriceMultiplier": 1.8,
+    "reputationDelta": 0,
+    "titleKey": "event.san-gabriel-wedding-beauty-rush.title",
+    "messageKey": "event.san-gabriel-wedding-beauty-rush.message"
+  },
+  {
+    "affectedCommodityID": "sneakers",
+    "cashDelta": 0,
+    "districtIDs": [
+      "rowlandHeights"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "rowland-colima-sneakers",
+    "kind": "opportunity",
+    "marketPriceMultiplier": 1.95,
+    "reputationDelta": 0,
+    "titleKey": "event.rowland-colima-sneakers.title",
+    "messageKey": "event.rowland-colima-sneakers.message"
+  },
+  {
+    "affectedCommodityID": "importedSnacks",
+    "cashDelta": 0,
+    "districtIDs": [
+      "cityOfIndustry"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "industry-container-clearance",
+    "kind": "setback",
+    "marketPriceMultiplier": 0.55,
+    "reputationDelta": 0,
+    "titleKey": "event.industry-container-clearance.title",
+    "messageKey": "event.industry-container-clearance.message"
+  },
+  {
+    "affectedCommodityID": "usedTesla",
+    "cashDelta": 0,
+    "districtIDs": [
+      "irvine"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "irvine-tech-ev-turnover",
+    "kind": "setback",
+    "marketPriceMultiplier": 0.68,
+    "reputationDelta": 0,
+    "titleKey": "event.irvine-tech-ev-turnover.title",
+    "messageKey": "event.irvine-tech-ev-turnover.message"
+  },
+  {
+    "affectedCommodityID": "importedSnacks",
+    "cashDelta": 0,
+    "districtIDs": [
+      "littleSaigon"
+    ],
+    "group": "market",
+    "healthDelta": 0,
+    "id": "little-saigon-tet-gift-rush",
+    "kind": "opportunity",
+    "marketPriceMultiplier": 1.9,
+    "reputationDelta": 0,
+    "titleKey": "event.little-saigon-tet-gift-rush.title",
+    "messageKey": "event.little-saigon-tet-gift-rush.message"
+  }
+]

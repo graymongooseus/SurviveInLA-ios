@@ -1,0 +1,33 @@
+[
+  {
+    "id": "jia-ff-night-market",
+    "sourceNPCID": "jia-yueting",
+    "districtID": "rowlandHeights",
+    "encounterChance": 0.25,
+    "minimumInvestment": 1,
+    "delayTurns": 10,
+    "profitChance": 0.85,
+    "profitPercent": 50,
+    "lossPercent": 40,
+    "invitation": {
+      "titleKey": "event.jia-ff-night-market.invitation.title",
+      "messageKey": "event.jia-ff-night-market.invitation.message"
+    },
+    "accepted": {
+      "titleKey": "event.jia-ff-night-market.accepted.title",
+      "messageKey": "event.jia-ff-night-market.accepted.message"
+    },
+    "declined": {
+      "titleKey": "event.jia-ff-night-market.declined.title",
+      "messageKey": "event.jia-ff-night-market.declined.message"
+    },
+    "profit": {
+      "titleKey": "event.jia-ff-night-market.profit.title",
+      "messageKey": "event.jia-ff-night-market.profit.message"
+    },
+    "loss": {
+      "titleKey": "event.jia-ff-night-market.loss.title",
+      "messageKey": "event.jia-ff-night-market.loss.message"
+    }
+  }
+]

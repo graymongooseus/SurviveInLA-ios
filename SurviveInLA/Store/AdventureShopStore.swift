@@ -5,6 +5,7 @@ import StoreKit
 enum AdventurePurchaseError: LocalizedError {
     case productUnavailable
     case failedVerification
+    case noActiveSession
 
     var errorDescription: String? {
         switch self {
@@ -12,6 +13,8 @@ enum AdventurePurchaseError: LocalizedError {
             "这个奇遇暂时无法购买，请稍后再试。"
         case .failedVerification:
             "交易验证失败，没有发放游戏奖励。请稍后重试或联系支持。"
+        case .noActiveSession:
+            "请先开始一局游戏，再购买奇遇。未完成的 App Store 交易会在下一局开始后自动补发。"
         }
     }
 }
@@ -19,12 +22,24 @@ enum AdventurePurchaseError: LocalizedError {
 @MainActor
 @Observable
 final class AdventureShopStore {
+    @ObservationIgnored
+    private var directGrantSequence = UInt64(Date.now.timeIntervalSince1970 * 1_000_000)
+
     private(set) var products: [String: Product] = [:]
     private(set) var isLoading = false
     private(set) var purchasingProductID: String?
     var notice: UserNotice?
 
+    var usesDirectGrantMode: Bool {
+#if DEBUG
+        ProcessInfo.processInfo.environment["SURVIVE_IN_LA_USE_STOREKIT"] != "1"
+#else
+        false
+#endif
+    }
+
     func loadProducts() async {
+        guard !usesDirectGrantMode else { return }
         guard products.isEmpty, !isLoading else { return }
         isLoading = true
         defer { isLoading = false }
@@ -48,6 +63,14 @@ final class AdventureShopStore {
         purchasingProductID = adventure.rawValue
         defer { purchasingProductID = nil }
 
+        if usesDirectGrantMode {
+            directGrantSequence &+= 1
+            if !grant(adventure, directGrantSequence) {
+                notice = UserNotice(title: "暂时无法充值", message: AdventurePurchaseError.noActiveSession.localizedDescription)
+            }
+            return
+        }
+
         do {
             guard let product = products[adventure.rawValue] else {
                 throw AdventurePurchaseError.productUnavailable
@@ -56,7 +79,10 @@ final class AdventureShopStore {
             switch try await product.purchase() {
             case .success(let verification):
                 let transaction = try verified(verification)
-                if grant(adventure, transaction.id) { await transaction.finish() }
+                guard grant(adventure, transaction.id) else {
+                    throw AdventurePurchaseError.noActiveSession
+                }
+                await transaction.finish()
             case .pending:
                 notice = UserNotice(
                     title: "等待确认",
@@ -75,15 +101,8 @@ final class AdventureShopStore {
     func listenForTransactions(
         grant: @escaping @MainActor (AdventureProduct, UInt64) -> Bool
     ) async {
-        // A purchase approved after an ending is delivered to the next active run.
-        for await update in Transaction.unfinished {
-            guard !Task.isCancelled else { return }
-            if let transaction = try? verified(update),
-               let adventure = AdventureProduct(rawValue: transaction.productID),
-               grant(adventure, transaction.id) {
-                await transaction.finish()
-            }
-        }
+        guard !usesDirectGrantMode else { return }
+
         for await update in Transaction.updates {
             guard !Task.isCancelled else { return }
 
@@ -92,7 +111,14 @@ final class AdventureShopStore {
                 guard let adventure = AdventureProduct(rawValue: transaction.productID) else {
                     continue
                 }
-                if grant(adventure, transaction.id) { await transaction.finish() }
+                if grant(adventure, transaction.id) {
+                    await transaction.finish()
+                } else {
+                    notice = UserNotice(
+                        title: "奇遇等待发放",
+                        message: AdventurePurchaseError.noActiveSession.localizedDescription
+                    )
+                }
             } catch {
                 notice = UserNotice(title: "交易验证失败", message: error.localizedDescription)
             }
@@ -100,11 +126,16 @@ final class AdventureShopStore {
     }
 
     func syncPurchases() async {
+        guard !usesDirectGrantMode else {
+            notice = UserNotice(title: "正在使用测试模式", message: "点击商品会直接发放剧情和游戏存款，不会连接 App Store。")
+            return
+        }
+
         do {
             try await AppStore.sync()
             notice = UserNotice(
                 title: "交易已同步",
-                message: "已向 App Store 请求同步。消耗型奇遇在发放后不会重复恢复。"
+                message: "已向 App Store 请求同步。已发放的消耗型奇遇不会重复恢复。"
             )
         } catch {
             notice = UserNotice(title: "同步失败", message: error.localizedDescription)

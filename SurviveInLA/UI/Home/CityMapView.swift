@@ -3,6 +3,7 @@ import SwiftUI
 
 struct CityMapView: View {
     @Bindable var store: GameStore
+    let onSelectDistrict: () -> Void
     @State private var visibleRegion: MKCoordinateRegion?
     @State private var cameraPosition: MapCameraPosition = .region(
         MKCoordinateRegion(
@@ -28,9 +29,10 @@ struct CityMapView: View {
                 let district = presentation.district
                 Annotation(district.name, coordinate: district.coordinate, anchor: .bottom) {
                     Button {
-                        guard store.selectedAction == .trading else { return }
                         withAnimation(.snappy) {
+                            store.selectedAction = .trading
                             store.select(district.id)
+                            onSelectDistrict()
                         }
                     } label: {
                         DistrictMarker(

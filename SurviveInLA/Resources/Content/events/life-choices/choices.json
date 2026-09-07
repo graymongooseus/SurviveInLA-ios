@@ -1,0 +1,386 @@
+[
+  {
+    "id": "landing-coworker",
+    "options": [
+      {
+        "cashDelta": 0,
+        "healthDelta": -4,
+        "id": "landing-coworker-0",
+        "luckDelta": 4,
+        "titleKey": "event.landing-coworker.option.landing-coworker-0.title",
+        "resultKey": "event.landing-coworker.option.landing-coworker-0.result"
+      },
+      {
+        "cashDelta": 0,
+        "healthDelta": -2,
+        "id": "landing-coworker-1",
+        "luckDelta": 2,
+        "titleKey": "event.landing-coworker.option.landing-coworker-1.title",
+        "resultKey": "event.landing-coworker.option.landing-coworker-1.result"
+      },
+      {
+        "cashDelta": 0,
+        "healthDelta": 0,
+        "id": "landing-coworker-2",
+        "luckDelta": -4,
+        "titleKey": "event.landing-coworker.option.landing-coworker-2.title",
+        "resultKey": "event.landing-coworker.option.landing-coworker-2.result"
+      }
+    ],
+    "stage": 1,
+    "titleKey": "event.landing-coworker.title",
+    "storyKey": "event.landing-coworker.story"
+  },
+  {
+    "id": "landing-last-meal",
+    "options": [
+      {
+        "cashDelta": 0,
+        "healthDelta": 1,
+        "id": "landing-last-meal-0",
+        "luckDelta": 5,
+        "titleKey": "event.landing-last-meal.option.landing-last-meal-0.title",
+        "resultKey": "event.landing-last-meal.option.landing-last-meal-0.result"
+      },
+      {
+        "cashDelta": 0,
+        "healthDelta": 3,
+        "id": "landing-last-meal-1",
+        "luckDelta": 0,
+        "titleKey": "event.landing-last-meal.option.landing-last-meal-1.title",
+        "resultKey": "event.landing-last-meal.option.landing-last-meal-1.result"
+      },
+      {
+        "cashDelta": 45,
+        "healthDelta": 0,
+        "id": "landing-last-meal-2",
+        "luckDelta": -5,
+        "titleKey": "event.landing-last-meal.option.landing-last-meal-2.title",
+        "resultKey": "event.landing-last-meal.option.landing-last-meal-2.result"
+      }
+    ],
+    "stage": 1,
+    "titleKey": "event.landing-last-meal.title",
+    "storyKey": "event.landing-last-meal.story"
+  },
+  {
+    "id": "landing-wallet",
+    "options": [
+      {
+        "cashDelta": 0,
+        "healthDelta": 2,
+        "id": "landing-wallet-0",
+        "luckDelta": 6,
+        "titleKey": "event.landing-wallet.option.landing-wallet-0.title",
+        "resultKey": "event.landing-wallet.option.landing-wallet-0.result"
+      },
+      {
+        "cashDelta": 120,
+        "healthDelta": 0,
+        "id": "landing-wallet-1",
+        "luckDelta": -7,
+        "titleKey": "event.landing-wallet.option.landing-wallet-1.title",
+        "resultKey": "event.landing-wallet.option.landing-wallet-1.result"
+      },
+      {
+        "cashDelta": 0,
+        "healthDelta": 0,
+        "id": "landing-wallet-2",
+        "luckDelta": 0,
+        "titleKey": "event.landing-wallet.option.landing-wallet-2.title",
+        "resultKey": "event.landing-wallet.option.landing-wallet-2.result"
+      }
+    ],
+    "stage": 1,
+    "titleKey": "event.landing-wallet.title",
+    "storyKey": "event.landing-wallet.story"
+  },
+  {
+    "id": "steady-wage",
+    "options": [
+      {
+        "cashDelta": 90,
+        "healthDelta": -1,
+        "id": "steady-wage-0",
+        "luckDelta": 2,
+        "titleKey": "event.steady-wage.option.steady-wage-0.title",
+        "resultKey": "event.steady-wage.option.steady-wage-0.result"
+      },
+      {
+        "cashDelta": 0,
+        "healthDelta": -3,
+        "id": "steady-wage-1",
+        "luckDelta": 0,
+        "titleKey": "event.steady-wage.option.steady-wage-1.title",
+        "resultKey": "event.steady-wage.option.steady-wage-1.result"
+      },
+      {
+        "cashDelta": 130,
+        "healthDelta": 0,
+        "id": "steady-wage-2",
+        "luckDelta": -5,
+        "titleKey": "event.steady-wage.option.steady-wage-2.title",
+        "resultKey": "event.steady-wage.option.steady-wage-2.result"
+      }
+    ],
+    "stage": 2,
+    "titleKey": "event.steady-wage.title",
+    "storyKey": "event.steady-wage.story"
+  },
+  {
+    "id": "steady-reference",
+    "options": [
+      {
+        "cashDelta": 0,
+        "healthDelta": -2,
+        "id": "steady-reference-0",
+        "luckDelta": 5,
+        "titleKey": "event.steady-reference.option.steady-reference-0.title",
+        "resultKey": "event.steady-reference.option.steady-reference-0.result"
+      },
+      {
+        "cashDelta": 0,
+        "healthDelta": 0,
+        "id": "steady-reference-1",
+        "luckDelta": 0,
+        "titleKey": "event.steady-reference.option.steady-reference-1.title",
+        "resultKey": "event.steady-reference.option.steady-reference-1.result"
+      },
+      {
+        "cashDelta": 180,
+        "healthDelta": 0,
+        "id": "steady-reference-2",
+        "luckDelta": -7,
+        "titleKey": "event.steady-reference.option.steady-reference-2.title",
+        "resultKey": "event.steady-reference.option.steady-reference-2.result"
+      }
+    ],
+    "stage": 2,
+    "titleKey": "event.steady-reference.title",
+    "storyKey": "event.steady-reference.story"
+  },
+  {
+    "id": "steady-sick-shift",
+    "options": [
+      {
+        "cashDelta": -80,
+        "healthDelta": 7,
+        "id": "steady-sick-shift-0",
+        "luckDelta": 0,
+        "titleKey": "event.steady-sick-shift.option.steady-sick-shift-0.title",
+        "resultKey": "event.steady-sick-shift.option.steady-sick-shift-0.result"
+      },
+      {
+        "cashDelta": 100,
+        "healthDelta": -6,
+        "id": "steady-sick-shift-1",
+        "luckDelta": 1,
+        "titleKey": "event.steady-sick-shift.option.steady-sick-shift-1.title",
+        "resultKey": "event.steady-sick-shift.option.steady-sick-shift-1.result"
+      },
+      {
+        "cashDelta": 180,
+        "healthDelta": -9,
+        "id": "steady-sick-shift-2",
+        "luckDelta": -6,
+        "titleKey": "event.steady-sick-shift.option.steady-sick-shift-2.title",
+        "resultKey": "event.steady-sick-shift.option.steady-sick-shift-2.result"
+      }
+    ],
+    "stage": 2,
+    "titleKey": "event.steady-sick-shift.title",
+    "storyKey": "event.steady-sick-shift.story"
+  },
+  {
+    "id": "temptation-inside",
+    "options": [
+      {
+        "cashDelta": 0,
+        "healthDelta": -1,
+        "id": "temptation-inside-0",
+        "luckDelta": 5,
+        "titleKey": "event.temptation-inside.option.temptation-inside-0.title",
+        "resultKey": "event.temptation-inside.option.temptation-inside-0.result"
+      },
+      {
+        "cashDelta": 120,
+        "healthDelta": -2,
+        "id": "temptation-inside-1",
+        "luckDelta": 0,
+        "titleKey": "event.temptation-inside.option.temptation-inside-1.title",
+        "resultKey": "event.temptation-inside.option.temptation-inside-1.result"
+      },
+      {
+        "cashDelta": 360,
+        "healthDelta": 0,
+        "id": "temptation-inside-2",
+        "luckDelta": -8,
+        "titleKey": "event.temptation-inside.option.temptation-inside-2.title",
+        "resultKey": "event.temptation-inside.option.temptation-inside-2.result"
+      }
+    ],
+    "stage": 3,
+    "titleKey": "event.temptation-inside.title",
+    "storyKey": "event.temptation-inside.story"
+  },
+  {
+    "id": "temptation-car",
+    "options": [
+      {
+        "cashDelta": -35,
+        "healthDelta": -2,
+        "id": "temptation-car-0",
+        "luckDelta": 5,
+        "titleKey": "event.temptation-car.option.temptation-car-0.title",
+        "resultKey": "event.temptation-car.option.temptation-car-0.result"
+      },
+      {
+        "cashDelta": 0,
+        "healthDelta": 0,
+        "id": "temptation-car-1",
+        "luckDelta": 0,
+        "titleKey": "event.temptation-car.option.temptation-car-1.title",
+        "resultKey": "event.temptation-car.option.temptation-car-1.result"
+      },
+      {
+        "cashDelta": 160,
+        "healthDelta": 0,
+        "id": "temptation-car-2",
+        "luckDelta": -5,
+        "titleKey": "event.temptation-car.option.temptation-car-2.title",
+        "resultKey": "event.temptation-car.option.temptation-car-2.result"
+      }
+    ],
+    "stage": 3,
+    "titleKey": "event.temptation-car.title",
+    "storyKey": "event.temptation-car.story"
+  },
+  {
+    "id": "temptation-cash",
+    "options": [
+      {
+        "cashDelta": 0,
+        "healthDelta": 0,
+        "id": "temptation-cash-0",
+        "luckDelta": 5,
+        "titleKey": "event.temptation-cash.option.temptation-cash-0.title",
+        "resultKey": "event.temptation-cash.option.temptation-cash-0.result"
+      },
+      {
+        "cashDelta": 90,
+        "healthDelta": 0,
+        "id": "temptation-cash-1",
+        "luckDelta": -3,
+        "titleKey": "event.temptation-cash.option.temptation-cash-1.title",
+        "resultKey": "event.temptation-cash.option.temptation-cash-1.result"
+      },
+      {
+        "cashDelta": 90,
+        "healthDelta": 0,
+        "id": "temptation-cash-2",
+        "luckDelta": -6,
+        "titleKey": "event.temptation-cash.option.temptation-cash-2.title",
+        "resultKey": "event.temptation-cash.option.temptation-cash-2.result"
+      }
+    ],
+    "stage": 3,
+    "titleKey": "event.temptation-cash.title",
+    "storyKey": "event.temptation-cash.story"
+  },
+  {
+    "id": "reflection-promise",
+    "options": [
+      {
+        "cashDelta": -240,
+        "healthDelta": 2,
+        "id": "reflection-promise-0",
+        "luckDelta": 7,
+        "titleKey": "event.reflection-promise.option.reflection-promise-0.title",
+        "resultKey": "event.reflection-promise.option.reflection-promise-0.result"
+      },
+      {
+        "cashDelta": 0,
+        "healthDelta": -1,
+        "id": "reflection-promise-1",
+        "luckDelta": 2,
+        "titleKey": "event.reflection-promise.option.reflection-promise-1.title",
+        "resultKey": "event.reflection-promise.option.reflection-promise-1.result"
+      },
+      {
+        "cashDelta": 0,
+        "healthDelta": 0,
+        "id": "reflection-promise-2",
+        "luckDelta": -8,
+        "titleKey": "event.reflection-promise.option.reflection-promise-2.title",
+        "resultKey": "event.reflection-promise.option.reflection-promise-2.result"
+      }
+    ],
+    "stage": 4,
+    "titleKey": "event.reflection-promise.title",
+    "storyKey": "event.reflection-promise.story"
+  },
+  {
+    "id": "reflection-newcomer",
+    "options": [
+      {
+        "cashDelta": 0,
+        "healthDelta": -1,
+        "id": "reflection-newcomer-0",
+        "luckDelta": 6,
+        "titleKey": "event.reflection-newcomer.option.reflection-newcomer-0.title",
+        "resultKey": "event.reflection-newcomer.option.reflection-newcomer-0.result"
+      },
+      {
+        "cashDelta": -45,
+        "healthDelta": 2,
+        "id": "reflection-newcomer-1",
+        "luckDelta": 4,
+        "titleKey": "event.reflection-newcomer.option.reflection-newcomer-1.title",
+        "resultKey": "event.reflection-newcomer.option.reflection-newcomer-1.result"
+      },
+      {
+        "cashDelta": 150,
+        "healthDelta": 0,
+        "id": "reflection-newcomer-2",
+        "luckDelta": -7,
+        "titleKey": "event.reflection-newcomer.option.reflection-newcomer-2.title",
+        "resultKey": "event.reflection-newcomer.option.reflection-newcomer-2.result"
+      }
+    ],
+    "stage": 4,
+    "titleKey": "event.reflection-newcomer.title",
+    "storyKey": "event.reflection-newcomer.story"
+  },
+  {
+    "id": "reflection-call-home",
+    "options": [
+      {
+        "cashDelta": 0,
+        "healthDelta": 3,
+        "id": "reflection-call-home-0",
+        "luckDelta": 5,
+        "titleKey": "event.reflection-call-home.option.reflection-call-home-0.title",
+        "resultKey": "event.reflection-call-home.option.reflection-call-home-0.result"
+      },
+      {
+        "cashDelta": 0,
+        "healthDelta": 1,
+        "id": "reflection-call-home-1",
+        "luckDelta": 1,
+        "titleKey": "event.reflection-call-home.option.reflection-call-home-1.title",
+        "resultKey": "event.reflection-call-home.option.reflection-call-home-1.result"
+      },
+      {
+        "cashDelta": 0,
+        "healthDelta": -2,
+        "id": "reflection-call-home-2",
+        "luckDelta": -2,
+        "titleKey": "event.reflection-call-home.option.reflection-call-home-2.title",
+        "resultKey": "event.reflection-call-home.option.reflection-call-home-2.result"
+      }
+    ],
+    "stage": 4,
+    "titleKey": "event.reflection-call-home.title",
+    "storyKey": "event.reflection-call-home.story"
+  }
+]

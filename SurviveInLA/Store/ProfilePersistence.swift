@@ -13,26 +13,29 @@ enum ProfileID: Int, CaseIterable, Codable, Identifiable, Sendable {
 }
 
 struct GameSnapshot: Codable, Sendable {
-    static let currentVersion = 1
+    static let currentVersion = 4
 
     let version: Int
     let profileID: ProfileID
     let session: GameSession
     let randomCheckpoint: UInt64
     let updatedAt: Date
+    let contentVersion: String?
 
     init(
         version: Int = Self.currentVersion,
         profileID: ProfileID,
         session: GameSession,
         randomCheckpoint: UInt64,
-        updatedAt: Date = .now
+        updatedAt: Date = .now,
+        contentVersion: String? = EventContentCatalog.bundled.manifest.contentVersion
     ) {
         self.version = version
         self.profileID = profileID
         self.session = session
         self.randomCheckpoint = randomCheckpoint
         self.updatedAt = updatedAt
+        self.contentVersion = contentVersion
     }
 }
 
@@ -171,7 +174,11 @@ struct ProfileRepository: Sendable {
     }
 
     private func loadICloudRecord(_ profileID: ProfileID) throws -> CloudProfileRecord? {
-        guard let data = NSUbiquitousKeyValueStore.default.data(forKey: cloudKey(for: profileID)) else {
+        let store = NSUbiquitousKeyValueStore.default
+        guard let data = store.data(forKey: cloudKey(for: profileID))
+                ?? store.data(forKey: "profile-\(profileID.rawValue)-v3")
+                ?? store.data(forKey: "profile-\(profileID.rawValue)-v2")
+                ?? store.data(forKey: "profile-\(profileID.rawValue)-v1") else {
             return nil
         }
 
@@ -181,20 +188,35 @@ struct ProfileRepository: Sendable {
     }
 
     private func migrated(_ snapshot: GameSnapshot) throws -> GameSnapshot {
-        guard snapshot.version == GameSnapshot.currentVersion else {
+        guard (1 ... GameSnapshot.currentVersion).contains(snapshot.version) else {
             throw ProfilePersistenceError.unsupportedVersion(snapshot.version)
         }
-        guard snapshot.session.totalDays == 40 else { return snapshot }
 
         var migratedSession = snapshot.session
-        migratedSession.totalDays = 52
-        migratedSession.actionThisWeek = nil
+        if migratedSession.totalDays == 40 {
+            migratedSession.totalDays = 52
+            migratedSession.resetWeeklyActions()
+        }
+        if migratedSession.luck == nil { migratedSession.luck = 50 }
+        if migratedSession.equipment == nil { migratedSession.equipment = LifeEquipment() }
+        if migratedSession.resolvedLifeChoiceIDs == nil { migratedSession.resolvedLifeChoiceIDs = [] }
+        if snapshot.version < 3 {
+            migratedSession.activeWorldEvents = migratedSession.activeWorldEvents.map { active in
+                var frozen = active
+                frozen.modifiers = active.modifiers ?? WorldEventCatalog.event(active.eventID)?.modifiers
+                return frozen
+            }
+            migratedSession.lastWorldEventDrawWeek = migratedSession.latestWorldEventWeek
+        }
         return GameSnapshot(
-            version: snapshot.version,
+            version: GameSnapshot.currentVersion,
             profileID: snapshot.profileID,
             session: migratedSession,
             randomCheckpoint: snapshot.randomCheckpoint,
-            updatedAt: snapshot.updatedAt
+            updatedAt: snapshot.updatedAt,
+            contentVersion: snapshot.version < 3
+                ? EventContentCatalog.bundled.manifest.contentVersion
+                : snapshot.contentVersion
         )
     }
 

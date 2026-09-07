@@ -1,0 +1,150 @@
+[
+  {
+    "durationWeeks": 4,
+    "id": "labor-enforcement-wave",
+    "imageName": "WorldLaborEnforcement",
+    "modifiers": {
+      "bankInterest": 1.05,
+      "debtInterest": 0.95,
+      "healthChange": 0.9,
+      "investmentReturn": 0.95,
+      "marketPrice": 1,
+      "tradeIncome": 0.95,
+      "workIncome": 1.2
+    },
+    "titleKey": "event.labor-enforcement-wave.title",
+    "messageKey": "event.labor-enforcement-wave.message",
+    "selection": {
+      "baseWeight": 1,
+      "favorability": "mixed",
+      "strength": 1
+    }
+  },
+  {
+    "durationWeeks": 5,
+    "id": "port-logistics-gridlock",
+    "imageName": "WorldPortGridlock",
+    "modifiers": {
+      "bankInterest": 0.9,
+      "debtInterest": 1.15,
+      "healthChange": 1.2,
+      "investmentReturn": 0.8,
+      "marketPrice": 1,
+      "tradeIncome": 0.78,
+      "workIncome": 1.1
+    },
+    "titleKey": "event.port-logistics-gridlock.title",
+    "messageKey": "event.port-logistics-gridlock.message",
+    "selection": {
+      "baseWeight": 1,
+      "favorability": "unfavorable",
+      "strength": 2
+    }
+  },
+  {
+    "durationWeeks": 6,
+    "id": "southern-california-spending-boom",
+    "imageName": "WorldSpendingBoom",
+    "modifiers": {
+      "bankInterest": 1.1,
+      "debtInterest": 1.1,
+      "healthChange": 0.9,
+      "investmentReturn": 1.2,
+      "marketPrice": 1,
+      "tradeIncome": 1.25,
+      "workIncome": 1.12
+    },
+    "titleKey": "event.southern-california-spending-boom.title",
+    "messageKey": "event.southern-california-spending-boom.message",
+    "selection": {
+      "baseWeight": 1,
+      "favorability": "favorable",
+      "strength": 2
+    }
+  },
+  {
+    "durationWeeks": 8,
+    "id": "rapid-rate-hike",
+    "imageName": "WorldRateHike",
+    "modifiers": {
+      "bankInterest": 1.6,
+      "debtInterest": 1.55,
+      "healthChange": 1.1,
+      "investmentReturn": 0.75,
+      "marketPrice": 1,
+      "tradeIncome": 0.9,
+      "workIncome": 0.95
+    },
+    "titleKey": "event.rapid-rate-hike.title",
+    "messageKey": "event.rapid-rate-hike.message",
+    "selection": {
+      "baseWeight": 1,
+      "favorability": "unfavorable",
+      "strength": 2
+    }
+  },
+  {
+    "durationWeeks": 3,
+    "id": "strait-of-hormuz-crisis",
+    "imageName": "WorldHormuzCrisis",
+    "modifiers": {
+      "bankInterest": 1,
+      "debtInterest": 1,
+      "healthChange": 1,
+      "investmentReturn": 1,
+      "investmentReturnCap": -35,
+      "marketPrice": 1.55,
+      "tradeIncome": 1,
+      "workIncome": 1
+    },
+    "titleKey": "event.strait-of-hormuz-crisis.title",
+    "messageKey": "event.strait-of-hormuz-crisis.message",
+    "selection": {
+      "baseWeight": 1,
+      "favorability": "unfavorable",
+      "strength": 3
+    }
+  },
+  {
+    "durationWeeks": 5,
+    "id": "holiday-economy-surge",
+    "imageName": "WorldHolidaySurge",
+    "modifiers": {
+      "bankInterest": 1.08,
+      "debtInterest": 1.05,
+      "healthChange": 1.1,
+      "investmentReturn": 1.15,
+      "marketPrice": 1,
+      "tradeIncome": 1.3,
+      "workIncome": 1.25
+    },
+    "titleKey": "event.holiday-economy-surge.title",
+    "messageKey": "event.holiday-economy-surge.message",
+    "selection": {
+      "baseWeight": 1,
+      "favorability": "favorable",
+      "strength": 3
+    }
+  },
+  {
+    "durationWeeks": 6,
+    "id": "regional-public-health-crisis",
+    "imageName": "WorldHealthCrisis",
+    "modifiers": {
+      "bankInterest": 0.95,
+      "debtInterest": 1.08,
+      "healthChange": 1.5,
+      "investmentReturn": 0.7,
+      "marketPrice": 1,
+      "tradeIncome": 0.82,
+      "workIncome": 0.72
+    },
+    "titleKey": "event.regional-public-health-crisis.title",
+    "messageKey": "event.regional-public-health-crisis.message",
+    "selection": {
+      "baseWeight": 1,
+      "favorability": "unfavorable",
+      "strength": 3
+    }
+  }
+]
