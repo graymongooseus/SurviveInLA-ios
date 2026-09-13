@@ -30,9 +30,10 @@
   {
     "id": "freeway-gridlock",
     "title": "高速堵死",
-    "message": "事故让通勤时间翻倍，你又累又饿，只能买点东西垫肚子。",
-    "health": -2,
-    "cash": -24
+    "message": "高速堵得水泄不通，聪明的你发现最左侧的 Express Lane 畅通无比，果断驶入，一路飙车。最终，你收获了一张 250 美元的罚单。",
+    "health": 0,
+    "cash": -250,
+    "group": "money"
   },
   {
     "id": "hillside-dehydration",

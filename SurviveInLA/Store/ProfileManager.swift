@@ -15,6 +15,7 @@ enum ICloudSyncState: Equatable {
 final class ProfileManager {
     private static let iCloudSyncPreferenceKey = "profiles.iCloudSyncEnabled"
     private let repository: ProfileRepository
+    let rankingUploads: RankingUploadStore
 
     var slots: [ProfileSlot] = []
     var activeStore: GameStore?
@@ -22,8 +23,9 @@ final class ProfileManager {
     var isICloudSyncEnabled: Bool
     var iCloudSyncState: ICloudSyncState
 
-    init(repository: ProfileRepository = ProfileRepository()) {
+    init(repository: ProfileRepository = ProfileRepository(), rankingUploads: RankingUploadStore? = nil) {
         self.repository = repository
+        self.rankingUploads = rankingUploads ?? RankingUploadStore()
         let syncEnabled = UserDefaults.standard.bool(forKey: Self.iCloudSyncPreferenceKey)
         isICloudSyncEnabled = syncEnabled
         iCloudSyncState = syncEnabled ? .ready : .disabled
@@ -36,7 +38,12 @@ final class ProfileManager {
             let snapshot = try repository.load(profileID)
             let store = GameStore(profileID: profileID, snapshot: snapshot, repository: repository)
             store.onSave = { [weak self] snapshot in
-                self?.persist(snapshot)
+                try self?.persist(snapshot)
+            }
+            store.onCompletedRun = { [weak self] snapshot in
+                guard let uploads = self?.rankingUploads else { return }
+                try uploads.enqueue(snapshot)
+                Task { await uploads.retryPending() }
             }
             activeStore = store
 
@@ -108,7 +115,7 @@ final class ProfileManager {
         }
     }
 
-    private func persist(_ snapshot: GameSnapshot) {
+    private func persist(_ snapshot: GameSnapshot) throws {
         do {
             try repository.save(snapshot)
             DebugLog.record(
@@ -126,7 +133,7 @@ final class ProfileManager {
                 "profile=\(snapshot.profileID.rawValue) error=\(error.localizedDescription)"
             )
             notice = UserNotice(title: "自动存档失败", message: error.localizedDescription)
-            return
+            throw error
         }
 
         guard isICloudSyncEnabled, repository.isICloudAccountAvailable else { return }

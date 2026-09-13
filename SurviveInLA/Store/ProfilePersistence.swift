@@ -13,26 +13,29 @@ enum ProfileID: Int, CaseIterable, Codable, Identifiable, Sendable {
 }
 
 struct GameSnapshot: Codable, Sendable {
-    static let currentVersion = 1
+    static let currentVersion = 7
 
     let version: Int
     let profileID: ProfileID
     let session: GameSession
     let randomCheckpoint: UInt64
     let updatedAt: Date
+    let contentVersion: String?
 
     init(
         version: Int = Self.currentVersion,
         profileID: ProfileID,
         session: GameSession,
         randomCheckpoint: UInt64,
-        updatedAt: Date = .now
+        updatedAt: Date = .now,
+        contentVersion: String? = EventContentCatalog.bundled.manifest.contentVersion
     ) {
         self.version = version
         self.profileID = profileID
         self.session = session
         self.randomCheckpoint = randomCheckpoint
         self.updatedAt = updatedAt
+        self.contentVersion = contentVersion
     }
 }
 
@@ -86,7 +89,7 @@ struct ProfileRepository: Sendable {
 
         let data = try Data(contentsOf: fileURL)
         let snapshot = try Self.decoder.decode(GameSnapshot.self, from: data)
-        return try migrated(snapshot)
+        return try GameSnapshotMigration.migrate(snapshot)
     }
 
     func save(_ snapshot: GameSnapshot) throws {
@@ -171,31 +174,17 @@ struct ProfileRepository: Sendable {
     }
 
     private func loadICloudRecord(_ profileID: ProfileID) throws -> CloudProfileRecord? {
-        guard let data = NSUbiquitousKeyValueStore.default.data(forKey: cloudKey(for: profileID)) else {
+        let store = NSUbiquitousKeyValueStore.default
+        let keys = (1 ... GameSnapshot.currentVersion)
+            .reversed()
+            .map { "profile-\(profileID.rawValue)-v\($0)" }
+        guard let data = keys.lazy.compactMap({ store.data(forKey: $0) }).first else {
             return nil
         }
 
         let record = try Self.decoder.decode(CloudProfileRecord.self, from: data)
         guard let snapshot = record.snapshot else { return record }
-        return CloudProfileRecord(snapshot: try migrated(snapshot))
-    }
-
-    private func migrated(_ snapshot: GameSnapshot) throws -> GameSnapshot {
-        guard snapshot.version == GameSnapshot.currentVersion else {
-            throw ProfilePersistenceError.unsupportedVersion(snapshot.version)
-        }
-        guard snapshot.session.totalDays == 40 else { return snapshot }
-
-        var migratedSession = snapshot.session
-        migratedSession.totalDays = 52
-        migratedSession.actionThisWeek = nil
-        return GameSnapshot(
-            version: snapshot.version,
-            profileID: snapshot.profileID,
-            session: migratedSession,
-            randomCheckpoint: snapshot.randomCheckpoint,
-            updatedAt: snapshot.updatedAt
-        )
+        return CloudProfileRecord(snapshot: try GameSnapshotMigration.migrate(snapshot))
     }
 
     private func url(for profileID: ProfileID) -> URL {

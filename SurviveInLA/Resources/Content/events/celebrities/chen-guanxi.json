@@ -1,0 +1,76 @@
+[
+  {
+    "id": "chen-santa-monica-photo",
+    "sourceNPCID": "chen-guanxi",
+    "districtID": "santaMonica",
+    "condition": {
+      "metric": {
+        "name": "luck",
+        "comparison": "greaterThan",
+        "value": 60
+      }
+    },
+    "invitation": {
+      "titleKey": "celebrity.chen-guanxi.santa-monica.invitation.title",
+      "messageKey": "celebrity.chen-guanxi.santa-monica.invitation.message"
+    },
+    "selection": {
+      "titleKey": "celebrity.chen-guanxi.santa-monica.selection.title",
+      "messageKey": "celebrity.chen-guanxi.santa-monica.selection.message"
+    },
+    "declined": {
+      "titleKey": "celebrity.chen-guanxi.santa-monica.declined.title",
+      "messageKey": "celebrity.chen-guanxi.santa-monica.declined.message"
+    },
+    "options": [
+      {
+        "id": "ferris-wheel",
+        "titleKey": "celebrity.chen-guanxi.santa-monica.ferris-wheel.title",
+        "resultKey": "celebrity.chen-guanxi.santa-monica.ferris-wheel.result",
+        "photoTitleKey": "celebrity.chen-guanxi.santa-monica.ferris-wheel.photo",
+        "salePrice": 300,
+        "buff": {
+          "id": "chen-ferris-wheel",
+          "titleKey": "celebrity.chen-guanxi.santa-monica.ferris-wheel.buff.title",
+          "messageKey": "celebrity.chen-guanxi.santa-monica.ferris-wheel.buff.message",
+          "durationTurns": 3,
+          "luckDelta": 10,
+          "healthPerTurn": 0,
+          "workIncomeMultiplier": 1
+        }
+      },
+      {
+        "id": "beach",
+        "titleKey": "celebrity.chen-guanxi.santa-monica.beach.title",
+        "resultKey": "celebrity.chen-guanxi.santa-monica.beach.result",
+        "photoTitleKey": "celebrity.chen-guanxi.santa-monica.beach.photo",
+        "salePrice": 500,
+        "buff": {
+          "id": "chen-beach",
+          "titleKey": "celebrity.chen-guanxi.santa-monica.beach.buff.title",
+          "messageKey": "celebrity.chen-guanxi.santa-monica.beach.buff.message",
+          "durationTurns": 3,
+          "luckDelta": 0,
+          "healthPerTurn": 4,
+          "workIncomeMultiplier": 1
+        }
+      },
+      {
+        "id": "route-66",
+        "titleKey": "celebrity.chen-guanxi.santa-monica.route-66.title",
+        "resultKey": "celebrity.chen-guanxi.santa-monica.route-66.result",
+        "photoTitleKey": "celebrity.chen-guanxi.santa-monica.route-66.photo",
+        "salePrice": 800,
+        "buff": {
+          "id": "chen-route-66",
+          "titleKey": "celebrity.chen-guanxi.santa-monica.route-66.buff.title",
+          "messageKey": "celebrity.chen-guanxi.santa-monica.route-66.buff.message",
+          "durationTurns": 3,
+          "luckDelta": 0,
+          "healthPerTurn": 0,
+          "workIncomeMultiplier": 1.15
+        }
+      }
+    ]
+  }
+]

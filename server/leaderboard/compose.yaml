@@ -1,0 +1,34 @@
+name: survive-in-la-leaderboard
+
+services:
+  api:
+    build: .
+    restart: unless-stopped
+    init: true
+    environment:
+      DATABASE_PATH: /data/leaderboard.sqlite3
+    ports:
+      - "127.0.0.1:${LOCAL_PORT:-8080}:8000"
+    volumes:
+      - leaderboard_data:/data
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
+    pids_limit: 128
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  leaderboard_data:

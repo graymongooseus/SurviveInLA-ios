@@ -1,0 +1,19 @@
+{
+    default_sni {$LEADERBOARD_IP}
+    auto_https disable_redirects
+}
+
+https://{$LEADERBOARD_IP} {
+    tls {
+        issuer acme {
+            dir https://acme-v02.api.letsencrypt.org/directory
+            profile shortlived
+            disable_tlsalpn_challenge
+        }
+    }
+    request_body {
+        max_size 8KB
+    }
+    encode zstd gzip
+    reverse_proxy api:8000
+}

@@ -77,7 +77,7 @@ struct HealthEventOverlay: View {
     private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 12) {
-                Text("健康事件")
+                Text(event.group == .money ? "钱财事件" : "健康事件")
                     .font(.caption.weight(.bold))
                 Rectangle()
                     .frame(width: 28, height: 1)
@@ -104,11 +104,13 @@ struct HealthEventOverlay: View {
                 .accessibilityHidden(true)
 
             HStack(spacing: 0) {
-                effect("健康", value: event.healthDelta, isCash: false)
-                Rectangle()
-                    .fill(.white.opacity(0.16))
-                    .frame(width: 1, height: 48)
-                    .accessibilityHidden(true)
+                if event.group != .money || event.healthDelta != 0 {
+                    effect("健康", value: event.healthDelta, isCash: false)
+                    Rectangle()
+                        .fill(.white.opacity(0.16))
+                        .frame(width: 1, height: 48)
+                        .accessibilityHidden(true)
+                }
                 effect("现金", value: event.cashDelta, isCash: true)
             }
             .padding(.top, 14)
@@ -130,10 +132,10 @@ struct HealthEventOverlay: View {
         return VStack(spacing: 6) {
             Text(title)
                 .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.58))
+                .foregroundStyle(AppTheme.effectColor(value))
             Text(text)
                 .font(.system(value == 0 ? .title2 : .largeTitle, weight: .bold).monospacedDigit())
-                .foregroundStyle(value < 0 ? AppTheme.coral : (value > 0 ? AppTheme.positive : .white.opacity(0.65)))
+                .foregroundStyle(AppTheme.effectColor(value))
                 .lineLimit(1)
                 .minimumScaleFactor(0.65)
         }

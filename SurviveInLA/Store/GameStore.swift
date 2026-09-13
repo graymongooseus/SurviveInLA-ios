@@ -6,6 +6,7 @@ struct UserNotice: Identifiable, Sendable {
     let title: String
     let message: String
     var event: GameEvent? = nil
+    var isHousingEviction = false
 
     var healthEvent: GameEvent? {
         guard let event, event.healthEventImageName != nil else { return nil }
@@ -40,7 +41,10 @@ final class GameStore {
     @ObservationIgnored private let purchaseHistoryKey = "iap.processedTransactionIDs.v1"
 
     let profileID: ProfileID?
-    var onSave: ((GameSnapshot) -> Void)?
+    var onSave: ((GameSnapshot) throws -> Void)?
+    var onCompletedRun: ((GameSnapshot) throws -> Void)?
+    private var automaticallySubmitCompletion: Bool
+    private var rankingCompletedAt: Date?
 
     var session: GameSession
     var selectedDestinationID: District.ID
@@ -49,20 +53,123 @@ final class GameStore {
     var isIntroductionPresented = false
     var tradeContext: TradeContext?
     var notice: UserNotice?
+    var queuedNotice: UserNotice?
     var worldEventNotice: WorldEventNotice?
     var purchasedAdventure: AdventureProduct?
     var journeyRecords: [JourneyRecord] = []
     var leaderboardError: String?
+    var investmentInvitationError: String?
+    var celebrityEventError: String?
+    var actingEventError: String?
+
+    var actingNotice: GameEvent? { session.unreadActingNotices?.first }
+
+    func chooseActingRole(_ optionID: String, encounterID: String) {
+        do {
+            try engine.chooseActingRole(optionID, encounterID: encounterID, in: &session)
+            actingEventError = nil
+            saveProgress()
+        } catch { actingEventError = error.localizedDescription }
+    }
+
+    func dismissActingNotice(_ id: String) {
+        guard session.unreadActingNotices?.first?.id == id else { return }
+        session.unreadActingNotices?.removeFirst()
+        saveProgress()
+    }
+
+
+    var canPresentCelebrityEvent: Bool { presentation == .celebrity }
+    var isAwaitingTravelNotice: Bool { pendingTravelNoticeTask != nil }
+
+    func respondToCelebrityInvitation(_ id: String, approach: Bool) {
+        do {
+            try engine.respondToCelebrityInvitation(id, approach: approach, in: &session)
+            celebrityEventError = nil
+            saveProgress()
+        } catch { celebrityEventError = error.localizedDescription }
+    }
+
+    func chooseCelebrityBackground(_ optionID: String, encounterID: String) {
+        do {
+            try engine.chooseCelebrityBackground(optionID, encounterID: encounterID, in: &session)
+            celebrityEventError = nil
+            saveProgress()
+        } catch { celebrityEventError = error.localizedDescription }
+    }
+
+    func finishCelebrityEncounter(_ id: String, sell: Bool) {
+        do {
+            try engine.finishCelebrityEncounter(id, sell: sell, in: &session)
+            celebrityEventError = nil
+            saveProgress()
+        } catch { celebrityEventError = error.localizedDescription }
+    }
+
+    func sellCelebrityPhoto(_ photoID: String) {
+        do {
+            try engine.sellCelebrityPhoto(photoID, in: &session)
+            celebrityEventError = nil
+            saveProgress()
+        } catch { celebrityEventError = error.localizedDescription }
+    }
+
+    var investmentNotice: GameEvent? { session.unreadInvestmentNotices?.first }
+
+    var canPresentInvestmentEvent: Bool { presentation == .investment }
+
+    func respondToInvestmentInvitation(amount: Int?) {
+        do {
+            try engine.respondToInvestmentInvitation(amount: amount, in: &session)
+            investmentInvitationError = nil
+            saveProgress()
+        } catch {
+            investmentInvitationError = error.localizedDescription
+        }
+    }
+
+    func dismissInvestmentNotice(_ id: String) {
+        guard session.unreadInvestmentNotices?.first?.id == id else { return }
+        session.unreadInvestmentNotices?.removeFirst()
+        saveProgress()
+    }
 
     var treatmentCostPerPoint: Int { engine.balance.treatmentCostPerPoint }
+    var clinicClosureHoliday: USFederalHoliday? { engine.clinicClosureHoliday(in: session) }
+    var clinicWeeklyHealthLimit: Int { engine.balance.clinicWeeklyHealthLimit }
+    var clinicRemainingTreatmentPoints: Int { engine.clinicRemainingTreatmentPoints(in: session) }
+    var massageHealthRecovery: Int { engine.balance.massageHealthRecovery }
+    var massageCostPerPoint: Int { engine.balance.massageCostPerPoint }
+    var massageCost: Int { engine.massageCost }
+    var didVisitMassageThisWeek: Bool { session.massageVisitWeek == session.day }
     var maximumCapacity: Int { engine.balance.maximumCapacity }
     var capacityUpgradeCost: Int { engine.capacityUpgradeCost(for: session) }
     var bankInterestRate: Double { engine.balance.bankInterestRate }
     var debtInterestRate: Double { engine.balance.debtInterestRate }
-    var activeWorldEvent: WorldEvent? { engine.activeWorldEvent(in: session) }
-    var activeWorldEventRemainingWeeks: Int {
-        guard let active = session.activeWorldEvent,
-              active.isActive(in: session.day) else { return 0 }
+    var driversLicenseCost: Int { engine.balance.driversLicenseCost }
+    var weeklyHousingRent: Int { engine.balance.weeklyHousingRent }
+    var basementMoveInFee: Int { engine.balance.basementMoveInFee }
+    var weeklyCarRent: Int { engine.balance.weeklyCarRent }
+    var carPurchasePrice: Int { engine.balance.carPurchasePrice }
+    var carResaleValue: Int { engine.balance.carResaleValue }
+    var drivingOperatingCost: Int { engine.balance.drivingOperatingCost }
+    var vehicleHealthProtection: Int { engine.balance.vehicleHealthProtection }
+    var toolsPurchasePrice: Int { engine.balance.toolsPurchasePrice }
+    var toolsWageMultiplier: Double { engine.balance.toolsWageMultiplier }
+    var toolsHealthProtection: Int { engine.balance.toolsHealthProtection }
+    var propertyInvestmentPrice: Int { engine.balance.propertyInvestmentPrice }
+    var propertyWeeklyIncome: Int { engine.balance.propertyWeeklyIncome }
+    var propertyHealthRecovery: Int { engine.balance.propertyHealthRecovery }
+    var restAtHomeHealthRecovery: Int { engine.balance.restAtHomeHealthRecovery }
+    var housingTiers: [HousingTier] { HousingTier.allCases }
+    var canPerformDreamAction: Bool { !session.didPerformDreamActionThisWeek }
+    var driversLicensePassChancePercent: Int {
+        Int((engine.driversLicensePassChance(for: session.currentLuck) * 100).rounded())
+    }
+    var activeWorldEvents: [WorldEvent] { engine.activeWorldEvents(in: session) }
+    var combinedWorldModifiers: WorldEventModifiers { engine.worldModifiers(for: session) }
+    func worldEventRemainingWeeks(_ eventID: String) -> Int {
+        guard let active = session.activeWorldEvents.first(where: { $0.eventID == eventID && $0.isActive(in: session.day) }) else { return 0 }
         return active.endingWeek - session.day + 1
     }
 
@@ -74,16 +181,13 @@ final class GameStore {
     ) {
         self.repository = repository
         self.profileID = profileID
+        automaticallySubmitCompletion = snapshot?.session.isFinished != true
+        rankingCompletedAt = snapshot?.session.isFinished == true ? snapshot?.updatedAt : nil
         let initialEngine: GameEngine
         let initialSession: GameSession
         if let snapshot {
             initialEngine = GameEngine(randomCheckpoint: snapshot.randomCheckpoint)
-            var restoredSession = snapshot.session
-            if restoredSession.totalDays == 40 {
-                restoredSession.totalDays = 52
-                restoredSession.actionThisWeek = nil
-            }
-            initialSession = restoredSession
+            initialSession = GameSnapshotMigration.restoreSession(snapshot)
         } else {
             var newEngine = GameEngine(seed: seed)
             initialSession = newEngine.makeNewSession()
@@ -96,6 +200,9 @@ final class GameStore {
             engine.endJourney(session: &session)
         }
         isIntroductionPresented = snapshot == nil
+        if let pending = session.unreadWorldEvents?.first {
+            worldEventNotice = WorldEventNotice(eventID: pending.eventID, triggeredWeek: pending.startedWeek, endingWeek: pending.endingWeek, localNotice: nil)
+        }
         DebugLog.record("profile.open", debugContext)
     }
 
@@ -109,6 +216,19 @@ final class GameStore {
 
     var currentJob: JobOpportunity {
         GameContent.job(in: session.currentDistrictID)
+    }
+
+    var currentJobs: [JobOpportunity] {
+        GameContent.jobs(in: session.currentDistrictID)
+    }
+
+    var pendingLifeChoice: LifeChoiceEvent? {
+        session.pendingLifeChoiceID.flatMap(GameContent.lifeChoice)
+    }
+
+    var lifeChoiceResult: GameEvent? {
+        guard let event = notice?.event, event.id.hasPrefix("life-choice-") else { return nil }
+        return event
     }
 
     var currentInvestment: InvestmentOpportunity {
@@ -152,8 +272,10 @@ final class GameStore {
 
     func travel() {
         pendingTravelNoticeTask?.cancel()
+        pendingTravelNoticeTask = nil
         DebugLog.record("travel.begin", "\(debugContext) destination=\(selectedDestinationID.rawValue)")
         do {
+            let endingWeek = session.day
             let previousWorldEventID = session.latestWorldEventID
             let previousWorldEventWeek = session.latestWorldEventWeek
             try engine.travel(to: selectedDestinationID, session: &session)
@@ -167,24 +289,31 @@ final class GameStore {
             let localNotice = session.latestEvent.map {
                 UserNotice(event: $0)
             }
+            let rentNotice = housingEvictionNotice(afterEnding: endingWeek)
             if var worldNotice {
                 worldNotice = WorldEventNotice(
                     eventID: worldNotice.eventID,
                     triggeredWeek: worldNotice.triggeredWeek,
                     endingWeek: worldNotice.endingWeek,
-                    localNotice: localNotice
+                    localNotice: rentNotice ?? localNotice
                 )
                 worldEventNotice = worldNotice
+                if rentNotice != nil { queuedNotice = localNotice }
+            } else if let rentNotice {
+                notice = rentNotice
+                queuedNotice = localNotice
             } else if let localNotice, !session.isFinished {
                 pendingTravelNoticeTask = Task { @MainActor [weak self] in
                     try? await Task.sleep(for: .milliseconds(850))
                     guard !Task.isCancelled else { return }
+                    self?.pendingTravelNoticeTask = nil
                     self?.notice = localNotice
                 }
             }
             let didSave = saveProgress()
             // 终局仍先展示本次健康事件，让玩家看清健康归零的原因。
-            if didSave, session.health <= 0, worldNotice == nil, localNotice?.healthEvent != nil {
+            if didSave, session.health <= 0, worldNotice == nil,
+               rentNotice == nil, localNotice?.healthEvent != nil {
                 notice = localNotice
             }
             DebugLog.record("travel.success", debugContext)
@@ -194,12 +323,12 @@ final class GameStore {
         }
     }
 
-    func work() {
+    func work(_ jobID: String? = nil) {
         DebugLog.record("work.begin", debugContext)
         do {
             let previousWorldEventID = session.latestWorldEventID
             let previousWorldEventWeek = session.latestWorldEventWeek
-            let event = try engine.work(in: &session)
+            let event = try engine.work(jobID ?? currentJob.id, in: &session)
             selectedDestinationID = session.currentDistrictID
             let localNotice = UserNotice(event: event)
             if let worldNotice = worldEventNoticeIfChanged(
@@ -223,6 +352,20 @@ final class GameStore {
         }
     }
 
+    func restAtHome() {
+        DebugLog.record("rest.begin", debugContext)
+        do {
+            let event = try engine.restAtHome(in: &session)
+            selectedDestinationID = session.currentDistrictID
+            notice = UserNotice(event: event)
+            saveProgress()
+            DebugLog.record("rest.success", debugContext)
+        } catch {
+            DebugLog.record("rest.failure", "\(debugContext) error=\(error.localizedDescription)")
+            notice = UserNotice(title: "这周不能躺平", message: error.localizedDescription)
+        }
+    }
+
     func invest(_ amount: Int) {
         DebugLog.record("investment.begin", "\(debugContext) amount=\(amount)")
         do {
@@ -239,16 +382,30 @@ final class GameStore {
 
     func finishStationaryWeek() {
         do {
+            let endingWeek = session.day
             let previousWorldEventID = session.latestWorldEventID
             let previousWorldEventWeek = session.latestWorldEventWeek
             try engine.finishStationaryWeek(in: &session)
             selectedDestinationID = session.currentDistrictID
             selectedAction = .trading
+            let localNotice = session.latestEvent.map(UserNotice.init(event:))
+            let rentNotice = housingEvictionNotice(afterEnding: endingWeek)
             if let worldNotice = worldEventNoticeIfChanged(
                 previousID: previousWorldEventID,
                 previousWeek: previousWorldEventWeek
             ) {
-                worldEventNotice = worldNotice
+                self.worldEventNotice = WorldEventNotice(
+                    eventID: worldNotice.eventID,
+                    triggeredWeek: worldNotice.triggeredWeek,
+                    endingWeek: worldNotice.endingWeek,
+                    localNotice: rentNotice ?? localNotice
+                )
+                if rentNotice != nil { queuedNotice = localNotice }
+            } else if let rentNotice {
+                notice = rentNotice
+                queuedNotice = localNotice
+            } else if let localNotice, !session.isFinished {
+                notice = localNotice
             }
             saveProgress()
             DebugLog.record("stationary_week.finished", debugContext)
@@ -263,23 +420,41 @@ final class GameStore {
     }
 
     func dismissWorldEvent() {
-        let localNotice = worldEventNotice?.localNotice
-        worldEventNotice = nil
-        if localNotice?.healthEvent != nil {
-            notice = localNotice
+        guard let current = worldEventNotice else { return }
+        let localNotice = current.localNotice
+        session.unreadWorldEvents?.removeAll {
+            $0.eventID == current.eventID && $0.startedWeek == current.triggeredWeek
         }
+        if let pending = session.unreadWorldEvents?.first {
+            worldEventNotice = WorldEventNotice(eventID: pending.eventID, triggeredWeek: pending.startedWeek, endingWeek: pending.endingWeek, localNotice: localNotice)
+        } else {
+            worldEventNotice = nil
+            if let localNotice { notice = localNotice }
+        }
+        saveProgress()
+    }
+
+    func dismissNotice() {
+        notice = queuedNotice
+        queuedNotice = nil
     }
 
     @discardableResult
     func applyPurchasedAdventure(_ adventure: AdventureProduct, transactionID: UInt64) -> Bool {
         guard !session.isFinished else { return false }
-        var processedIDs = Set(
+        let legacyProcessedIDs = Set(
             UserDefaults.standard.stringArray(forKey: purchaseHistoryKey) ?? []
         )
+        var processedIDs = session.processedPurchaseTransactionIDs ?? legacyProcessedIDs
         let transactionKey = String(transactionID)
         guard !processedIDs.contains(transactionKey) else { return true }
 
+        let sessionBeforePurchase = session
+        processedIDs.insert(transactionKey)
+        session.processedPurchaseTransactionIDs = processedIDs
+        let oldCash = session.cash
         session.cash += adventure.cashDelta
+        session.recordStatusChange(.cash, from: oldCash, reason: adventure.eventTitle)
         let event = GameEvent(
             id: "iap-\(adventure.rawValue)-\(transactionID)",
             kind: adventure.cashDelta >= 0 ? .opportunity : .setback,
@@ -297,9 +472,13 @@ final class GameStore {
                 eventID: "iap-\(adventure.rawValue)"
             )
         )
-        saveProgress()
+        guard saveProgress() else {
+            session = sessionBeforePurchase
+            return false
+        }
 
-        processedIDs.insert(transactionKey)
+        // Keep the legacy global marker during the v7 migration. The snapshot
+        // above remains the source of truth and is written atomically with cash.
         UserDefaults.standard.set(Array(processedIDs).sorted(), forKey: purchaseHistoryKey)
         purchasedAdventure = adventure
         DebugLog.record(
@@ -342,15 +521,92 @@ final class GameStore {
         }
     }
 
+    func clinicTreatmentRecovery(_ points: Int) -> Int {
+        engine.clinicTreatmentRecovery(points, in: session)
+    }
+
+    func visitMassageParlor() -> Bool {
+        performService(title: "按摩失败") {
+            try engine.visitMassageParlor(in: &session)
+        }
+    }
+
     func expandCapacity() -> Bool {
         performService(title: "升级失败") {
             try engine.expandCapacity(in: &session)
         }
     }
 
+    func obtainDriversLicense() -> Bool {
+        do {
+            let passed = try engine.obtainDriversLicense(in: &session)
+            notice = UserNotice(
+                title: passed ? "路考通过" : "路考没有通过",
+                message: passed
+                    ? "你完成了一周学习并通过路考，驾照已经到手。"
+                    : "这次没有通过。报名费不会重复收取，请到下一周再来路考。"
+            )
+            saveProgress()
+            return true
+        } catch {
+            notice = UserNotice(title: "驾照办理失败", message: error.localizedDescription)
+            return false
+        }
+    }
+
+    func startHousingRental(
+        _ tier: HousingTier = .basement,
+        paymentMethod: HousingPaymentMethod? = nil
+    ) -> Bool {
+        performService(title: "租房失败") {
+            try engine.startHousingRental(tier, paymentMethod: paymentMethod, in: &session)
+        }
+    }
+
+    func stopHousingRental() -> Bool {
+        performService(title: "退租失败") { try engine.stopHousingRental(in: &session) }
+    }
+
+    func startCarRental() -> Bool {
+        performService(title: "租车失败") { try engine.startCarRental(in: &session) }
+    }
+
+    func stopCarRental() -> Bool {
+        performService(title: "还车失败") { try engine.stopCarRental(in: &session) }
+    }
+
+    func buyCar() -> Bool {
+        performService(title: "买车失败") { try engine.buyCar(in: &session) }
+    }
+
+    func sellCar() -> Bool {
+        performService(title: "卖车失败") { try engine.sellCar(in: &session) }
+    }
+
+    func buyTools() -> Bool {
+        performService(title: "购买工具失败") { try engine.buyTools(in: &session) }
+    }
+
+    func investInProperty() -> Bool {
+        performService(title: "物业投资失败") { try engine.investInProperty(in: &session) }
+    }
+
+    func resolveLifeChoice(_ optionID: String) {
+        do {
+            let event = try engine.resolveLifeChoice(optionID, in: &session)
+            notice = UserNotice(event: event)
+            saveProgress()
+        } catch {
+            notice = UserNotice(title: "选择没有生效", message: error.localizedDescription)
+        }
+    }
+
     func restart() {
         guard saveProgress() else { return }
+        automaticallySubmitCompletion = true
+        rankingCompletedAt = nil
         pendingTravelNoticeTask?.cancel()
+        pendingTravelNoticeTask = nil
         var newEngine = GameEngine(seed: UInt64(Date.now.timeIntervalSince1970))
         session = newEngine.makeNewSession()
         engine = newEngine
@@ -360,26 +616,37 @@ final class GameStore {
         isIntroductionPresented = true
         tradeContext = nil
         notice = nil
+        queuedNotice = nil
         worldEventNotice = nil
         purchasedAdventure = nil
+        investmentInvitationError = nil
+        celebrityEventError = nil
+        actingEventError = nil
         saveProgress()
     }
 
     @discardableResult
     func saveProgress() -> Bool {
         if session.isFinished {
+            if rankingCompletedAt == nil { rankingCompletedAt = .now }
             pendingTravelNoticeTask?.cancel()
-            if notice?.healthEvent == nil { notice = nil }
+            pendingTravelNoticeTask = nil
+            if notice?.healthEvent == nil, notice?.isHousingEviction != true { notice = nil }
             tradeContext = nil
         }
         guard let profileID else { return true }
         let snapshot = GameSnapshot(
             profileID: profileID,
             session: session,
-            randomCheckpoint: engine.randomCheckpoint
+            randomCheckpoint: engine.randomCheckpoint,
+            updatedAt: session.isFinished ? (rankingCompletedAt ?? .now) : .now
         )
         do {
+            try onSave?(snapshot)
             try repository.archiveJourney(snapshot)
+            if session.isFinished, automaticallySubmitCompletion {
+                try onCompletedRun?(snapshot)
+            }
         } catch {
             notice = UserNotice(
                 title: "成绩尚未保存",
@@ -387,8 +654,13 @@ final class GameStore {
             )
             return false
         }
-        onSave?(snapshot)
         return true
+    }
+
+    var currentRankingSnapshot: GameSnapshot? {
+        guard let profileID else { return nil }
+        return GameSnapshot(profileID: profileID, session: session, randomCheckpoint: engine.randomCheckpoint,
+                            updatedAt: rankingCompletedAt ?? .now)
     }
 
     func loadLeaderboard() {
@@ -430,28 +702,33 @@ final class GameStore {
         notice = UserNotice(event: event)
     }
 
+    private func housingEvictionNotice(afterEnding week: Int) -> UserNotice? {
+        guard session.latestHousingEvictionWeek == min(week + 1, session.totalDays),
+              let amount = session.latestHousingEvictionAmount else { return nil }
+        return UserNotice(
+            title: "房租没有续上",
+            message: "结束第 \(week) 周时，房东要求支付下一回合房租 \(amount.usdText)。现金与银行存款合计不足，所以下回合将失去“有房住”增益，并开始流落街头。",
+            isHousingEviction: true
+        )
+    }
+
     private func worldEventNoticeIfChanged(
         previousID: String?,
         previousWeek: Int?
     ) -> WorldEventNotice? {
-        guard session.latestWorldEventID != previousID
-                || session.latestWorldEventWeek != previousWeek,
-              let eventID = session.latestWorldEventID,
-              WorldEventCatalog.event(eventID) != nil,
-              let triggeredWeek = session.latestWorldEventWeek,
-              let active = session.activeWorldEvent else { return nil }
-
-        return WorldEventNotice(
-            eventID: eventID,
-            triggeredWeek: triggeredWeek,
-            endingWeek: active.endingWeek,
-            localNotice: nil
-        )
+        guard session.latestWorldEventID != previousID || session.latestWorldEventWeek != previousWeek else { return nil }
+        guard let active = session.unreadWorldEvents?.first ?? session.activeWorldEvent,
+              WorldEventCatalog.event(active.eventID) != nil else { return nil }
+        return WorldEventNotice(eventID: active.eventID, triggeredWeek: active.startedWeek, endingWeek: active.endingWeek, localNotice: nil)
     }
 
     private var debugContext: String {
         let profile = profileID.map { String($0.rawValue) } ?? "preview"
-        let action = session.actionThisWeek?.rawValue ?? "none"
+        let completedActions = session.completedWeeklyActions
+            .map(\.rawValue)
+            .sorted()
+            .joined(separator: "+")
+        let action = completedActions.isEmpty ? "none" : completedActions
         return "profile=\(profile) week=\(session.day) district=\(session.currentDistrictID.rawValue) cash=\(session.cash) debt=\(session.debt) action=\(action)"
     }
 }

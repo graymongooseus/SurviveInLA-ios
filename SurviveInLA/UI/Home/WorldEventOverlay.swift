@@ -10,7 +10,12 @@ struct WorldEventOverlay: View {
     ]
 
     private var event: WorldEvent {
-        WorldEventCatalog.event(notice.eventID)!
+        var definition = WorldEventCatalog.event(notice.eventID)!
+        let instance = ((store.session.unreadWorldEvents ?? []) + store.session.activeWorldEvents).first {
+            $0.eventID == notice.eventID && $0.startedWeek == notice.triggeredWeek
+        }
+        definition.modifiers = instance?.modifiers ?? definition.modifiers
+        return definition
     }
 
     var body: some View {
@@ -93,9 +98,19 @@ struct WorldEventOverlay: View {
             }
 
             VStack(alignment: .leading, spacing: 9) {
-                Text("最终数值影响")
+                Text(store.activeWorldEvents.count > 1 ? "叠加后的数值影响" : "当前数值影响")
                     .font(.headline)
 
+                EventEffectText("本事件：\(event.effectSummary)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                if store.activeWorldEvents.count > 1 {
+                    Text("同时生效：" + store.activeWorldEvents.map(\.title).joined(separator: "、"))
+                        .font(.caption)
+                        .foregroundStyle(AppTheme.warning)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
                 LazyVGrid(columns: columns, spacing: 9) {
                     ForEach(impactItems) { item in
                         impactCard(item)
@@ -108,7 +123,9 @@ struct WorldEventOverlay: View {
                     Label("同时发生 · \(localNotice.title)", systemImage: "mappin.and.ellipse")
                         .font(.subheadline.weight(.bold))
                         .foregroundStyle(AppTheme.coralSoft)
-                    Text(localNotice.message)
+                    EventEffectText(localNotice.event?.baseEffectSummary ?? "")
+                        .font(.caption)
+                    Text(localNotice.event?.message ?? localNotice.message)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -148,7 +165,7 @@ struct WorldEventOverlay: View {
     }
 
     private var impactItems: [ImpactItem] {
-        let modifiers = event.modifiers
+        let modifiers = store.combinedWorldModifiers
         return [
             ImpactItem(
                 id: "work",
@@ -207,13 +224,6 @@ struct WorldEventOverlay: View {
                 value: multiplierText(modifiers.healthChange),
                 tone: .mixed
             ),
-            ImpactItem(
-                id: "reputation",
-                title: "声望变动",
-                symbol: "person.2.fill",
-                value: multiplierText(modifiers.reputationChange),
-                tone: .mixed
-            )
         ]
     }
 

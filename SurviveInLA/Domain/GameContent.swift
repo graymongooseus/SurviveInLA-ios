@@ -1,6 +1,23 @@
 import Foundation
 import CoreLocation
 
+// Nationwide recurring federal holidays listed by the U.S. Office of Personnel Management:
+// https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/
+// Names are sampled for fictional clinic closures, independently of real calendar dates.
+enum USFederalHoliday: String, CaseIterable, Sendable {
+    case newYearsDay = "元旦"
+    case martinLutherKingDay = "马丁·路德·金纪念日"
+    case washingtonBirthday = "华盛顿诞辰"
+    case memorialDay = "阵亡将士纪念日"
+    case juneteenth = "六月节"
+    case independenceDay = "独立日"
+    case laborDay = "劳动节"
+    case columbusDay = "哥伦布日"
+    case veteransDay = "退伍军人节"
+    case thanksgiving = "感恩节"
+    case christmas = "圣诞节"
+}
+
 enum GameContent {
     static let commodities: [Commodity] = [
         Commodity(id: .sneakers, name: "二手家具", symbol: "chair.lounge.fill", basePrice: 80, minimumPrice: 50, maximumPrice: 300),
@@ -22,6 +39,7 @@ enum GameContent {
     static let healthEvents = LocationEventCatalog.healthEvents
     static let moneyEvents = LocationEventCatalog.moneyEvents
     static let events = LocationEventCatalog.events
+    static let lifeChoices = EventContentCatalog.bundled.lifeChoices
 
     static func commodity(_ id: Commodity.ID) -> Commodity {
         commodities.first(where: { $0.id == id })!
@@ -31,11 +49,23 @@ enum GameContent {
         districts.first(where: { $0.id == id })!
     }
 
+    static func jobs(in districtID: District.ID) -> [JobOpportunity] {
+        jobs.filter { $0.districtID == districtID }
+    }
+
+    static func job(_ id: String, in districtID: District.ID) -> JobOpportunity? {
+        jobs.first { $0.id == id && $0.districtID == districtID }
+    }
+
     static func job(in districtID: District.ID) -> JobOpportunity {
-        jobs.first(where: { $0.districtID == districtID })!
+        jobs(in: districtID).first!
     }
 
     static func investment(in districtID: District.ID) -> InvestmentOpportunity {
         investments.first(where: { $0.districtID == districtID })!
+    }
+
+    static func lifeChoice(_ id: String) -> LifeChoiceEvent? {
+        EventContentCatalog.bundled.choicesByID[id]
     }
 }

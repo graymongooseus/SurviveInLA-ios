@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A0010000000000000000001F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A0020000000000000000001F /* PrivacyInfo.xcprivacy */; };
+		C50100000000000000000001 /* WorldRankingStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50200000000000000000001 /* WorldRankingStore.swift */; };
+		C50100000000000000000002 /* WorldRankingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50200000000000000000002 /* WorldRankingView.swift */; };
+		C50100000000000000000003 /* WorldRankingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50200000000000000000003 /* WorldRankingTests.swift */; };
 		B10100000000000000000001 /* HealthEventOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10200000000000000000001 /* HealthEventOverlay.swift */; };
 		A00100000000000000000001 /* SurviveInLAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000001 /* SurviveInLAApp.swift */; };
 		A00100000000000000000002 /* GameModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00200000000000000000002 /* GameModels.swift */; };
@@ -35,6 +39,44 @@
 		A00100000000000000000019 /* AdventureShopStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0020000000000000000001C /* AdventureShopStore.swift */; };
 		A0010000000000000000001A /* GameResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0020000000000000000001D /* GameResultView.swift */; };
 		A0010000000000000000001B /* AdventureShopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0020000000000000000001E /* AdventureShopView.swift */; };
+		E90100000000000000000001 /* EventModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90200000000000000000001 /* EventModels.swift */; };
+		E90100000000000000000002 /* WorldEventModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90200000000000000000002 /* WorldEventModels.swift */; };
+		E90100000000000000000003 /* EventEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90200000000000000000003 /* EventEffect.swift */; };
+		E90100000000000000000004 /* EventEffectExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90200000000000000000004 /* EventEffectExecutor.swift */; };
+		E90100000000000000000005 /* EventCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90200000000000000000005 /* EventCondition.swift */; };
+		E90100000000000000000006 /* EventSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90200000000000000000006 /* EventSelection.swift */; };
+		E90100000000000000000007 /* WorldEventScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90200000000000000000007 /* WorldEventScheduler.swift */; };
+		E90100000000000000000008 /* EventContentCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90200000000000000000008 /* EventContentCatalog.swift */; };
+		E90100000000000000000009 /* Content in Resources */ = {isa = PBXBuildFile; fileRef = E90200000000000000000009 /* Content */; };
+		E90100000000000000000010 /* EventLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90200000000000000000010 /* EventLibraryTests.swift */; };
+		FA0100000000000000000001 /* InvestmentEventModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0200000000000000000001 /* InvestmentEventModels.swift */; };
+		FA0100000000000000000002 /* InvestmentEventEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0200000000000000000002 /* InvestmentEventEngine.swift */; };
+		FA0100000000000000000003 /* InvestmentEventOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0200000000000000000003 /* InvestmentEventOverlay.swift */; };
+		FA0100000000000000000004 /* InvestmentEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0200000000000000000004 /* InvestmentEventTests.swift */; };
+		CB0100000000000000000001 /* CelebrityEventModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB0200000000000000000001 /* CelebrityEventModels.swift */; };
+		CB0100000000000000000002 /* PlayerBuffModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB0200000000000000000002 /* PlayerBuffModels.swift */; };
+		CB0100000000000000000003 /* CelebrityEventEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB0200000000000000000003 /* CelebrityEventEngine.swift */; };
+		CB0100000000000000000004 /* PlayerBuffEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB0200000000000000000004 /* PlayerBuffEngine.swift */; };
+		CB0100000000000000000005 /* CelebrityEventOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB0200000000000000000005 /* CelebrityEventOverlay.swift */; };
+		CB0100000000000000000006 /* CelebrityEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB0200000000000000000006 /* CelebrityEventTests.swift */; };
+		AC0100000000000000000001 /* CurrencyFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200000000000000000001 /* CurrencyFormatting.swift */; };
+		AC0100000000000000000002 /* PendingInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200000000000000000002 /* PendingInteraction.swift */; };
+		AC0100000000000000000003 /* CityServicesEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200000000000000000003 /* CityServicesEngine.swift */; };
+		AC0100000000000000000004 /* EquipmentEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200000000000000000004 /* EquipmentEngine.swift */; };
+		AC0100000000000000000005 /* TradingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200000000000000000005 /* TradingEngine.swift */; };
+		AC0100000000000000000006 /* WorkEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200000000000000000006 /* WorkEngine.swift */; };
+		AC0100000000000000000007 /* SessionEventEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200000000000000000007 /* SessionEventEngine.swift */; };
+		AC0100000000000000000008 /* GameActionRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200000000000000000008 /* GameActionRules.swift */; };
+		AC0100000000000000000009 /* JourneySettlementEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0200000000000000000009 /* JourneySettlementEngine.swift */; };
+		AC010000000000000000000A /* TurnEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC020000000000000000000A /* TurnEngine.swift */; };
+		AC010000000000000000000B /* GamePresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC020000000000000000000B /* GamePresentation.swift */; };
+		AC010000000000000000000C /* GameSnapshotMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC020000000000000000000C /* GameSnapshotMigration.swift */; };
+		AC010000000000000000000D /* ArchitectureIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC020000000000000000000D /* ArchitectureIntegrationTests.swift */; };
+		AC010000000000000000000E /* ArchitectureReplayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC020000000000000000000E /* ArchitectureReplayTests.swift */; };
+		D40100000000000000000001 /* CelebrityActingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40200000000000000000001 /* CelebrityActingModels.swift */; };
+		D40100000000000000000002 /* CelebrityActingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40200000000000000000002 /* CelebrityActingEngine.swift */; };
+		D40100000000000000000003 /* CelebrityActingOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40200000000000000000003 /* CelebrityActingOverlay.swift */; };
+		D40100000000000000000004 /* CelebrityActingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40200000000000000000004 /* CelebrityActingTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +90,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A0020000000000000000001F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		C50200000000000000000001 /* WorldRankingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldRankingStore.swift; sourceTree = "<group>"; };
+		C50200000000000000000002 /* WorldRankingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldRankingView.swift; sourceTree = "<group>"; };
+		C50200000000000000000003 /* WorldRankingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldRankingTests.swift; sourceTree = "<group>"; };
 		B10200000000000000000001 /* HealthEventOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthEventOverlay.swift; sourceTree = "<group>"; };
 		A00200000000000000000001 /* SurviveInLAApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurviveInLAApp.swift; sourceTree = "<group>"; };
 		A00200000000000000000002 /* GameModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModels.swift; sourceTree = "<group>"; };
@@ -79,6 +125,44 @@
 		A0020000000000000000001C /* AdventureShopStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdventureShopStore.swift; sourceTree = "<group>"; };
 		A0020000000000000000001D /* GameResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameResultView.swift; sourceTree = "<group>"; };
 		A0020000000000000000001E /* AdventureShopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdventureShopView.swift; sourceTree = "<group>"; };
+		E90200000000000000000001 /* EventModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventModels.swift; sourceTree = "<group>"; };
+		E90200000000000000000002 /* WorldEventModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldEventModels.swift; sourceTree = "<group>"; };
+		E90200000000000000000003 /* EventEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEffect.swift; sourceTree = "<group>"; };
+		E90200000000000000000004 /* EventEffectExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventEffectExecutor.swift; sourceTree = "<group>"; };
+		E90200000000000000000005 /* EventCondition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCondition.swift; sourceTree = "<group>"; };
+		E90200000000000000000006 /* EventSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSelection.swift; sourceTree = "<group>"; };
+		E90200000000000000000007 /* WorldEventScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldEventScheduler.swift; sourceTree = "<group>"; };
+		E90200000000000000000008 /* EventContentCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventContentCatalog.swift; sourceTree = "<group>"; };
+		E90200000000000000000009 /* Content */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Content; sourceTree = "<group>"; };
+		E90200000000000000000010 /* EventLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLibraryTests.swift; sourceTree = "<group>"; };
+		FA0200000000000000000001 /* InvestmentEventModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentEventModels.swift; sourceTree = "<group>"; };
+		FA0200000000000000000002 /* InvestmentEventEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentEventEngine.swift; sourceTree = "<group>"; };
+		FA0200000000000000000003 /* InvestmentEventOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InvestmentEventOverlay.swift"; sourceTree = "<group>"; };
+		FA0200000000000000000004 /* InvestmentEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InvestmentEventTests.swift"; sourceTree = "<group>"; };
+		CB0200000000000000000001 /* CelebrityEventModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrityEventModels.swift; sourceTree = "<group>"; };
+		CB0200000000000000000002 /* PlayerBuffModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerBuffModels.swift; sourceTree = "<group>"; };
+		CB0200000000000000000003 /* CelebrityEventEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrityEventEngine.swift; sourceTree = "<group>"; };
+		CB0200000000000000000004 /* PlayerBuffEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerBuffEngine.swift; sourceTree = "<group>"; };
+		CB0200000000000000000005 /* CelebrityEventOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CelebrityEventOverlay.swift"; sourceTree = "<group>"; };
+		CB0200000000000000000006 /* CelebrityEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CelebrityEventTests.swift"; sourceTree = "<group>"; };
+		AC0200000000000000000001 /* CurrencyFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyFormatting.swift; sourceTree = "<group>"; };
+		AC0200000000000000000002 /* PendingInteraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingInteraction.swift; sourceTree = "<group>"; };
+		AC0200000000000000000003 /* CityServicesEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityServicesEngine.swift; sourceTree = "<group>"; };
+		AC0200000000000000000004 /* EquipmentEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquipmentEngine.swift; sourceTree = "<group>"; };
+		AC0200000000000000000005 /* TradingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradingEngine.swift; sourceTree = "<group>"; };
+		AC0200000000000000000006 /* WorkEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkEngine.swift; sourceTree = "<group>"; };
+		AC0200000000000000000007 /* SessionEventEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionEventEngine.swift; sourceTree = "<group>"; };
+		AC0200000000000000000008 /* GameActionRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameActionRules.swift; sourceTree = "<group>"; };
+		AC0200000000000000000009 /* JourneySettlementEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneySettlementEngine.swift; sourceTree = "<group>"; };
+		AC020000000000000000000A /* TurnEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurnEngine.swift; sourceTree = "<group>"; };
+		AC020000000000000000000B /* GamePresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePresentation.swift; sourceTree = "<group>"; };
+		AC020000000000000000000C /* GameSnapshotMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSnapshotMigration.swift; sourceTree = "<group>"; };
+		AC020000000000000000000D /* ArchitectureIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchitectureIntegrationTests.swift; sourceTree = "<group>"; };
+		AC020000000000000000000E /* ArchitectureReplayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchitectureReplayTests.swift; sourceTree = "<group>"; };
+		D40200000000000000000001 /* CelebrityActingModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrityActingModels.swift; sourceTree = "<group>"; };
+		D40200000000000000000002 /* CelebrityActingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrityActingEngine.swift; sourceTree = "<group>"; };
+		D40200000000000000000003 /* CelebrityActingOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrityActingOverlay.swift; sourceTree = "<group>"; };
+		D40200000000000000000004 /* CelebrityActingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrityActingTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +217,8 @@
 		A00500000000000000000004 /* Domain */ = {
 			isa = PBXGroup;
 			children = (
+				AC0300000000000000000001 /* Events */,
+				AC0200000000000000000001 /* CurrencyFormatting.swift */,
 				A00200000000000000000002 /* GameModels.swift */,
 				A00200000000000000000003 /* GameContent.swift */,
 				A00200000000000000000017 /* DistrictCatalog.swift */,
@@ -147,6 +233,11 @@
 		A00500000000000000000005 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				AC0300000000000000000002 /* Events */,
+				AC0300000000000000000003 /* Actions */,
+				AC0300000000000000000004 /* Turns */,
+				AC0200000000000000000008 /* GameActionRules.swift */,
+				AC0200000000000000000009 /* JourneySettlementEngine.swift */,
 				A00200000000000000000004 /* SeededRandomNumberGenerator.swift */,
 				A00200000000000000000005 /* GameEngine.swift */,
 			);
@@ -156,10 +247,13 @@
 		A00500000000000000000006 /* Store */ = {
 			isa = PBXGroup;
 			children = (
+				AC020000000000000000000B /* GamePresentation.swift */,
+				AC020000000000000000000C /* GameSnapshotMigration.swift */,
 				A00200000000000000000006 /* GameStore.swift */,
 				A00200000000000000000012 /* ProfilePersistence.swift */,
 				A00200000000000000000013 /* ProfileManager.swift */,
 				A0020000000000000000001C /* AdventureShopStore.swift */,
+				C50200000000000000000001 /* WorldRankingStore.swift */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -175,6 +269,9 @@
 		A00500000000000000000008 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				D40200000000000000000003 /* CelebrityActingOverlay.swift */,
+				FA0200000000000000000003 /* InvestmentEventOverlay.swift */,
+				CB0200000000000000000005 /* CelebrityEventOverlay.swift */,
 				A00200000000000000000008 /* GameHomeView.swift */,
 				A00200000000000000000009 /* StatusStripView.swift */,
 				A0020000000000000000000A /* CityMapView.swift */,
@@ -182,6 +279,7 @@
 				A00200000000000000000019 /* WorldEventOverlay.swift */,
 				B10200000000000000000001 /* HealthEventOverlay.swift */,
 				A0020000000000000000001D /* GameResultView.swift */,
+				C50200000000000000000002 /* WorldRankingView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -189,7 +287,9 @@
 		A00500000000000000000009 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E90200000000000000000009 /* Content */,
 				A0020000000000000000000D /* Assets.xcassets */,
+				A0020000000000000000001F /* PrivacyInfo.xcprivacy */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -197,7 +297,14 @@
 		A0050000000000000000000A /* SurviveInLATests */ = {
 			isa = PBXGroup;
 			children = (
+				D40200000000000000000004 /* CelebrityActingTests.swift */,
+				AC020000000000000000000D /* ArchitectureIntegrationTests.swift */,
+				AC020000000000000000000E /* ArchitectureReplayTests.swift */,
+				FA0200000000000000000004 /* InvestmentEventTests.swift */,
+				CB0200000000000000000006 /* CelebrityEventTests.swift */,
+				E90200000000000000000010 /* EventLibraryTests.swift */,
 				A0020000000000000000000E /* GameEngineTests.swift */,
+				C50200000000000000000003 /* WorldRankingTests.swift */,
 			);
 			path = SurviveInLATests;
 			sourceTree = "<group>";
@@ -248,6 +355,57 @@
 			path = Shop;
 			sourceTree = "<group>";
 		};
+		AC0300000000000000000001 /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				D40200000000000000000001 /* CelebrityActingModels.swift */,
+				FA0200000000000000000001 /* InvestmentEventModels.swift */,
+				CB0200000000000000000002 /* PlayerBuffModels.swift */,
+				CB0200000000000000000001 /* CelebrityEventModels.swift */,
+				E90200000000000000000008 /* EventContentCatalog.swift */,
+				E90200000000000000000006 /* EventSelection.swift */,
+				E90200000000000000000005 /* EventCondition.swift */,
+				E90200000000000000000003 /* EventEffect.swift */,
+				E90200000000000000000002 /* WorldEventModels.swift */,
+				E90200000000000000000001 /* EventModels.swift */,
+				AC0200000000000000000002 /* PendingInteraction.swift */,
+			);
+			path = Events;
+			sourceTree = "<group>";
+		};
+		AC0300000000000000000002 /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				D40200000000000000000002 /* CelebrityActingEngine.swift */,
+				FA0200000000000000000002 /* InvestmentEventEngine.swift */,
+				CB0200000000000000000004 /* PlayerBuffEngine.swift */,
+				CB0200000000000000000003 /* CelebrityEventEngine.swift */,
+				E90200000000000000000007 /* WorldEventScheduler.swift */,
+				E90200000000000000000004 /* EventEffectExecutor.swift */,
+				AC0200000000000000000007 /* SessionEventEngine.swift */,
+			);
+			path = Events;
+			sourceTree = "<group>";
+		};
+		AC0300000000000000000003 /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				AC0200000000000000000003 /* CityServicesEngine.swift */,
+				AC0200000000000000000004 /* EquipmentEngine.swift */,
+				AC0200000000000000000005 /* TradingEngine.swift */,
+				AC0200000000000000000006 /* WorkEngine.swift */,
+			);
+			path = Actions;
+			sourceTree = "<group>";
+		};
+		AC0300000000000000000004 /* Turns */ = {
+			isa = PBXGroup;
+			children = (
+				AC020000000000000000000A /* TurnEngine.swift */,
+			);
+			path = Turns;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -255,6 +413,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A00B00000000000000000002 /* Build configuration list for PBXNativeTarget "SurviveInLA" */;
 			buildPhases = (
+				E90300000000000000000001 /* Validate Event Content */,
 				A00600000000000000000001 /* Sources */,
 				A00400000000000000000001 /* Frameworks */,
 				A00700000000000000000001 /* Resources */,
@@ -330,7 +489,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E90100000000000000000009 /* Content in Resources */,
 				A0010000000000000000000D /* Assets.xcassets in Resources */,
+				A0010000000000000000001F /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,11 +504,57 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+        E90300000000000000000001 /* Validate Event Content */ = {
+            isa = PBXShellScriptBuildPhase;
+            alwaysOutOfDate = 1;
+            buildActionMask = 2147483647;
+            files = ();
+            inputPaths = ("$(SRCROOT)/tools/content/validate.py", "$(SRCROOT)/SurviveInLA/Resources/Content", "$(SRCROOT)/SurviveInLA/Resources/Assets.xcassets", "$(SRCROOT)/SurviveInLA/Domain/GameModels.swift");
+            name = "Validate Event Content";
+            outputPaths = ();
+            runOnlyForDeploymentPostprocessing = 0;
+            shellPath = /bin/sh;
+            shellScript = "python3 \"$SRCROOT/tools/content/validate.py\" --root \"$SRCROOT\"";
+        };
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		A00600000000000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D40100000000000000000003 /* CelebrityActingOverlay.swift in Sources */,
+				D40100000000000000000002 /* CelebrityActingEngine.swift in Sources */,
+				D40100000000000000000001 /* CelebrityActingModels.swift in Sources */,
+				AC010000000000000000000C /* GameSnapshotMigration.swift in Sources */,
+				AC010000000000000000000B /* GamePresentation.swift in Sources */,
+				AC010000000000000000000A /* TurnEngine.swift in Sources */,
+				AC0100000000000000000009 /* JourneySettlementEngine.swift in Sources */,
+				AC0100000000000000000008 /* GameActionRules.swift in Sources */,
+				AC0100000000000000000007 /* SessionEventEngine.swift in Sources */,
+				AC0100000000000000000006 /* WorkEngine.swift in Sources */,
+				AC0100000000000000000005 /* TradingEngine.swift in Sources */,
+				AC0100000000000000000004 /* EquipmentEngine.swift in Sources */,
+				AC0100000000000000000003 /* CityServicesEngine.swift in Sources */,
+				AC0100000000000000000002 /* PendingInteraction.swift in Sources */,
+				AC0100000000000000000001 /* CurrencyFormatting.swift in Sources */,
+				FA0100000000000000000003 /* InvestmentEventOverlay.swift in Sources */,
+				CB0100000000000000000005 /* CelebrityEventOverlay.swift in Sources */,
+				FA0100000000000000000002 /* InvestmentEventEngine.swift in Sources */,
+				CB0100000000000000000004 /* PlayerBuffEngine.swift in Sources */,
+				CB0100000000000000000003 /* CelebrityEventEngine.swift in Sources */,
+				FA0100000000000000000001 /* InvestmentEventModels.swift in Sources */,
+				CB0100000000000000000002 /* PlayerBuffModels.swift in Sources */,
+				CB0100000000000000000001 /* CelebrityEventModels.swift in Sources */,
+				E90100000000000000000008 /* EventContentCatalog.swift in Sources */,
+				E90100000000000000000007 /* WorldEventScheduler.swift in Sources */,
+				E90100000000000000000006 /* EventSelection.swift in Sources */,
+				E90100000000000000000005 /* EventCondition.swift in Sources */,
+				E90100000000000000000004 /* EventEffectExecutor.swift in Sources */,
+				E90100000000000000000003 /* EventEffect.swift in Sources */,
+				E90100000000000000000002 /* WorldEventModels.swift in Sources */,
+				E90100000000000000000001 /* EventModels.swift in Sources */,
 				A00100000000000000000001 /* SurviveInLAApp.swift in Sources */,
 				A00100000000000000000002 /* GameModels.swift in Sources */,
 				A00100000000000000000003 /* GameContent.swift in Sources */,
@@ -374,6 +581,8 @@
 				A00100000000000000000019 /* AdventureShopStore.swift in Sources */,
 				A0010000000000000000001A /* GameResultView.swift in Sources */,
 				A0010000000000000000001B /* AdventureShopView.swift in Sources */,
+				C50100000000000000000001 /* WorldRankingStore.swift in Sources */,
+				C50100000000000000000002 /* WorldRankingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,7 +590,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D40100000000000000000004 /* CelebrityActingTests.swift in Sources */,
+				AC010000000000000000000E /* ArchitectureReplayTests.swift in Sources */,
+				AC010000000000000000000D /* ArchitectureIntegrationTests.swift in Sources */,
+				FA0100000000000000000004 /* InvestmentEventTests.swift in Sources */,
+				CB0100000000000000000006 /* CelebrityEventTests.swift in Sources */,
+				E90100000000000000000010 /* EventLibraryTests.swift in Sources */,
 				A0010000000000000000000E /* GameEngineTests.swift in Sources */,
+				C50100000000000000000003 /* WorldRankingTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -431,7 +647,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SurviveInLA/SurviveInLA.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 5HL85C4694;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Surviving LA";
@@ -445,7 +661,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.graymongooseus.SurviveInLA;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -464,7 +680,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SurviveInLA/SurviveInLA.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 5HL85C4694;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Surviving LA";
@@ -478,7 +694,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.graymongooseus.SurviveInLA;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

@@ -2,11 +2,14 @@ import SwiftUI
 
 struct GameResultOverlay: View {
     @Bindable var store: GameStore
+    let uploads: RankingUploadStore
     @State private var showsSummary = false
     @State private var showsLeaderboard = false
     @State private var confirmsRestart = false
+    @State private var showsWorldRanking = false
 
     private var session: GameSession { store.session }
+    private var hasEndingStory: Bool { session.isDeported || session.isRootedInLosAngeles }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -21,8 +24,10 @@ struct GameResultOverlay: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    if showsSummary || !session.isDeported {
+                    if showsSummary || !hasEndingStory {
                         summary
+                    } else if session.isRootedInLosAngeles {
+                        rootedStory
                     } else {
                         departure
                     }
@@ -36,10 +41,17 @@ struct GameResultOverlay: View {
             .id(showsSummary)
 
             VStack(spacing: 10) {
-                if !showsSummary && session.isDeported {
+                if let snapshot = store.currentRankingSnapshot,
+                   RankingSubmission(snapshot: snapshot, displayName: uploads.displayName, appVersion: RankingUploadStore.appVersion) != nil {
+                    RankingUploadStatusView(uploads: uploads, snapshot: snapshot)
+                    Button("世界排名 · Top 50") { showsWorldRanking = true }
+                        .font(.subheadline.weight(.semibold))
+                        .tint(AppTheme.coralSoft)
+                }
+                if !showsSummary && hasEndingStory {
                     Button { showsSummary = true } label: {
                         HStack {
-                            Text("翻开这一年的账单")
+                            Text(session.isRootedInLosAngeles ? "看看这一年的收获" : "翻开这一年的账单")
                             Spacer()
                             Image(systemName: "arrow.right")
                         }
@@ -53,12 +65,12 @@ struct GameResultOverlay: View {
                     Label("查看排行榜", systemImage: "list.number")
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(EndingButtonStyle(prominent: showsSummary || !session.isDeported))
+                .buttonStyle(EndingButtonStyle(prominent: showsSummary || !hasEndingStory))
                 .accessibilityIdentifier("ending.leaderboard")
 
-                if showsSummary || !session.isDeported {
+                if showsSummary || !hasEndingStory {
                     HStack {
-                        if session.isDeported {
+                        if hasEndingStory {
                             Button("重读终章") { showsSummary = false }
                             Spacer()
                         }
@@ -82,11 +94,56 @@ struct GameResultOverlay: View {
         .sheet(isPresented: $showsLeaderboard) {
             JourneyLeaderboardView(store: store)
         }
+        .sheet(isPresented: $showsWorldRanking) {
+            NavigationStack {
+                WorldRankingView(uploads: uploads)
+                    .toolbar { ToolbarItem(placement: .topBarLeading) { Button("完成") { showsWorldRanking = false } } }
+            }
+            .preferredColorScheme(.dark)
+        }
         .alert("开始新的人生？", isPresented: $confirmsRestart) {
             Button("再看看", role: .cancel) { }
             Button("重新开始") { store.restart() }
         } message: {
             Text("本局成绩和历史事件会保留在本机排行榜，新旅程将从第 1 周开始。")
+        }
+    }
+
+    private var rootedStory: some View {
+        Group {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("WEEK 52 · 圆满结局")
+                    .font(.caption.weight(.bold).monospaced())
+                    .tracking(2)
+                    .foregroundStyle(AppTheme.warning)
+                Text("灯亮着。\n这一次，是你的家。")
+                    .font(.system(size: 36, weight: .black, design: .serif))
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(RootedEndingStory.subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            VStack(alignment: .leading, spacing: 12) {
+                Label(RootedEndingStory.title, systemImage: "house.fill")
+                    .font(.title2.weight(.bold))
+                Text("LOS ANGELES / 往后余生")
+                    .font(.caption.weight(.semibold).monospaced())
+                    .tracking(1)
+                Divider()
+                Label("一份事业 · 一位伴侣 · 一个家", systemImage: "heart.fill")
+                    .font(.subheadline.weight(.semibold))
+            }
+            .foregroundStyle(AppTheme.warning)
+            .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(AppTheme.warning.opacity(0.09), in: RoundedRectangle(cornerRadius: 18))
+            ForEach(Array(RootedEndingStory.chapters.enumerated()), id: \.offset) { _, paragraph in
+                storyText(paragraph)
+            }
+            Text("你曾经只是想留下来。\n现在，你知道自己为什么留下来。")
+                .font(.title3.weight(.semibold))
+                .lineSpacing(5)
+                .foregroundStyle(AppTheme.warning)
         }
     }
 
@@ -159,15 +216,15 @@ struct GameResultOverlay: View {
                     .font(.caption.weight(.bold))
                     .tracking(2)
                     .foregroundStyle(AppTheme.coralSoft)
-                Text(session.health <= 0 ? "身体先说了再见。" : "这一年，值不值？")
+                Text(session.health <= 0 ? "身体先说了再见。" : (session.isRootedInLosAngeles ? "希望在这里生了根。" : "这一年，值不值？"))
                     .font(.largeTitle.weight(.black))
-                Text(session.isDeported ? "一张回程票，把所有数字变成了过去。" : "每一份成绩，都有数字之外的代价。")
+                Text(session.isDeported ? "一张回程票，把所有数字变成了过去。" : (session.isRootedInLosAngeles ? RootedEndingStory.subtitle : "每一份成绩，都有数字之外的代价。"))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                Text(session.isDeported ? "回国净本钱" : "最终净资产")
+                Text(session.isDeported ? "回国净本钱" : (session.isRootedInLosAngeles ? "留在洛城的现金净结余" : "最终净资产"))
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.65))
                 Text(session.netWorth.usdText)
@@ -175,7 +232,7 @@ struct GameResultOverlay: View {
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
                     .foregroundStyle(session.netWorth > 0 ? AppTheme.positive : AppTheme.coralSoft)
-                Text(session.isDeported ? "已清算库存、扣除机票及全部未偿债务 · 美元" : "现金 + 存款 − 债务 · 美元；未清算库存不计入")
+                Text(session.isDeported ? "已清算库存、扣除机票及全部未偿债务 · 美元" : (session.isRootedInLosAngeles ? "现金 + 存款 − 债务 · 美元；物业保留，价值未计入；无需回程机票" : "现金 + 存款 − 债务 · 美元；未清算库存不计入"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -188,6 +245,8 @@ struct GameResultOverlay: View {
                 metric("累计健康损耗", value: session.journey.map { "\($0.healthLost) 点" } ?? "未记录", detail: "现有健康 \(session.health) / 100", symbol: "heart.slash", tint: AppTheme.coralSoft)
                 metric("走过的街区", value: session.journey.map { "\($0.visitedDistricts.count) / \(GameContent.districts.count)" } ?? "未记录", detail: "不同地点，不同活法", symbol: "map", tint: .cyan)
                 metric("经历的事件", value: "\(session.experienceCount) 种", detail: "已记录 \(session.historicalEvents.count) 次遭遇", symbol: "book.pages", tint: AppTheme.warning)
+                metric("最终运气", value: "\(session.currentLuck) / 100", detail: "由这一年的主动选择改变", symbol: "sparkles", tint: .purple)
+                metric("美国生存路线", value: "\(session.currentEquipment.completedMilestoneCount) / 5", detail: session.isRootedInLosAngeles ? "HOPE · 已经生根洛杉矶" : "进度不随周数自动增长", symbol: "sun.max.fill", tint: .yellow)
             }
 
             VStack(spacing: 12) {
@@ -197,7 +256,9 @@ struct GameResultOverlay: View {
                 if let settlement = session.settlement {
                     Divider()
                     ledgerRow("库存清算（已计入）", "+\(settlement.liquidationIncome.usdText)")
-                    ledgerRow("单程机票（已扣除）", "−\(settlement.ticketCost.usdText)")
+                    if settlement.ticketCost > 0 {
+                        ledgerRow("单程机票（已扣除）", "−\(settlement.ticketCost.usdText)")
+                    }
                     if settlement.ticketDebt > 0 {
                         ledgerRow("机票欠款（已计入债务）", settlement.ticketDebt.usdText)
                     }
@@ -206,6 +267,16 @@ struct GameResultOverlay: View {
                     Divider()
                     ledgerRow("累计恢复健康", "\(journey.healthRecovered) 点")
                     ledgerRow("诊所治疗支出", journey.treatmentSpending.usdText)
+                    ledgerRow("累计房租", journey.housingSpending.map(\.usdText) ?? "未记录")
+                    ledgerRow("车辆净支出", journey.vehicleSpending.map(\.usdText) ?? "未记录")
+                    ledgerRow("驾驶工作收入", journey.drivingIncome.map(\.usdText) ?? "未记录")
+                    ledgerRow("美国生存路线投入", journey.dreamInvestmentSpending.map(\.usdText) ?? "未记录")
+                    if let choices = journey.keyChoices, !choices.isEmpty {
+                        Divider()
+                        ForEach(Array(choices.enumerated()), id: \.offset) { _, choice in
+                            Text(choice).font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
                 }
             }
             .font(.subheadline)
@@ -213,7 +284,7 @@ struct GameResultOverlay: View {
             .background(AppTheme.panel, in: RoundedRectangle(cornerRadius: 18))
 
             VStack(alignment: .leading, spacing: 14) {
-                Text(session.health <= 0 ? "未完的人生" : "尾声 / 广州")
+                Text(session.health <= 0 ? "未完的人生" : (session.isRootedInLosAngeles ? "尾声 / 洛杉矶的家" : "尾声 / 广州"))
                     .font(.caption.weight(.bold))
                     .tracking(2)
                     .foregroundStyle(AppTheme.coralSoft)
@@ -320,7 +391,7 @@ struct JourneyLeaderboardView: View {
                                         .foregroundStyle(index == 0 ? AppTheme.warning : .secondary)
                                     VStack(alignment: .leading, spacing: 5) {
                                         Text(record.profileID.displayName).font(.headline)
-                                        Text("\(record.session.isDeported ? "单程广州" : (record.session.health <= 0 ? "健康归零" : "旅程结束")) · 第 \(min(record.session.day, record.session.totalDays)) 周")
+                                        Text("\(record.session.isDeported ? "单程广州" : (record.session.isRootedInLosAngeles ? "圆满结局 · 扎根洛城" : (record.session.health <= 0 ? "健康归零" : "旅程结束"))) · 第 \(min(record.session.day, record.session.totalDays)) 周")
                                             .font(.caption).foregroundStyle(.secondary)
                                         Text("\(record.session.experienceCount) 种事件 · 查看全部历程 ›")
                                             .font(.caption2).foregroundStyle(AppTheme.coralSoft)

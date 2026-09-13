@@ -10,13 +10,13 @@
       "internalID" : "A1C3EB9B-497C-4D01-B171-1D7A7F2E8D01",
       "localizations" : [
         {
-          "description" : "固定获得 3,000 游戏现金，不含随机内容。",
-          "displayName" : "起步现金包",
+          "description" : "固定触发越南女友留下三千美元支票后不知去向的剧情。",
+          "displayName" : "越南女朋友雪中送炭",
           "locale" : "zh_CN"
         }
       ],
-      "productID" : "com.graymongooseus.SurviveInLA.currency.starter",
-      "referenceName" : "Currency - Starter Cash Pack",
+      "productID" : "com.graymongooseus.SurviveInLA.adventure.vietnam",
+      "referenceName" : "Surviving LA - Adventure 01 - 3,000 Game Cash",
       "type" : "Consumable"
     },
     {
@@ -25,13 +25,13 @@
       "internalID" : "79D5838E-253D-4E46-BF3D-62C514427202",
       "localizations" : [
         {
-          "description" : "固定获得 6,000 游戏现金，不含随机内容。",
-          "displayName" : "生存现金包",
+          "description" : "固定触发便利店乐透刮刮卡获得六千美元的剧情。",
+          "displayName" : "便利店乐透刮刮卡",
           "locale" : "zh_CN"
         }
       ],
-      "productID" : "com.graymongooseus.SurviveInLA.currency.survivor",
-      "referenceName" : "Currency - Survivor Cash Pack",
+      "productID" : "com.graymongooseus.SurviveInLA.adventure.lottery",
+      "referenceName" : "Surviving LA - Adventure 02 - 6,000 Game Cash",
       "type" : "Consumable"
     },
     {
@@ -40,13 +40,13 @@
       "internalID" : "C7A41F36-5C19-4526-BA5E-41F9631A3303",
       "localizations" : [
         {
-          "description" : "固定获得 18,000 游戏现金，不含随机内容。",
-          "displayName" : "发展现金包",
+          "description" : "固定触发手机匿名券商末日期权获得一万八千美元的剧情。",
+          "displayName" : "手机发现匿名券商",
           "locale" : "zh_CN"
         }
       ],
-      "productID" : "com.graymongooseus.SurviveInLA.currency.builder",
-      "referenceName" : "Currency - Builder Cash Pack",
+      "productID" : "com.graymongooseus.SurviveInLA.adventure.options",
+      "referenceName" : "Surviving LA - Adventure 03 - 18,000 Game Cash",
       "type" : "Consumable"
     },
     {
@@ -55,13 +55,13 @@
       "internalID" : "E96633DE-9050-47CD-9D3D-0CA55443D404",
       "localizations" : [
         {
-          "description" : "固定获得 36,000 游戏现金，不含随机内容。",
-          "displayName" : "美国梦现金包",
+          "description" : "固定触发圣盖博车库拍卖淘到旧表并获得三万六千美元的剧情。",
+          "displayName" : "圣盖博车库拍卖",
           "locale" : "zh_CN"
         }
       ],
-      "productID" : "com.graymongooseus.SurviveInLA.currency.dream",
-      "referenceName" : "Currency - American Dream Cash Pack",
+      "productID" : "com.graymongooseus.SurviveInLA.adventure.watch",
+      "referenceName" : "Surviving LA - Adventure 04 - 36,000 Game Cash",
       "type" : "Consumable"
     }
   ],

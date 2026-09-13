@@ -186,22 +186,69 @@ enum DistrictCatalog {
     ]
 
     static let jobs: [JobOpportunity] = [
-        JobOpportunity(districtID: .koreatown, title: "韩餐馆夜班", detail: "深夜客人多，下班时天已经快亮了。", wage: 370, healthCost: 5),
-        JobOpportunity(districtID: .pasadenaRoseBowl, title: "跳蚤市场搭摊", detail: "天不亮就进场，帮摊主搬货摆货。", wage: 390, healthCost: 5),
-        JobOpportunity(districtID: .figueroaCorridor, title: "拉皮条", detail: "你在菲格罗亚街头替性交易招揽客人，收入高，但连续做下去会迅速引来执法风险。", wage: 600, healthCost: 6),
-        JobOpportunity(districtID: .hollywood, title: "片场临时群演", detail: "等候时间比上镜时间长得多。", wage: 480, healthCost: 4),
-        JobOpportunity(districtID: .inglewood, title: "赛事场馆装卸", detail: "赶在观众入场前把设备全部归位。", wage: 460, healthCost: 6),
-        JobOpportunity(districtID: .culverCity, title: "剧组制片助理", detail: "送文件、买咖啡、盯器材，什么都做。", wage: 520, healthCost: 6),
-        JobOpportunity(districtID: .westwood, title: "校园跑腿配送", detail: "订单不大，但宿舍楼之间来回很费腿。", wage: 350, healthCost: 4),
-        JobOpportunity(districtID: .venice, title: "海边租赁摊帮工", detail: "搬单车、擦滑板，还要回答游客问题。", wage: 390, healthCost: 5),
-        JobOpportunity(districtID: .santaMonica, title: "酒店宴会临工", detail: "换场速度快，结束后能拿到一笔小费。", wage: 450, healthCost: 5),
-        JobOpportunity(districtID: .dingPangZiPlaza, title: "广场餐馆帮工", detail: "洗菜、打包、送外卖，现金当天结。", wage: 320, healthCost: 4),
-        JobOpportunity(districtID: .sanGabriel, title: "华人超市理货", detail: "凌晨补货，忙完正好赶上早市。", wage: 380, healthCost: 5),
-        JobOpportunity(districtID: .rowlandHeights, title: "夜市摊位帮手", detail: "搭棚、收摊，再帮老板看一会儿货。", wage: 420, healthCost: 5),
-        JobOpportunity(districtID: .cityOfIndustry, title: "快递仓库分拣", detail: "传送带不停，赶在货车发班前把包裹全部分区。", wage: 470, healthCost: 7),
-        JobOpportunity(districtID: .irvine, title: "科技展会临工", detail: "替参展公司布置展台、搬运设备。", wage: 560, healthCost: 5),
-        JobOpportunity(districtID: .littleSaigon, title: "家族餐馆外场", detail: "午市翻台快，小费全靠手脚麻利。", wage: 360, healthCost: 4)
+        job("koreatown-kitchen", .koreatown, "韩餐馆夜班", "深夜客人多，下班时天已经快亮了。", 370, 5),
+        job("koreatown-market", .koreatown, "韩国超市理货", "冷库和货架来回跑，胜在排班稳定。", 330, 3),
+        job("koreatown-delivery", .koreatown, "深夜外卖配送", "订单密集，小费不错，但需要自己解决车辆。", 500, 5, vehicle: true),
+        job("pasadena-stall", .pasadenaRoseBowl, "跳蚤市场搭摊", "天不亮就进场，帮摊主搬货摆货。", 390, 5),
+        job("pasadena-ticket", .pasadenaRoseBowl, "球场检票", "站得久，但流程清楚、收入稳定。", 350, 3),
+        job("pasadena-parking", .pasadenaRoseBowl, "赛事停车引导", "开车巡场并处理临时调度。", 510, 5, vehicle: true),
+        job("figueroa-pimping", .figueroaCorridor, "拉皮条", "你在菲格罗亚街头替性交易招揽客人，收入高，但连续做下去会迅速引来执法风险。", 600, 6),
+        job("figueroa-cleanup", .figueroaCorridor, "场馆撤场清洁", "散场后清理看台，活累但钱干净。", 390, 5, housing: false),
+        job("figueroa-campus-delivery", .figueroaCorridor, "校园设备配送", "在场馆和校园之间运送设备。", 520, 5, vehicle: true),
+        job("hollywood-extra", .hollywood, "片场临时群演", "等候时间比上镜时间长得多。", 480, 4),
+        job("hollywood-set", .hollywood, "布景搬运", "抢时间换景，工资高，也更费体力。", 540, 7),
+        job("hollywood-runner", .hollywood, "剧组跑腿", "全天候替剧组取送道具和文件。", 610, 5, vehicle: true),
+        job("inglewood-loader", .inglewood, "赛事场馆装卸", "赶在观众入场前把设备全部归位。", 460, 6, housing: false),
+        job("inglewood-cleaner", .inglewood, "赛后清洁", "夜深才开工，收入普通但门槛低。", 380, 4, housing: false),
+        job("inglewood-rideshare", .inglewood, "比赛日接送", "散场订单连成一片，堵车也算成本。", 640, 5, vehicle: true),
+        job("culver-pa", .culverCity, "剧组制片助理", "送文件、买咖啡、盯器材，什么都做。", 520, 6),
+        job("culver-exhibition", .culverCity, "展览布置", "按图把展墙和灯具装好，手艺比力气重要。", 450, 4),
+        job("culver-equipment", .culverCity, "影视器材配送", "昂贵器材必须准时送到片场。", 650, 5, vehicle: true),
+        job("westwood-tutor", .westwood, "中文家教", "备课花时间，但对身体更友好。", 360, 2),
+        job("westwood-moving", .westwood, "学生搬家", "楼梯很多，现金当天结。", 450, 7),
+        job("westwood-medical-runner", .westwood, "医院文件配送", "路线严格，迟到会被扣钱。", 560, 4, vehicle: true),
+        job("venice-rental", .venice, "海边租赁摊帮工", "搬单车、擦滑板，还要回答游客问题。", 390, 5),
+        job("venice-photo", .venice, "游客街拍", "靠耐心揽客，天气好时小费不少。", 430, 3),
+        job("venice-event", .venice, "海滨活动补给", "往返仓库与海滩送饮料和设备。", 570, 5, vehicle: true),
+        job("santa-hotel", .santaMonica, "酒店宴会临工", "换场速度快，结束后能拿到一笔小费。", 450, 5),
+        job("santa-retail", .santaMonica, "精品店理货", "要求细致，体力消耗较小。", 400, 3),
+        job("santa-catering", .santaMonica, "宴会物资配送", "酒店催得紧，准时比路线更重要。", 590, 5, vehicle: true),
+        job("ding-kitchen", .dingPangZiPlaza, "广场餐馆帮工", "洗菜、打包，现金当天结。", 320, 4, housing: false),
+        job("ding-loader", .dingPangZiPlaza, "商铺装卸搬运", "工资更高，腰背也更累。", 410, 7, housing: false),
+        job("ding-delivery", .dingPangZiPlaza, "华人商圈同城送货", "熟门熟路能多跑几单。", 530, 5, vehicle: true),
+        job("san-gabriel-market", .sanGabriel, "华人超市理货", "凌晨补货，忙完正好赶上早市。", 380, 5),
+        job("san-gabriel-front", .sanGabriel, "酒楼双语前台", "应付订位和投诉，费心多过费力。", 350, 3),
+        job("san-gabriel-delivery", .sanGabriel, "商家文件配送", "在银行、店铺和事务所之间来回跑。", 540, 4, vehicle: true),
+        job("rowland-night-market", .rowlandHeights, "夜市摊位帮手", "搭棚、收摊，再帮老板看一会儿货。", 420, 5, housing: false),
+        job("rowland-tutor", .rowlandHeights, "补习班助教", "批作业、盯自习，收入稳定。", 370, 3),
+        job("rowland-rideshare", .rowlandHeights, "深夜网约车", "广场之间距离远，有车才接得下。", 610, 5, vehicle: true),
+        job("industry-sorter", .cityOfIndustry, "快递仓库分拣", "传送带不停，赶在货车发班前把包裹全部分区。", 470, 7, housing: false),
+        job("industry-clerk", .cityOfIndustry, "物流双语跟单", "电话不停，但不用整天搬箱子。", 430, 3),
+        job("industry-driver", .cityOfIndustry, "仓库送货司机", "车程长、收入高，油费从工资里出。", 680, 6, vehicle: true),
+        job("irvine-expo", .irvine, "科技展会临工", "替参展公司布置展台、搬运设备。", 560, 5),
+        job("irvine-tutor", .irvine, "数学家教", "备课认真就有稳定回头客。", 480, 2),
+        job("irvine-pet", .irvine, "宠物接送", "路线分散，但客户愿意为准时付钱。", 650, 4, vehicle: true),
+        job("saigon-restaurant", .littleSaigon, "家族餐馆外场", "午市翻台快，小费全靠手脚麻利。", 360, 4),
+        job("saigon-bakery", .littleSaigon, "面包店收银", "天没亮就开门，下午能早点收工。", 330, 3),
+        job("saigon-elder", .littleSaigon, "社区长者接送", "需要耐心，也需要一辆可靠的车。", 520, 3, vehicle: true)
     ]
+
+    private static func job(
+        _ id: String,
+        _ districtID: District.ID,
+        _ title: String,
+        _ detail: String,
+        _ wage: Int,
+        _ healthCost: Int,
+        housing: Bool = true,
+        vehicle: Bool = false
+    ) -> JobOpportunity {
+        JobOpportunity(
+            id: id, districtID: districtID, title: title, detail: detail,
+            wage: wage, healthCost: healthCost,
+            requiresHousing: housing, requiresVehicle: vehicle
+        )
+    }
 
     static let investments: [InvestmentOpportunity] = [
         InvestmentOpportunity(districtID: .koreatown, title: "美妆直播拼货", detail: "主播准备测试一批新的本地货盘。", risk: .medium, minimumInvestment: 200),

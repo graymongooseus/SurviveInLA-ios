@@ -1,0 +1,200 @@
+[
+  {
+    "cashDelta": -250,
+    "group": "money",
+    "healthDelta": 0,
+    "id": "freeway-gridlock",
+    "kind": "setback",
+    "reputationDelta": 0,
+    "titleKey": "event.freeway-gridlock.title",
+    "messageKey": "event.freeway-gridlock.message"
+  },
+  {
+    "cashDelta": -75,
+    "group": "money",
+    "healthDelta": 0,
+    "id": "street-cleaning-ticket",
+    "kind": "setback",
+    "reputationDelta": 0,
+    "titleKey": "event.street-cleaning-ticket.title",
+    "messageKey": "event.street-cleaning-ticket.message"
+  },
+  {
+    "cashDelta": -310,
+    "districtIDs": [
+      "hollywood",
+      "culverCity",
+      "figueroaCorridor",
+      "pasadenaRoseBowl"
+    ],
+    "group": "money",
+    "healthDelta": 0,
+    "id": "temporary-no-parking-tow",
+    "kind": "setback",
+    "reputationDelta": 0,
+    "titleKey": "event.temporary-no-parking-tow.title",
+    "messageKey": "event.temporary-no-parking-tow.message"
+  },
+  {
+    "cashDelta": -165,
+    "districtIDs": [
+      "figueroaCorridor",
+      "koreatown",
+      "inglewood",
+      "dingPangZiPlaza",
+      "rowlandHeights"
+    ],
+    "group": "money",
+    "healthDelta": 0,
+    "id": "pothole-flat",
+    "kind": "setback",
+    "reputationDelta": 0,
+    "titleKey": "event.pothole-flat.title",
+    "messageKey": "event.pothole-flat.message"
+  },
+  {
+    "cashDelta": -120,
+    "group": "money",
+    "healthDelta": 0,
+    "id": "phone-screen-repair",
+    "kind": "setback",
+    "reputationDelta": 0,
+    "titleKey": "event.phone-screen-repair.title",
+    "messageKey": "event.phone-screen-repair.message"
+  },
+  {
+    "cashDelta": -48,
+    "districtIDs": [
+      "koreatown",
+      "figueroaCorridor",
+      "hollywood",
+      "culverCity",
+      "westwood",
+      "santaMonica",
+      "pasadenaRoseBowl"
+    ],
+    "group": "money",
+    "healthDelta": 0,
+    "id": "metro-delay-rideshare",
+    "kind": "setback",
+    "reputationDelta": 0,
+    "titleKey": "event.metro-delay-rideshare.title",
+    "messageKey": "event.metro-delay-rideshare.message"
+  },
+  {
+    "cashDelta": -70,
+    "districtIDs": [
+      "venice",
+      "santaMonica"
+    ],
+    "group": "money",
+    "healthDelta": 0,
+    "id": "beach-parking",
+    "kind": "setback",
+    "reputationDelta": 0,
+    "titleKey": "event.beach-parking.title",
+    "messageKey": "event.beach-parking.message"
+  },
+  {
+    "cashDelta": -85,
+    "districtIDs": [
+      "figueroaCorridor",
+      "hollywood",
+      "venice",
+      "pasadenaRoseBowl",
+      "dingPangZiPlaza",
+      "littleSaigon"
+    ],
+    "group": "money",
+    "healthDelta": 0,
+    "id": "vending-compliance",
+    "kind": "opportunity",
+    "luckDelta": 2,
+    "reputationDelta": 0,
+    "titleKey": "event.vending-compliance.title",
+    "messageKey": "event.vending-compliance.message"
+  },
+  {
+    "cashDelta": 110,
+    "districtIDs": [
+      "dingPangZiPlaza"
+    ],
+    "group": "money",
+    "healthDelta": 0,
+    "id": "ding-pang-zi-referral-shift",
+    "kind": "opportunity",
+    "luckDelta": 1,
+    "reputationDelta": 0,
+    "titleKey": "event.ding-pang-zi-referral-shift.title",
+    "messageKey": "event.ding-pang-zi-referral-shift.message"
+  },
+  {
+    "cashDelta": 140,
+    "districtIDs": [
+      "sanGabriel"
+    ],
+    "group": "money",
+    "healthDelta": 0,
+    "id": "san-gabriel-repaid-tab",
+    "kind": "opportunity",
+    "luckDelta": 1,
+    "reputationDelta": 0,
+    "titleKey": "event.san-gabriel-repaid-tab.title",
+    "messageKey": "event.san-gabriel-repaid-tab.message"
+  },
+  {
+    "cashDelta": 125,
+    "districtIDs": [
+      "rowlandHeights"
+    ],
+    "group": "money",
+    "healthDelta": -2,
+    "id": "rowland-carpool-delivery",
+    "kind": "opportunity",
+    "reputationDelta": 0,
+    "titleKey": "event.rowland-carpool-delivery.title",
+    "messageKey": "event.rowland-carpool-delivery.message"
+  },
+  {
+    "cashDelta": -190,
+    "districtIDs": [
+      "cityOfIndustry"
+    ],
+    "group": "money",
+    "healthDelta": 0,
+    "id": "industry-damaged-shipment",
+    "kind": "setback",
+    "luckDelta": -1,
+    "reputationDelta": 0,
+    "titleKey": "event.industry-damaged-shipment.title",
+    "messageKey": "event.industry-damaged-shipment.message"
+  },
+  {
+    "cashDelta": 180,
+    "districtIDs": [
+      "irvine"
+    ],
+    "group": "money",
+    "healthDelta": 0,
+    "id": "irvine-expo-overtime",
+    "kind": "opportunity",
+    "luckDelta": 1,
+    "reputationDelta": 0,
+    "titleKey": "event.irvine-expo-overtime.title",
+    "messageKey": "event.irvine-expo-overtime.message"
+  },
+  {
+    "cashDelta": 130,
+    "districtIDs": [
+      "littleSaigon"
+    ],
+    "group": "money",
+    "healthDelta": 0,
+    "id": "little-saigon-wedding-tips",
+    "kind": "opportunity",
+    "luckDelta": 1,
+    "reputationDelta": 0,
+    "titleKey": "event.little-saigon-wedding-tips.title",
+    "messageKey": "event.little-saigon-wedding-tips.message"
+  }
+]

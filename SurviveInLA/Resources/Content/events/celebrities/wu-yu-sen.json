@@ -1,0 +1,52 @@
+[
+  {
+    "id": "wu-hollywood-film",
+    "sourceNPCID": "wu-yu-sen",
+    "districtID": "hollywood",
+    "condition": {
+      "metric": {
+        "comparison": "atLeast",
+        "value": 55,
+        "name": "luck"
+      }
+    },
+    "oncePerJourney": true,
+    "requiresTimeForBonus": true,
+    "delayTurns": 10,
+    "bonusMultiplier": 10,
+    "invitation": {
+      "titleKey": "wu.film.invitation.title",
+      "messageKey": "wu.film.invitation.message"
+    },
+    "premiere": {
+      "titleKey": "wu.film.premiere.title",
+      "messageKey": "wu.film.premiere.message"
+    },
+    "options": [
+      {
+        "id": "messenger",
+        "titleKey": "wu.film.messenger.title",
+        "resultKey": "wu.film.messenger.result",
+        "fee": 300,
+        "healthDelta": -5,
+        "luckDelta": 0
+      },
+      {
+        "id": "action",
+        "titleKey": "wu.film.action.title",
+        "resultKey": "wu.film.action.result",
+        "fee": 600,
+        "healthDelta": -12,
+        "luckDelta": 0
+      },
+      {
+        "id": "extra",
+        "titleKey": "wu.film.extra.title",
+        "resultKey": "wu.film.extra.result",
+        "fee": 0,
+        "healthDelta": 10,
+        "luckDelta": 3
+      }
+    ]
+  }
+]

@@ -1,0 +1,224 @@
+[
+  {
+    "cashDelta": -12,
+    "districtIDs": [
+      "koreatown",
+      "pasadenaRoseBowl",
+      "figueroaCorridor",
+      "hollywood",
+      "inglewood",
+      "culverCity",
+      "westwood",
+      "dingPangZiPlaza",
+      "sanGabriel",
+      "rowlandHeights",
+      "cityOfIndustry",
+      "irvine",
+      "littleSaigon"
+    ],
+    "group": "health",
+    "healthDelta": -8,
+    "id": "extreme-heat",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.extreme-heat.title",
+    "messageKey": "event.extreme-heat.message"
+  },
+  {
+    "cashDelta": -18,
+    "group": "health",
+    "healthDelta": -7,
+    "id": "wildfire-smoke",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.wildfire-smoke.title",
+    "messageKey": "event.wildfire-smoke.message"
+  },
+  {
+    "cashDelta": -10,
+    "group": "health",
+    "healthDelta": -4,
+    "id": "unhealthy-air",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.unhealthy-air.title",
+    "messageKey": "event.unhealthy-air.message"
+  },
+  {
+    "cashDelta": 0,
+    "group": "health",
+    "healthDelta": -3,
+    "id": "metro-hard-stop",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.metro-hard-stop.title",
+    "messageKey": "event.metro-hard-stop.message"
+  },
+  {
+    "cashDelta": -8,
+    "districtIDs": [
+      "hollywood",
+      "pasadenaRoseBowl"
+    ],
+    "group": "health",
+    "healthDelta": -6,
+    "id": "hillside-dehydration",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.hillside-dehydration.title",
+    "messageKey": "event.hillside-dehydration.message"
+  },
+  {
+    "cashDelta": -45,
+    "districtIDs": [
+      "pasadenaRoseBowl",
+      "figueroaCorridor",
+      "hollywood",
+      "inglewood"
+    ],
+    "group": "health",
+    "healthDelta": -7,
+    "id": "cooler-failure",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.cooler-failure.title",
+    "messageKey": "event.cooler-failure.message"
+  },
+  {
+    "cashDelta": -35,
+    "districtIDs": [
+      "venice",
+      "santaMonica",
+      "culverCity"
+    ],
+    "group": "health",
+    "healthDelta": -6,
+    "id": "bike-path-fall",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.bike-path-fall.title",
+    "messageKey": "event.bike-path-fall.message"
+  },
+  {
+    "cashDelta": 0,
+    "districtIDs": [
+      "venice",
+      "santaMonica"
+    ],
+    "group": "health",
+    "healthDelta": -12,
+    "id": "rip-current",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.rip-current.title",
+    "messageKey": "event.rip-current.message"
+  },
+  {
+    "cashDelta": -25,
+    "group": "health",
+    "healthDelta": -5,
+    "id": "earthquake-jolt",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.earthquake-jolt.title",
+    "messageKey": "event.earthquake-jolt.message"
+  },
+  {
+    "cashDelta": -7,
+    "group": "health",
+    "healthDelta": -4,
+    "id": "sleep-debt",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.sleep-debt.title",
+    "messageKey": "event.sleep-debt.message"
+  },
+  {
+    "cashDelta": -28,
+    "group": "health",
+    "healthDelta": -5,
+    "id": "seasonal-flu",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.seasonal-flu.title",
+    "messageKey": "event.seasonal-flu.message"
+  },
+  {
+    "cashDelta": -18,
+    "districtIDs": [
+      "dingPangZiPlaza"
+    ],
+    "group": "health",
+    "healthDelta": -4,
+    "id": "ding-pang-zi-kitchen-smoke",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.ding-pang-zi-kitchen-smoke.title",
+    "messageKey": "event.ding-pang-zi-kitchen-smoke.message"
+  },
+  {
+    "cashDelta": -45,
+    "districtIDs": [
+      "sanGabriel"
+    ],
+    "group": "health",
+    "healthDelta": -6,
+    "id": "san-gabriel-kitchen-burn",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.san-gabriel-kitchen-burn.title",
+    "messageKey": "event.san-gabriel-kitchen-burn.message"
+  },
+  {
+    "cashDelta": -25,
+    "districtIDs": [
+      "rowlandHeights"
+    ],
+    "group": "health",
+    "healthDelta": -5,
+    "id": "rowland-market-back-strain",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.rowland-market-back-strain.title",
+    "messageKey": "event.rowland-market-back-strain.message"
+  },
+  {
+    "cashDelta": -30,
+    "districtIDs": [
+      "cityOfIndustry"
+    ],
+    "group": "health",
+    "healthDelta": -7,
+    "id": "industry-warehouse-rush-strain",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.industry-warehouse-rush-strain.title",
+    "messageKey": "event.industry-warehouse-rush-strain.message"
+  },
+  {
+    "cashDelta": -30,
+    "districtIDs": [
+      "irvine"
+    ],
+    "group": "health",
+    "healthDelta": -6,
+    "id": "irvine-long-commute-fatigue",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.irvine-long-commute-fatigue.title",
+    "messageKey": "event.irvine-long-commute-fatigue.message"
+  },
+  {
+    "cashDelta": -35,
+    "districtIDs": [
+      "littleSaigon"
+    ],
+    "group": "health",
+    "healthDelta": -5,
+    "id": "little-saigon-kitchen-slip",
+    "kind": "health",
+    "reputationDelta": 0,
+    "titleKey": "event.little-saigon-kitchen-slip.title",
+    "messageKey": "event.little-saigon-kitchen-slip.message"
+  }
+]

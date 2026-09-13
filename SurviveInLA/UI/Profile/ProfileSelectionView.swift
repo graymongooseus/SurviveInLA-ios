@@ -272,6 +272,20 @@ struct GameSettingsView: View {
             } footer: {
                 Text("删除后会从本机和 iCloud 同时移除，下一次选择该槽位时将从第 1 周重新开始。")
             }
+
+            Section("反馈与版本") {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("反馈邮箱")
+                    Link("liu@graymongoose.us", destination: URL(string: "mailto:liu@graymongoose.us")!)
+                        .font(.subheadline)
+                        .textSelection(.enabled)
+                        .accessibilityIdentifier("settings.feedbackEmail")
+                }
+                .padding(.vertical, 4)
+
+                LabeledContent("版本号", value: RankingUploadStore.appVersion)
+                    .accessibilityIdentifier("settings.appVersion")
+            }
         }
         .navigationTitle("游戏设置")
         .navigationBarTitleDisplayMode(.inline)
